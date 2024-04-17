@@ -73,8 +73,8 @@ onMounted(() => {
     <v-card-text>
       <div class="d-sm-flex align-center">
         <div>
-          <h3 class="text-h5 title mb-1">Sales Overview</h3>
-          <h5 class="text-subtitle-1">Flexy Admin Vs MaterialPro Admin</h5>
+          <h3 class="text-h5 title mb-1">Días más concurridos</h3>
+          <h5 class="text-subtitle-1">Analisís semanal</h5>
         </div>
         <div class="ml-auto">
           <div class="d-flex align-center">

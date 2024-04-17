@@ -1,9 +1,10 @@
 <template>
     <div class="pa-4 pt-0 ma-4 mt-0 bg-light-primary rounded-lg text-center">
-        <img src="/images/svgs/sidebar-buynow-bg.svg" />
-        <h4 class="font-weight-regular mb-3">Get Template for Free</h4>
-        <v-btn  color="secondary" class="mb-2" target="_blank" href="https://www.wrappixel.com/templates/adminpro-free-nuxtjs-admin-template/"
-            block>Download Free</v-btn>
-        <v-btn color="primary" target="_blank" href="https://www.wrappixel.com/templates/adminpro-nuxtjs/" block>Check Pro</v-btn>
+        <a href="https://github.com/javiesp/citt-pass-crm-front-end" target="_blank">
+        <v-btn class="ma-2" color="#24292e" dark rounded>
+            <v-icon left>mdi-github</v-icon>
+             Ver en GitHub
+        </v-btn>
+        </a>
     </div>
 </template>

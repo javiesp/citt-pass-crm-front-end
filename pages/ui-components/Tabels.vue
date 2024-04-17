@@ -1,44 +1,45 @@
 <script setup>
 import UiChildCard from '@/components/shared/UiChildCard.vue';
+
 const desserts = ref([
     {
-        name: "Frozen Yogurt",
+        name: "Alumno 1",
         calories: 159,
     },
     {
-        name: "Ice cream sandwich",
+        name: "Alumno 2",
         calories: 237,
     },
     {
-        name: "Eclair",
+        name: "Alumno 3",
         calories: 262,
     },
     {
-        name: "Cupcake",
+        name: "Alumno 4",
         calories: 305,
     },
     {
-        name: "Gingerbread",
+        name: "Alumno 5",
         calories: 356,
     },
     {
-        name: "Jelly bean",
+        name: "Alumno 6",
         calories: 375,
     },
     {
-        name: "Lollipop",
+        name: "Alumno 7",
         calories: 392,
     },
     {
-        name: "Honeycomb",
+        name: "Alumno 8",
         calories: 408,
     },
     {
-        name: "Donut",
+        name: "Alumno 9",
         calories: 452,
     },
     {
-        name: "KitKat",
+        name: "Alumno 10",
         calories: 518,
     },
 ]);
@@ -47,12 +48,12 @@ const desserts = ref([
 <template>
     <v-row class="month-table">
         <v-col cols="12" sm="12" >
-            <UiChildCard title="General Table">
+            <UiChildCard title="Ingresos citt">
                 <v-table>
                     <thead>
                         <tr>
-                            <th class="text-left">Name</th>
-                            <th class="text-left">Calories</th>
+                            <th class="text-left">Alumno</th>
+                            <th class="text-left">Ingresos</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -1,16 +1,16 @@
 <script setup>
 const userprofile = ref([
   {
-    title: "My Profile",
-    desc: "Account Settings",
+    title: "Mi perfil",
+    desc: "Configuración de la cuenta",
   },
   {
-    title: "My Inbox",
-    desc: "Messages & Emails",
+    title: "Centro de notificaciones",
+    desc: "Notificaciones",
   },
   {
-    title: "My Tasks",
-    desc: "To-do and Daily Tasks",
+    title: "Mis tareas",
+    desc: "To-do y tareas diarias",
   },
 ]);
 </script>
@@ -29,7 +29,7 @@ const userprofile = ref([
         <v-list-item class="py-2  mb-2" v-for="(item, i) in userprofile" :key="i" :value="item" :title="item.title"
           :subtitle="item.desc" rounded="md">
         </v-list-item>
-        <v-btn block color="primary" class="mt-4 py-4">Logout</v-btn>
+        <v-btn block color="primary" class="mt-4 py-4">Cerrar sesión</v-btn>
       </v-list>
     </v-sheet>
   </v-menu>

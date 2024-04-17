@@ -5,10 +5,16 @@ import BlogCard from "@/components/dashboard/BlogCard.vue";
 import TheProfileCard from '@/components/dashboard/TheProfileCard.vue';
 import TheMyContacts from '@/components/dashboard/TheMyContacts.vue';
 import TheActivityTimeline from '@/components/dashboard/TheActivityTimeline.vue'
+import IngresoSemanal from '@/components/dashboard/IngresoSemanal.vue'
+
 </script>
 
 <template>
   <v-row>
+    <!---Ingreso Semanal--->
+    <v-col cols="12" sm="12" lg="12">
+      <IngresoSemanal />
+    </v-col>
     <!---SalesOverview--->
     <v-col cols="12" sm="12" lg="8">
       <TheSalesOverview />

@@ -7,6 +7,7 @@ import {
   LayoutDashboardIcon
 
 } from 'vue-tabler-icons';
+import { IconCards, IconTable  } from '@tabler/icons-vue';
 
 export interface menu {
   header?: string;
@@ -25,13 +26,13 @@ export interface menu {
 }
 
 const sidebarItem: menu[] = [
-  { header: 'Home' },
+  { header: 'GESTOR' },
   {
-    title: "Dashboard",
-    icon: LayoutDashboardIcon,
+    title: "Gestor ingresos",
+    icon: IconCards,
     to: "/",
   },
-  { header: 'Utilities' },
+  { header: 'INVENTARIO' },
   {
     title: "Alert",
     icon: AlertCircleIcon,

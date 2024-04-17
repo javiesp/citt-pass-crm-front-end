@@ -38,8 +38,8 @@ function href() {
   <VCard elevation="10" class="overflow-hidden">
     <v-card-text class="pa-0">
       <div class="bg-primary pa-5">
-        <h2 class="text-h5 mb-1">My Contacts</h2>
-        <h5 class="text-subtitle-1">Checkout my contacts here</h5>
+        <h2 class="text-h5 mb-1">Últimos ingresos</h2>
+        <h5 class="text-subtitle-1">Ingresos diarios</h5>
       </div>
 
       <div class="pa-4">

@@ -13,8 +13,8 @@ const sidebarMenu = markRaw(sidebarItems);
     <div class="sidebar_profile border-bottom">
       <v-list class="bg-muted">
         <v-list-item class="pa-4 pb-0 ml-1">
-          <v-list-item-title class="text-h6 mb-1">Julia Roberts</v-list-item-title>
-          <v-list-item-subtitle class="text-subtitle-1">Web Designer</v-list-item-subtitle>
+          <v-list-item-title class="text-h6 mb-1">Wilson maldonado</v-list-item-title>
+          <v-list-item-subtitle class="text-subtitle-1">Ingeniería en informática</v-list-item-subtitle>
           <template v-slot:prepend class="me-0">
             <v-avatar size="45" class="me-0">
               <img src="/images/profile/user2.jpg" width="50" />
