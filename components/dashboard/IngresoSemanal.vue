@@ -14,7 +14,7 @@
             pdfUrl: {
             type: String,
             required: true
-            },
+            },       
             pdfFileName: {
             type: String,
             required: true
