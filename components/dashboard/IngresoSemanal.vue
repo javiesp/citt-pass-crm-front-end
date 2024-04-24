@@ -17,7 +17,7 @@
             },       
             pdfFileName: {
             type: String,
-            required: true
+            required: true                                          
             }
         },
         // VARIEABLES 
