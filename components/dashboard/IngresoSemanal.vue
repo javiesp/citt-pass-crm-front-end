@@ -1,6 +1,8 @@
 <script> // setup lang="ts"
+    import { IconEdit } from '@tabler/icons-vue';
     import { defineComponent } from 'vue'; 
     import { getAllUsers } from '../api/userApi.ts';
+    import { getAllProjects } from '../api/projectApi.ts';
 
     console.log("")
     export default defineComponent({
@@ -21,6 +23,7 @@
         // VARIEABLES 
         dialog: false,
         usersArray: [],
+        projectArray: [],
         totalRows: 0,
         selectedProyect: null,
         // ARRAY SELECTORES 
@@ -54,6 +57,20 @@
                 this.loading = false;
             }
         },
+        async getProjects() {
+            this.loading = true;
+            const string = 'const'; 
+            try {
+                const projectResponse = await getAllProjects(string);
+                this.projectArray = projectResponse.data;
+                this.totalRows = projectResponse.data.total;
+                console.log('ARRAY',this.projectArray)
+            } catch (error) {
+                console.error('Error al obtener usuarios:', error);
+            } finally {
+                this.loading = false;
+            }
+        },
         // DESCARGAR PDF
         downloadPdf() {
             // create element <a> for download PDF
@@ -78,10 +95,17 @@
     },
     async created() {
         await this.getUsers();
+        await this.getProjects();
         console.log('USER ARRAY')
         console.log(this.usersArray)
+        console.log('POEYCT ARRAY')
+        console.log(this.projectArray)
         },
     });
+
+  components: {
+    IconEdit // Registra el componente IconEdit en el componente Vue
+  }
 </script>
 
 
@@ -130,6 +154,7 @@
                 <th class="text-left">Teléfono</th>
                 <th class="text-left">Email</th>
                 <th class="text-left">Id Proyecto</th>
+                <th class="text-left">Acción</th>
                 </tr>
             </thead>
             <tbody>
@@ -139,6 +164,26 @@
                 <td>{{ user.phone }}</td>
                 <td>{{ user.email }}</td>
                 <td>{{ user.proyect_id }}</td>
+                <td>
+                  <v-col>
+                    <v-btn
+                     class="margin-left" 
+                     color="primary" 
+                     icon 
+                     size="x-small" 
+                     flat>
+                     <IconEdit stroke={2} />
+                    </v-btn>
+                    <v-btn
+                     class="margin-left" 
+                     color="primary" 
+                     icon 
+                     size="x-small" 
+                     flat>
+                     <BellIcon stroke-width="1.5"  />
+                    </v-btn>
+                  </v-col>
+                </td>
                 </tr>
             </tbody>
             </v-table>

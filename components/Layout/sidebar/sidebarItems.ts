@@ -7,7 +7,14 @@ import {
   LayoutDashboardIcon
 
 } from 'vue-tabler-icons';
-import { IconCards, IconTable  } from '@tabler/icons-vue';
+import { 
+  IconCards
+  , IconTable 
+  , IconUsersGroup
+  , IconPackages
+  , IconShoppingBag
+  , IconHeart
+} from '@tabler/icons-vue';
 
 export interface menu {
   header?: string;
@@ -26,31 +33,31 @@ export interface menu {
 }
 
 const sidebarItem: menu[] = [
-  { header: 'GESTOR' },
+  { header: 'ADMINISTRAR' },
   {
     title: "Gestor ingresos",
     icon: IconCards,
     to: "/",
   },
-  { header: 'INVENTARIO' },
   {
-    title: "Alert",
-    icon: AlertCircleIcon,
+    title: "Gestor de proyectos",
+    icon: IconUsersGroup,
     to: "/ui-components/alerts",
   },
+  { header: 'INVENTARIO' },
   {
-    title: "Button",
-    icon: CircleDotIcon,
+    title: "Gestor Inventario",
+    icon: IconPackages,
     to: "/ui-components/buttons",
   },
   {
-    title: "Cards",
-    icon: BoxMultiple1Icon,
+    title: "Gestor de productos",
+    icon: IconShoppingBag,
     to: "/ui-components/cards",
   },
   {
-    title: "Curousel",
-    icon: AdjustmentsHorizontalIcon,
+    title: "Lista de deseados",
+    icon: IconHeart,
     to: "/ui-components/curousel",
   },
   {

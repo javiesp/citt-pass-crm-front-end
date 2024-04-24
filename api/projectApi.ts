@@ -7,7 +7,7 @@ axios.defaults.validateStatus = function (status) {
 // Create a new Axios instance with base URL and timeout
 const diffusion = axios.create({
 //   baseURL: "/sdApi",
-  baseURL: 'http://localhost:3005/',
+  baseURL: 'http://localhost:3008/',
   timeout: 100000,
 });
 
@@ -17,11 +17,6 @@ diffusion.interceptors.request.use();
 // 添加响应拦截器 xd 
 diffusion.interceptors.response.use();
 // Función para obtener todos los usuarios
-export const getAllUsers = (proyect_id: any) => {
-  return diffusion.get('users/find-all-users', { params: { proyect_id } });
-};
-
-export const createUser = (createUserDto?: any) => {
-  console.log(createUserDto);
-  return diffusion.post('/roles/create-roles', createUserDto );
+export const getAllProjects = () => {
+    return diffusion.get('/project/get-projects');
 };
