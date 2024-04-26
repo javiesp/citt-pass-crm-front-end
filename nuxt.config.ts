@@ -8,7 +8,7 @@ export default defineNuxtConfig({
   app: {
     head: {
       title:
-        "AdminPro Free Nuxt 3 Dashboard",
+        "Proyecto Citt-Pass",
     },
   },
   nitro: {

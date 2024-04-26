@@ -29,7 +29,7 @@ const userprofile = ref([
         <v-list-item class="py-2  mb-2" v-for="(item, i) in userprofile" :key="i" :value="item" :title="item.title"
           :subtitle="item.desc" rounded="md">
         </v-list-item>
-        <v-btn block color="primary" class="mt-4 py-4">Cerrar sesión</v-btn>
+        <v-btn block color="error" class="mt-4 py-4">Cerrar sesión</v-btn>
       </v-list>
     </v-sheet>
   </v-menu>

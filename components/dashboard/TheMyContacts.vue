@@ -18,10 +18,10 @@ const myContactsData = ref([
     desc: "pamela1987@gmail.com",
   },
   {
-    title: "Arijit singh",
+    title: "Admin Wilson",
     avatar: img3,
     avatarstatus: "warning",
-    desc: "cruise1298.fiplip@gmail.com",
+    desc: "AmigoKerido@gmail.com",
   },
   {
     title: "Pavan Kumar",
