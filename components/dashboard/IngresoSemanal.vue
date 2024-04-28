@@ -24,10 +24,12 @@
         dialog: false,
         usersArray: [],
         projectArray: [],
+        projectsNames: [],
+        projectId: 0,
         totalRows: 0,
         selectedProyect: null,
         // ARRAY SELECTORES 
-        items: [1,2,3,4,5,6],
+        items: [1,2,3,4,5,6,7,8,9,10],
         userRole: ['Admin citt', 'Profesor', 'Alumno', 'CIA', 'MMT'],
         uidUser: ['OIUUYFASD', 'ASDIUAD908', '908DKJHAS'],
         loading: false, 
@@ -58,19 +60,36 @@
             }
         },
         async getProjects() {
-            this.loading = true;
-            const string = 'const'; 
-            try {
-                const projectResponse = await getAllProjects(string);
-                this.projectArray = projectResponse.data;
-                this.totalRows = projectResponse.data.total;
-                console.log('ARRAY',this.projectArray)
-            } catch (error) {
-                console.error('Error al obtener usuarios:', error);
-            } finally {
-                this.loading = false;
-            }
+          this.loading = true;
+          try {
+            const projectResponse = await getAllProjects();
+            this.projectArray = projectResponse.data;
+            this.projectsNames = this.projectArray.map(project => project.project_name); // Llena el array con los nombres de proyecto
+            this.totalRows = projectResponse.data.total;
+          } catch (error) {
+            console.error('Error al obtener proyectos:', error);
+          } finally {
+            this.loading = false;
+          }
         },
+        selectProjectId() {
+          // Busca el project_id correspondiente al nombre seleccionado
+          const selectedProject = this.projectArray.find(project => project.project_name === this.selectedProyect);
+          if (selectedProject) {
+            this.projectId = selectedProject.project_id; // Guarda el projectId
+            console.log("projectId seleccionado:", this.projectId);
+          } else {
+            console.error("No se encontró el projectId para el proyecto seleccionado");
+          }
+        },
+        // async selectProyect() {
+        //   this.projectsNames = []; // Reinicia el array de nombres de proyectos
+        //   this.projectArray.forEach(project => {
+        //       this.projectsNames.push(project.project_name); // Agrega cada nombre de proyecto al array
+        //       this.projectId = project.project_id;
+        //       console.log(this.projectId);
+        //   });
+        // },
         // DESCARGAR PDF
         downloadPdf() {
             // create element <a> for download PDF
@@ -88,6 +107,7 @@
     },
     watch: {
     selectedProyect: function(newValue, oldValue) {
+        console.log(this.projectsNames)
         if (newValue !== oldValue) {
         this.getUsers();
         }
@@ -96,10 +116,7 @@
     async created() {
         await this.getUsers();
         await this.getProjects();
-        console.log('USER ARRAY')
-        console.log(this.usersArray)
-        console.log('POEYCT ARRAY')
-        console.log(this.projectArray)
+        await this.selectProyect()
         },
     });
 
@@ -113,13 +130,13 @@
     <v-row class="month-table">
         <!-- SELECTOR DE PROYECTO -->
         <v-col cols="3">
-            <v-autocomplete
-            v-model="selectedProyect"
-            :items="items"
+          <v-combobox
+            v-model="selectedProjectName"
+            :items="projectsNames"
             label="Proyecto"
             outlined
-            @change="getUsers"
-            ></v-autocomplete>
+            @change="selectProjectId"
+          ></v-combobox>
         </v-col>
         <!-- BOTONERA -->
         <v-col cols="3">

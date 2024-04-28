@@ -7,7 +7,7 @@ axios.defaults.validateStatus = function (status) {
 // Create a new Axios instance with base URL and timeout
 const diffusion = axios.create({
 //   baseURL: "/sdApi",
-  baseURL: 'http://localhost:3008/',
+  baseURL: 'http://localhost:3005/',
   timeout: 100000,
 });
 
@@ -20,3 +20,4 @@ diffusion.interceptors.response.use();
 export const getAllProjects = () => {
     return diffusion.get('/project/get-projects');
 };
+
