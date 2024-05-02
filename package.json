@@ -11,9 +11,11 @@
     "nuxt": "3.7.4"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.5.2",
+    "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@mdi/font": "^6.5.95",
     "@nuxt/vite-builder": "^3.7.4",
-    "@tabler/icons-vue": "^3.2.0",
+    "@tabler/icons-vue": "^3.3.0",
     "apexcharts": "3.36.3",
     "axios": "^1.6.8",
     "sass": "^1.49.9",
