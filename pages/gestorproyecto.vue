@@ -119,6 +119,7 @@ export default defineComponent({
             <v-table>
                 <thead>
                     <tr>
+                        <th class="text-left">ID</th>
                         <th class="text-left">Proyecto</th>
                         <th class="text-left">Descripción</th>
                         <th class="text-left">Status</th>
@@ -128,6 +129,7 @@ export default defineComponent({
                 </thead>
                 <tbody>
                     <tr v-for="project in projectArray" :key="project.project_id">
+                        <td>{{ project.project_id }}</td>
                         <td>{{ project.project_name }}</td>
                         <td>{{ project.project_description }}</td>
                         <td>{{ project.project_status }}</td>

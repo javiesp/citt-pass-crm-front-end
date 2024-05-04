@@ -38,9 +38,14 @@ export interface menu {
 const sidebarItem: menu[] = [
   { header: 'ADMINISTRAR' },
   {
-    title: "Gestor ingresos",
+    title: "Home",
     icon: IconCards,
     to: "/",
+  },
+  {
+    title: "Gestor ingresos",
+    icon: IconCards,
+    to: "/gestoringreso",
   },
 
   { header: 'INVENTARIO' },
@@ -50,6 +55,12 @@ const sidebarItem: menu[] = [
     to: "/gestorinventario",
 
   },
+  {
+    title: "Rack",
+    icon: IconAlignBoxCenterBottom,
+    to: "/gestorrack",
+  
+  },
   { header: 'PROYECTO' },
   {
     title: "Gestor de proyectos",
@@ -57,6 +68,14 @@ const sidebarItem: menu[] = [
     to: "/gestorproyecto",
     //to: "/ui-components/alerts",
   },
+  { header: 'WISH-LIST' },
+  {
+    title: "Wish-list",
+    icon: IconAlignBoxCenterBottom,
+    to: "/wishlist",
+
+  },
+
   { header: 'PLANTILLAS' },
   {
     title: "Gestor Botones",
@@ -84,3 +103,5 @@ const sidebarItem: menu[] = [
 ];
 
 export default sidebarItem;
+
+

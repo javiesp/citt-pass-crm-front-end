@@ -61,11 +61,11 @@ export default defineComponent({
 
 
 <template>
-  <h2>Inventarios Citt</h2>
+  <h2>Gestor Rack</h2>
   <BR></BR>
   <v-row class="month-table">
     <v-col cols="3">
-      <v-combobox v-model="selectedInventoryName" :items="inventoryNames" label="Inventario" outlined
+      <v-combobox v-model="selectedInventoryName" :items="inventoryNames" label="Rack" outlined
         @change="selectInventoryId"></v-combobox>
     </v-col>
     <v-col cols="3">
@@ -73,17 +73,15 @@ export default defineComponent({
     </v-col>
     <v-col cols="6" class="text-right">
       <v-btn variant="tonal" color="primary" prepend-icon="mdi-folder-outline" @click="dialog = true">Agregar
-        Inventario</v-btn>
+        Rack</v-btn>
     </v-col>
     <v-col cols="12" sm="12">
       <v-table>
         <thead>
           <tr>
-            <th class="text-left">ID</th>
-            <th class="text-left">Item</th>
-            <th class="text-left">Rack</th>
-            <th class="text-left">Stock</th>
-            <th class="text-left">ID Producto</th>
+            <th class="text-left">ID Rack</th>
+            <th class="text-left">Nombre</th>
+            <th class="text-left">Tipo</th>
             <th class="text-left">Acción</th>
           </tr>
         </thead>
@@ -92,8 +90,7 @@ export default defineComponent({
             <td>{{ inventory.invenId }}</td>
             <td>{{ inventory.nombreInventario }}</td>
             <td>{{ inventory.descripcionInventario }}</td>
-            <td>{{ inventory.stockInventario }}</td>
-            <td>{{ inventory.idTeam }}</td>
+
             <td>
               <v-col>
                 <!-- Botones -->

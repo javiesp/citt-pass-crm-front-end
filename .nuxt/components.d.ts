@@ -2,6 +2,7 @@
 declare module 'vue' {
   export interface GlobalComponents {
     'Form': typeof import("../components/Form.vue")['default']
+    'IngresoSemanal': typeof import("../components/IngresoSemanal.vue")['default']
     'LayoutHeader': typeof import("../components/Layout/header/index.vue")['default']
     'LayoutLogo': typeof import("../components/Layout/logo/Logo.vue")['default']
     'LayoutLogoIcon': typeof import("../components/Layout/logo/LogoIcon.vue")['default']
@@ -14,7 +15,6 @@ declare module 'vue' {
     'LayoutSidebar': typeof import("../components/Layout/sidebar/index.vue")['default']
     'LayoutSidebarItems': typeof import("../components/Layout/sidebar/sidebarItems")['default']
     'DashboardBlogCard': typeof import("../components/dashboard/BlogCard.vue")['default']
-    'DashboardIngresoSemanal': typeof import("../components/dashboard/IngresoSemanal.vue")['default']
     'DashboardTheActivityTimeline': typeof import("../components/dashboard/TheActivityTimeline.vue")['default']
     'DashboardTheMyContacts': typeof import("../components/dashboard/TheMyContacts.vue")['default']
     'DashboardTheProfileCard': typeof import("../components/dashboard/TheProfileCard.vue")['default']
@@ -56,6 +56,7 @@ declare module 'vue' {
     'Html': typeof import("../node_modules/nuxt/dist/head/runtime/components")['Html']
     'Body': typeof import("../node_modules/nuxt/dist/head/runtime/components")['Body']
     'LazyForm': typeof import("../components/Form.vue")['default']
+    'LazyIngresoSemanal': typeof import("../components/IngresoSemanal.vue")['default']
     'LazyLayoutHeader': typeof import("../components/Layout/header/index.vue")['default']
     'LazyLayoutLogo': typeof import("../components/Layout/logo/Logo.vue")['default']
     'LazyLayoutLogoIcon': typeof import("../components/Layout/logo/LogoIcon.vue")['default']
@@ -68,7 +69,6 @@ declare module 'vue' {
     'LazyLayoutSidebar': typeof import("../components/Layout/sidebar/index.vue")['default']
     'LazyLayoutSidebarItems': typeof import("../components/Layout/sidebar/sidebarItems")['default']
     'LazyDashboardBlogCard': typeof import("../components/dashboard/BlogCard.vue")['default']
-    'LazyDashboardIngresoSemanal': typeof import("../components/dashboard/IngresoSemanal.vue")['default']
     'LazyDashboardTheActivityTimeline': typeof import("../components/dashboard/TheActivityTimeline.vue")['default']
     'LazyDashboardTheMyContacts': typeof import("../components/dashboard/TheMyContacts.vue")['default']
     'LazyDashboardTheProfileCard': typeof import("../components/dashboard/TheProfileCard.vue")['default']
@@ -113,6 +113,7 @@ declare module 'vue' {
 }
 
 export const Form: typeof import("../components/Form.vue")['default']
+export const IngresoSemanal: typeof import("../components/IngresoSemanal.vue")['default']
 export const LayoutHeader: typeof import("../components/Layout/header/index.vue")['default']
 export const LayoutLogo: typeof import("../components/Layout/logo/Logo.vue")['default']
 export const LayoutLogoIcon: typeof import("../components/Layout/logo/LogoIcon.vue")['default']
@@ -125,7 +126,6 @@ export const LayoutSidebarNavItem: typeof import("../components/Layout/sidebar/N
 export const LayoutSidebar: typeof import("../components/Layout/sidebar/index.vue")['default']
 export const LayoutSidebarItems: typeof import("../components/Layout/sidebar/sidebarItems")['default']
 export const DashboardBlogCard: typeof import("../components/dashboard/BlogCard.vue")['default']
-export const DashboardIngresoSemanal: typeof import("../components/dashboard/IngresoSemanal.vue")['default']
 export const DashboardTheActivityTimeline: typeof import("../components/dashboard/TheActivityTimeline.vue")['default']
 export const DashboardTheMyContacts: typeof import("../components/dashboard/TheMyContacts.vue")['default']
 export const DashboardTheProfileCard: typeof import("../components/dashboard/TheProfileCard.vue")['default']
@@ -167,6 +167,7 @@ export const Head: typeof import("../node_modules/nuxt/dist/head/runtime/compone
 export const Html: typeof import("../node_modules/nuxt/dist/head/runtime/components")['Html']
 export const Body: typeof import("../node_modules/nuxt/dist/head/runtime/components")['Body']
 export const LazyForm: typeof import("../components/Form.vue")['default']
+export const LazyIngresoSemanal: typeof import("../components/IngresoSemanal.vue")['default']
 export const LazyLayoutHeader: typeof import("../components/Layout/header/index.vue")['default']
 export const LazyLayoutLogo: typeof import("../components/Layout/logo/Logo.vue")['default']
 export const LazyLayoutLogoIcon: typeof import("../components/Layout/logo/LogoIcon.vue")['default']
@@ -179,7 +180,6 @@ export const LazyLayoutSidebarNavItem: typeof import("../components/Layout/sideb
 export const LazyLayoutSidebar: typeof import("../components/Layout/sidebar/index.vue")['default']
 export const LazyLayoutSidebarItems: typeof import("../components/Layout/sidebar/sidebarItems")['default']
 export const LazyDashboardBlogCard: typeof import("../components/dashboard/BlogCard.vue")['default']
-export const LazyDashboardIngresoSemanal: typeof import("../components/dashboard/IngresoSemanal.vue")['default']
 export const LazyDashboardTheActivityTimeline: typeof import("../components/dashboard/TheActivityTimeline.vue")['default']
 export const LazyDashboardTheMyContacts: typeof import("../components/dashboard/TheMyContacts.vue")['default']
 export const LazyDashboardTheProfileCard: typeof import("../components/dashboard/TheProfileCard.vue")['default']
