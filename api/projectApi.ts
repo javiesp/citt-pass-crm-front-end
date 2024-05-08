@@ -21,3 +21,20 @@ export const getAllProjects = () => {
     return diffusion.get('/project/get-projects');
 };
 
+export const deleteProject = (id: any) => {
+  return diffusion.delete('/project/delete-project/'+id);
+};
+
+export const updateProject = (id: string, updateProjectDto?: any) => {
+  console.log(updateProjectDto);
+  return diffusion.put('/project/update-project/'+id, updateProjectDto);
+};
+
+export const createProject = (createProjectDto?: any) => {
+  console.log(createProjectDto);
+  return diffusion.post('/project/create-project', createProjectDto );
+};
+
+export const searchProjectByName = (project_name?: any) => {
+  return diffusion.get("/project/search-project-by-name", { params: { project_name: project_name } });
+};

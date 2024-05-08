@@ -1,3 +1,5 @@
+
+
 import {
   BorderAllIcon,
   AlertCircleIcon,
@@ -10,10 +12,11 @@ import {
 import { 
   IconCards
   , IconTable 
-  , IconUsersGroup
   , IconPackages
   , IconShoppingBag
   , IconHeart
+  ,IconAlignBoxCenterBottom
+
 } from '@tabler/icons-vue';
 
 export interface menu {
@@ -35,18 +38,47 @@ export interface menu {
 const sidebarItem: menu[] = [
   { header: 'ADMINISTRAR' },
   {
-    title: "Gestor ingresos",
+    title: "Home",
     icon: IconCards,
     to: "/",
   },
   {
-    title: "Gestor de proyectos",
-    icon: IconUsersGroup,
-    to: "/ui-components/alerts",
+    title: "Gestor ingresos",
+    icon: IconCards,
+    to: "/gestoringreso",
   },
+
   { header: 'INVENTARIO' },
   {
-    title: "Gestor Inventario",
+    title: "Gestor de Inventarios",
+    icon: IconAlignBoxCenterBottom,
+    to: "/gestorinventario",
+
+  },
+  {
+    title: "Rack",
+    icon: IconAlignBoxCenterBottom,
+    to: "/gestorrack",
+  
+  },
+  { header: 'PROYECTO' },
+  {
+    title: "Gestor de proyectos",
+    icon: IconTable,
+    to: "/gestorproyecto",
+    //to: "/ui-components/alerts",
+  },
+  { header: 'WISH-LIST' },
+  {
+    title: "Wish-list",
+    icon: IconAlignBoxCenterBottom,
+    to: "/wishlist",
+
+  },
+
+  { header: 'PLANTILLAS' },
+  {
+    title: "Gestor Botones",
     icon: IconPackages,
     to: "/ui-components/buttons",
   },
@@ -71,3 +103,5 @@ const sidebarItem: menu[] = [
 ];
 
 export default sidebarItem;
+
+
