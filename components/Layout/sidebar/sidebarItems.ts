@@ -15,8 +15,8 @@ import {
   , IconPackages
   , IconShoppingBag
   , IconHeart
-  ,IconAlignBoxCenterBottom
-
+  , IconUserCheck 
+  , IconUsersGroup 
 } from '@tabler/icons-vue';
 
 export interface menu {
@@ -36,46 +36,44 @@ export interface menu {
 }
 
 const sidebarItem: menu[] = [
-  { header: 'ADMINISTRAR' },
+  { header: 'GESTOR USUARIO' },
   {
-    title: "Home",
-    icon: IconCards,
-    to: "/",
-  },
-  {
-    title: "Gestor ingresos",
+    title: "Usuarios (check-in)",
     icon: IconCards,
     to: "/gestoringreso",
   },
 
-  { header: 'INVENTARIO' },
+  { header: 'GESTOR INVENTARIO' },
   {
-    title: "Gestor de Inventarios",
-    icon: IconAlignBoxCenterBottom,
+    title: "Inventarios",
+    icon: IconPackages,
     to: "/gestorinventario",
 
   },
   {
     title: "Rack",
-    icon: IconAlignBoxCenterBottom,
+    icon: BorderAllIcon,
     to: "/gestorrack",
   
   },
-  { header: 'PROYECTO' },
+  { header: 'GESTOR PROYECTO' },
   {
-    title: "Gestor de proyectos",
-    icon: IconTable,
+    title: "Proyectos",
+    icon: IconUsersGroup,
     to: "/gestorproyecto",
     //to: "/ui-components/alerts",
   },
-  { header: 'WISH-LIST' },
+  { header: 'GESTOR WISH-LIST' },
   {
     title: "Wish-list",
-    icon: IconAlignBoxCenterBottom,
+    icon: IconHeart,
     to: "/wishlist",
-
   },
-
+  {
+    title: "Productos",
+    icon: IconShoppingBag,
+    to: "/wishlist",
+  },
   { header: 'PLANTILLAS' },
   {
     title: "Gestor Botones",

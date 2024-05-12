@@ -141,6 +141,11 @@ function href() {
 
 <v-col  cols="4">
   <VCard elevation="10" class="overflow-hidden">
+    <v-row>
+      <v-col>
+        <h1>caca poto</h1>
+      </v-col>
+    </v-row>
     <v-card-text class="pa-0">
       <div class="bg-primary pa-5">
         <h2 class="text-h5 mb-1">Últimos ingresos</h2>
