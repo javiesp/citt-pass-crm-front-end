@@ -1,12 +1,12 @@
 <script>
 import { defineComponent } from 'vue';
 import { getAllUsers } from '../api/userApi';
-import { 
- getAllProjects,
- deleteProject,
- updateProject,
- createProject,
- searchProjectByName 
+import {
+    getAllProjects,
+    deleteProject,
+    updateProject,
+    createProject,
+    searchProjectByName
 } from '../api/projectApi';
 
 export default defineComponent({
@@ -16,14 +16,14 @@ export default defineComponent({
             usersArray: [],
             projectArray: [],
             projectsNamesArray: [],
-            statusArray:['En proceso','En pausa','Completo','Sin iniciar','Descartado'],
+            statusArray: ['En proceso', 'En pausa', 'Completo', 'Sin iniciar', 'Descartado'],
             projectId: ref(null),
             totalRows: 0,
             selectedProyect: null,
             pdfUrl: "",
             pdfFileName: "",
             dialogVisible: false,
-            dialogUpdateVisible:false,
+            dialogUpdateVisible: false,
             alertVisible: false,
             errorAlertVisible: false,
             objectDto: {
@@ -50,15 +50,15 @@ export default defineComponent({
                 this.loading = false;
             }
         },
-        async searchItemByName(){
+        async searchItemByName() {
             console.log('id', this.projectId)
-            if(this.projectId === null) {
+            if (this.projectId === null) {
                 this.getProjects()
-            }else {
+            } else {
                 try {
-                const searchResponse = await searchProjectByName(this.projectId);
-                this.projectArray = searchResponse.data;
-                this.alertVisible = true;  
+                    const searchResponse = await searchProjectByName(this.projectId);
+                    this.projectArray = searchResponse.data;
+                    this.alertVisible = true;
                 } catch (error) {
                     console.error('Error al obtener proyectos:', error);
                     this.errorAlertVisible = true;
@@ -77,8 +77,7 @@ export default defineComponent({
         openUpdateDialog(projectId) {
             this.projectId = projectId;
             this.dialogUpdateVisible = true;
-            console.log('iisssssssssssssssssssssssssssssssss',this.projectId)
-            console.log(this.objectDto.project_id)
+
         },
         closeUpdateDialog() {
             this.dialogUpdateVisible = false;
@@ -97,8 +96,9 @@ export default defineComponent({
                 const updateResponse = await updateProject(this.projectId, put);
                 this.dialogVisible = false
                 this.getProjects()
-                console.log("UPDATED",updateResponse)
-                this.alertVisible = true;  
+                console.log("UPDATED", updateResponse)
+                this.alertVisible = true;
+                this.dialogUpdateVisible = false;
             } catch (error) {
                 console.error("No se ha podido actualizar el proyecto", this.projectId, error)
                 this.errorAlertVisible = true;
@@ -112,14 +112,14 @@ export default defineComponent({
         closeDeleteDialog() {
             this.dialogVisible = false;
         },
-        async deleteProject(){
-            console.log('aaaaaaaaaaaaaaaaa',this.projectId)
+        async deleteProject() {
+            console.log('aaaaaaaaaaaaaaaaa', this.projectId)
             try {
                 const deleteResponse = await deleteProject(this.projectId);
                 this.dialogVisible = false
                 this.getProjects()
-                console.log("DELETED",deleteResponse)
-                this.alertVisible = true;  
+                console.log("DELETED", deleteResponse)
+                this.alertVisible = true;
             } catch (error) {
                 console.error("No se ha podido eliminar el proyecto", this.projectId, error)
                 this.errorAlertVisible = true;
@@ -140,14 +140,24 @@ export default defineComponent({
                 wishlist_id: this.objectDto.wishlist_id,
                 project_team_id: this.objectDto.project_team_id
             }
-            console.log('asd',this.objectDto)
+            console.log('asd', this.objectDto)
             try {
                 console.log('llego hasta este punto bien')
                 const createResponse = await createProject(post);
                 this.dialogCreate = false;
                 this.getProjects()
-                console.log("CREATED",createResponse)
-                this.alertVisible = true;  
+                console.log("CREATED", createResponse)
+                this.alertVisible = true;
+                // Limpiar los campos del formulario
+                this.objectDto = {
+                    project_id: null,
+                project_name: '',
+                project_description: '',
+                project_status: '',
+                wishlist_id: null,
+                project_team_id: null
+ 
+                };
             } catch (error) {
                 console.error("No se ha podido eliminar el proyecto", this.objectDto.project_id, error)
                 this.errorAlertVisible = true;
@@ -159,7 +169,7 @@ export default defineComponent({
     async created() {
         await this.getProjects();
         console.log(this.projectArray)
-        console.log('sel',this.projectId)   
+        console.log('sel', this.projectId)
     },
 });
 </script>
@@ -168,32 +178,19 @@ export default defineComponent({
     <v-col cols="1">
         <h2>Proyectos Citt</h2>
     </v-col>
-    <v-row  class="month-table">
+    <v-row class="month-table">
         <v-col cols="3">
-            <v-autocomplete
-            :items="projectsNamesArray"
-            item-value="projectArray.project_id"
-            class="mx-auto"
-            density="comfortable"
-            menu-icon=""
-            placeholder="Buscar proyecto"
-            prepend-inner-icon="mdi-magnify"
-            style="max-width: 350px;"
-            theme="light"
-            variant="solo"
-            auto-select-first
-            v-model="projectId"
-            item-props
-            hint="Presione enter para buscar"
-            rounded
-            @keydown.enter="searchItemByName"
-          ></v-autocomplete>
+            <v-autocomplete :items="projectsNamesArray" item-value="projectArray.project_id" class="mx-auto"
+                density="comfortable" menu-icon="" placeholder="Buscar proyecto" prepend-inner-icon="mdi-magnify"
+                style="max-width: 350px;" theme="light" variant="solo" auto-select-first v-model="projectId" item-props
+                hint="Presione enter para buscar" rounded @keydown.enter="searchItemByName"></v-autocomplete>
         </v-col>
         <v-col cols="3">
             <v-btn variant="tonal" color="primary" @click="downloadPdf">Generar archivo .csv</v-btn>
         </v-col>
         <v-col cols="6" class="text-right">
-            <v-btn variant="tonal" color="primary" prepend-icon="mdi-folder-outline" @click="openCreateDialog">Agregar Proyecto</v-btn>
+            <v-btn variant="tonal" color="primary" prepend-icon="mdi-folder-outline" @click="openCreateDialog">Agregar
+                Proyecto</v-btn>
         </v-col>
         <v-col cols="12" sm="12">
             <v-table>
@@ -215,104 +212,106 @@ export default defineComponent({
                         <td>{{ project.project_status }}</td>
                         <td>{{ project.project_id_team }}</td>
                         <td>
-                <v-col>
-                <!-- Botones -->
-                <v-btn class="ml-2" color="primary" icon size="x-small" flat @click="openUpdateDialog(project._id)">
-                  <v-icon>mdi-pencil</v-icon> 
-                </v-btn>
-                <v-btn class="ml-2" color="error" icon size="x-small" flat @click="openDeleteDialog(project._id)">
-                  <v-icon>mdi-delete</v-icon> 
-                </v-btn>
-                <!-- <v-btn class="ml-2" color="warning" icon size="x-small" flat>
+                            <v-col>
+                                <!-- Botones -->
+                                <v-btn class="ml-2" color="primary" icon size="x-small" flat
+                                    @click="openUpdateDialog(project._id)">
+                                    <v-icon>mdi-pencil</v-icon>
+                                </v-btn>
+                                <v-btn class="ml-2" color="error" icon size="x-small" flat
+                                    @click="openDeleteDialog(project._id)">
+                                    <v-icon>mdi-delete</v-icon>
+                                </v-btn>
+                                <!-- <v-btn class="ml-2" color="warning" icon size="x-small" flat>
                   <v-icon>mdi-refresh</v-icon> 
                 </v-btn> -->
-              </v-col>
+                            </v-col>
                         </td>
                     </tr>
                 </tbody>
             </v-table>
         </v-col>
     </v-row>
-    <!-- botonera acciones -->    
+    <!-- botonera acciones -->
     <v-dialog v-model="dialogUpdateVisible" max-width="500px">
         <v-card>
-        <v-card-title>
-            Actualizar proyecto
-        </v-card-title>
-        <v-card-text>
+            <v-card-title>
+                Actualizar proyecto
+            </v-card-title>
             <v-card-text>
-                <v-row>
-                        <v-col cols="12" md="4">
-                            <v-text-field label="ID del Proyecto" v-model="objectDto.project_id"></v-text-field>
-                        </v-col>
-                        <v-col cols="12" md="4">
+                <v-card-text>
+                    <v-row>
+                        <v-col cols="12" md="6">
                             <v-text-field label="Nombre Proyecto" v-model="objectDto.project_name"></v-text-field>
                         </v-col>
-                        <v-col cols="12" md="4">
+                        <v-col cols="12" md="6">
                             <v-text-field label="Descripcion" v-model="objectDto.project_description"></v-text-field>
                         </v-col>
                         <v-col cols="12" md="4">
-                            <v-combobox hint="Status" label="Status" v-model="objectDto.project_status" :items="statusArray"></v-combobox>
+                            <v-combobox hint="Status" label="Status" v-model="objectDto.project_status"
+                                :items="statusArray"></v-combobox>
                         </v-col>
                         <v-col cols="12" md="4">
-                            <v-combobox hint="Proyect Team" label="Wishlist" v-model="objectDto.wishlist_id"></v-combobox>
+                            <v-combobox hint="Proyect Team" label="Wishlist"
+                                v-model="objectDto.wishlist_id"></v-combobox>
                         </v-col>
                         <v-col cols="12" md="4">
-                            <v-combobox hint="Proyect Team" label="Proyect Team" v-model="objectDto.project_team_id"></v-combobox>
+                            <v-combobox hint="Proyect Team" label="Proyect Team"
+                                v-model="objectDto.project_team_id"></v-combobox>
                         </v-col>
                     </v-row>
+                </v-card-text>
             </v-card-text>
-        </v-card-text>
-        <v-card-actions>
-            <v-btn color="error" text @click="closeUpdateDialog">Cancelar</v-btn>
-            <v-btn color="primary" text @click="updateProject">Actualizar</v-btn>
-        </v-card-actions>
+            <v-card-actions>
+                <v-btn color="error" text @click="closeUpdateDialog">Cancelar</v-btn>
+                <v-btn color="primary" text @click="updateProject">Actualizar</v-btn>
+            </v-card-actions>
         </v-card>
     </v-dialog>
     <!-- delete -->
     <v-dialog v-model="dialogVisible" max-width="500px">
         <v-card>
-        <v-card-title>
-            Eliminar proyecto
-        </v-card-title>
-        <v-card-text>
-            ¿Está seguro de eliminar este proyecto?
-        </v-card-text>
-        <v-card-actions>
-            <v-btn color="error" text @click="closeDeleteDialog">Cancelar</v-btn>
-            <v-btn color="primary" text @click="deleteProject">Eliminar</v-btn>
-        </v-card-actions>
+            <v-card-title>
+                Eliminar proyecto
+            </v-card-title>
+            <v-card-text>
+                ¿Está seguro de eliminar este proyecto?
+            </v-card-text>
+            <v-card-actions>
+                <v-btn color="error" text @click="closeDeleteDialog">Cancelar</v-btn>
+                <v-btn color="primary" text @click="deleteProject">Eliminar</v-btn>
+            </v-card-actions>
         </v-card>
     </v-dialog>
     <!-- ABRIR DIALOG -->
     <div class="pa-4 text-center">
-        <v-dialog
-            v-model="dialogCreate"
-            max-width="600"
-        >
-            <v-card
-                prepend-icon="mdi-folder-outline"
-                title="Agregar Proyecto"
-            >
+        <v-dialog v-model="dialogCreate" max-width="600">
+            <v-card prepend-icon="mdi-folder-outline" title="Agregar Proyecto">
                 <v-card-text>
                     <v-row>
                         <v-col cols="12" md="4">
-                            <v-text-field label="ID del Proyecto" v-model="objectDto.project_id" required></v-text-field>
+                            <v-text-field label="ID del Proyecto" v-model="objectDto.project_id"
+                                required></v-text-field>
                         </v-col>
                         <v-col cols="12" md="4">
-                            <v-text-field label="Nombre Proyecto" v-model="objectDto.project_name" required></v-text-field>
+                            <v-text-field label="Nombre Proyecto" v-model="objectDto.project_name"
+                                required></v-text-field>
                         </v-col>
                         <v-col cols="12" md="4">
-                            <v-text-field label="Descripcion" v-model="objectDto.project_description" required></v-text-field>
+                            <v-text-field label="Descripcion" v-model="objectDto.project_description"
+                                required></v-text-field>
                         </v-col>
                         <v-col cols="12" md="4">
-                            <v-combobox hint="Status" label="Status" v-model="objectDto.project_status" :items="statusArray" required></v-combobox>
+                            <v-combobox hint="Status" label="Status" v-model="objectDto.project_status"
+                                :items="statusArray" required></v-combobox>
                         </v-col>
                         <v-col cols="12" md="4">
-                            <v-combobox hint="Proyect Team" label="Wishlist" v-model="objectDto.wishlist_id"></v-combobox>
+                            <v-combobox hint="Proyect Team" label="Wishlist"
+                                v-model="objectDto.wishlist_id"></v-combobox>
                         </v-col>
                         <v-col cols="12" md="4">
-                            <v-combobox hint="Proyect Team" label="Proyect Team" v-model="objectDto.project_team_id"></v-combobox>
+                            <v-combobox hint="Proyect Team" label="Proyect Team"
+                                v-model="objectDto.project_team_id"></v-combobox>
                         </v-col>
                     </v-row>
                 </v-card-text>
@@ -327,17 +326,9 @@ export default defineComponent({
     </div>
 
     <div>
-        <v-alert
-        v-model="errorAlertVisible"
-        dismissible
-        color="red"
-        border="left"
-        elevation="2"
-        colored-border
-        icon="mdi-alert"
-        timeout="5000"
-        >
-        Oops! Ha ocurrido un problema.
+        <v-alert v-model="errorAlertVisible" dismissible color="red" border="left" elevation="2" colored-border
+            icon="mdi-alert" timeout="5000">
+            Oops! Ha ocurrido un problema.
         </v-alert>
     </div>
 
