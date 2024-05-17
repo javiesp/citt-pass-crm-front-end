@@ -1,6 +1,6 @@
 
 import { updateAppConfig } from '#app'
-import { defuFn } from 'C:/Users/chunc/OneDrive/Documentos/Integracion/Front/citt-pass-crm-front-end/node_modules/defu/dist/defu.mjs'
+import { defuFn } from 'C:/Users/alons/OneDrive/Documentos/CittPass/Frontend/citt-pass-crm-front-end/node_modules/defu/dist/defu.mjs'
 
 const inlineConfig = {
   "nuxt": {}

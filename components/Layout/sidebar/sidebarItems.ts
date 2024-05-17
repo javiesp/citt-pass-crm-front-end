@@ -72,7 +72,7 @@ const sidebarItem: menu[] = [
   {
     title: "Productos",
     icon: IconShoppingBag,
-    to: "/wishlist",
+    to: "",
   },
   { header: 'PLANTILLAS' },
   {

@@ -19,6 +19,7 @@ export default defineComponent({
             statusArray: ['En proceso', 'En pausa', 'Completo', 'Sin iniciar', 'Descartado'],
             projectId: ref(null),
             totalRows: 0,
+            searchQuery: '',
             selectedProyect: null,
             pdfUrl: "",
             pdfFileName: "",
@@ -36,6 +37,16 @@ export default defineComponent({
             }
         };
     },
+    computed: {
+    filteredRack() {
+      if (!this.searchQuery) {
+        return this.projectArray;
+      }
+      return this.projectArray.filter(project => 
+        project.project_name.toLowerCase().includes(this.searchQuery.toLowerCase())
+      );
+    }
+  },
     methods: {
         async getProjects() {
             this.loading = true;
@@ -129,7 +140,7 @@ export default defineComponent({
             this.dialogCreate = true;
         },
         closeDeleteDialog() {
-            this.dialogCreate = false;
+            this.dialogVisible = false;
         },
         async createProject() {
             const post = {
@@ -171,20 +182,47 @@ export default defineComponent({
         console.log(this.projectArray)
         console.log('sel', this.projectId)
     },
+    watch: {
+    // Watch route changes and reload data if necessary
+    $route(to, from) {
+      if (to.name === 'GestorProyecto') {
+        this.getProjects();
+      }
+    }
+  },
+  onBeforeUnmount() {
+    // Clear data or do some cleanup if necessary
+    this.projectArray = [];
+    this.projectsNamesArray = [];
+    this.searchQuery = '';
+  }
 });
 </script>
 
 <template>
-    <v-col cols="1">
-        <h2>Proyectos Citt</h2>
-    </v-col>
+
+    <h2>Proyectos Citt</h2>
+
     <v-row class="month-table">
         <v-col cols="3">
-            <v-autocomplete :items="projectsNamesArray" item-value="projectArray.project_id" class="mx-auto"
-                density="comfortable" menu-icon="" placeholder="Buscar proyecto" prepend-inner-icon="mdi-magnify"
-                style="max-width: 350px;" theme="light" variant="solo" auto-select-first v-model="projectId" item-props
-                hint="Presione enter para buscar" rounded @keydown.enter="searchItemByName"></v-autocomplete>
-        </v-col>
+            <v-autocomplete
+            :items="projectsNamesArray"
+            item-value="projectArray.project_name"
+            class="mx-auto"
+            density="comfortable"
+            menu-icon=""
+            placeholder="Buscar Proyecto"
+            prepend-inner-icon="mdi-magnify"
+            style="max-width: 350px;"
+            theme="light"
+            variant="solo"
+            auto-select-first
+            v-model="searchQuery"
+            item-props
+            hint="Escriba para buscar"
+            rounded
+        ></v-autocomplete>
+    </v-col>
         <v-col cols="3">
             <v-btn variant="tonal" color="primary" @click="downloadPdf">Generar archivo .csv</v-btn>
         </v-col>
@@ -205,7 +243,7 @@ export default defineComponent({
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="project in projectArray" :key="project.project_id">
+                    <tr v-for="project in filteredRack" :key="project.project_id">
                         <td>{{ project.project_id }}</td>
                         <td>{{ project.project_name }}</td>
                         <td>{{ project.project_description }}</td>
