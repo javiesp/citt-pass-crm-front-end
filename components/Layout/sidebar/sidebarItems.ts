@@ -45,17 +45,18 @@ const sidebarItem: menu[] = [
 
   { header: 'GESTOR INVENTARIO' },
   {
-    title: "Inventarios",
-    icon: IconPackages,
-    to: "/gestorinventario",
-
-  },
-  {
     title: "Rack",
     icon: BorderAllIcon,
     to: "/gestorrack",
   
   },
+  {
+    title: "Inventarios",
+    icon: IconPackages,
+    to: "/gestorinventario",
+
+  },
+
   { header: 'GESTOR PROYECTO' },
   {
     title: "Proyectos",

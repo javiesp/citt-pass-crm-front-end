@@ -1,6 +1,14 @@
 <script>
 import { defineComponent, ref } from 'vue';
-import { getAllinventory, searchInventoryByName, deleteInventory, createInventory, updateInventory } from '../api/inventoryApi';
+import { 
+  getAllinventory, 
+  deleteInventory, 
+  createInventory, 
+  updateInventory,
+  getInventoryByRackId 
+} from '../api/inventoryApi';
+//importas el rack 
+import { getAllrack } from '../api/rackApi'
 
 export default defineComponent({
   data() {
@@ -8,10 +16,12 @@ export default defineComponent({
       dialog: false,
       inventoryArray: [],
       inventoryNames: [],
+      rackIds:[],   
+      rackNames: [],
+      rackArray: [],
+      rackId: null, // aca hay que guardar el rack id seleccionado
       inventoryId: ref(null),
       searchQuery: '',
-      totalRows: 0,
-      selectedInventory: null,
       dialogVisible: false,
       dialogUpdateVisible: false,
       alertVisible: false,
@@ -46,6 +56,24 @@ export default defineComponent({
       } finally {
         this.loading = false;
       }
+    },
+    async getRack(){
+      try {
+        const rackResponse = await getAllrack();
+        this.rackArray = rackResponse.data;
+        this.rackNames = this.rackArray.map(rack => rack.rack_name);
+        this.rackIds = this.rackArray.map(rack => rack.rack_id);
+      } catch (error) {
+        console.error('Error al obtener Racks:', error);
+      }
+    },
+    // una vez que obtinee el rack id, llamas la funcion que correcponde
+    async getInventoryByRackId() {
+      //aca creas la logica de la funcion
+      // aca seteas response = awati getInventoryByRackId(ACA LA ID DEL RACK QUE CONSIGUES DEL SELECTOR)
+      // la idea es que luego cuando logres qeu la funcion te retorne la data asignes
+      // this.inventoryArray = response
+      // deja ahcer commit
     },
     downloadPdf() {
       const link = document.createElement('a');
@@ -135,6 +163,7 @@ export default defineComponent({
   },
   mounted() {
     this.getInventory();
+    this.getRack();
   }
 });
 </script>
@@ -143,6 +172,14 @@ export default defineComponent({
   <h2>Inventarios Citt</h2>
  
   <v-row class="month-table">
+    <v-col cols="3">
+      <!-- aca no va mostrar el nombre, ya que le estoy pasando el objeto, necesito mostrar el nombre -->
+      <v-select  
+       v-model="rackId"
+       label="Rack Nombre" 
+       :items="rackNames"
+      ></v-select>
+        </v-col>
     <v-col cols="3">
       <v-autocomplete
         :items="inventoryNames"
@@ -165,7 +202,7 @@ export default defineComponent({
     <v-col cols="3">
       <v-btn variant="tonal" color="primary" @click="downloadPdf">Generar archivo .csv</v-btn>
     </v-col>
-    <v-col cols="6" class="text-right">
+    <v-col cols="3" class="text-right">
       <v-btn variant="tonal" color="primary" prepend-icon="mdi-folder-outline" @click="openCreateDialog">Agregar Inventario</v-btn>
     </v-col>
     <v-col cols="12" sm="12">
@@ -226,14 +263,15 @@ export default defineComponent({
               <v-text-field label="Nombre Inventario" required v-model="objectDto.inventory_name"></v-text-field>
             </v-col>
             <v-col cols="12" md="4" sm="6">
-              <v-text-field hint="Rack" label="Rack ID" v-model="objectDto.rack_id"></v-text-field>
-            </v-col>
+              <v-combobox :items="rackIds" label="Nombre Rack" v-model="objectDto.rack_id" outlined
+              ></v-combobox>
+        </v-col>
           </v-row>
         </v-card-text>
         <v-divider></v-divider>
-        <v-card-actions>
+        <v-card-actions> 
           <v-spacer></v-spacer>
-          <v-btn text="Cancelar" variant="plain" @click="closeCreateDialog"></v-btn>
+          <v-btn color="error" text="Cancelar" variant="plain" @click="closeCreateDialog"></v-btn>
           <v-btn color="primary" text="Guardar Inventario" variant="tonal" @click="saveInventory"></v-btn>
         </v-card-actions>
       </v-card>

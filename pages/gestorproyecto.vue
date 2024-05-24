@@ -38,15 +38,15 @@ export default defineComponent({
         };
     },
     computed: {
-    filteredRack() {
-      if (!this.searchQuery) {
-        return this.projectArray;
-      }
-      return this.projectArray.filter(project => 
-        project.project_name.toLowerCase().includes(this.searchQuery.toLowerCase())
-      );
-    }
-  },
+        filteredRack() {
+            if (!this.searchQuery) {
+                return this.projectArray;
+            }
+            return this.projectArray.filter(project =>
+                project.project_name.toLowerCase().includes(this.searchQuery.toLowerCase())
+            );
+        }
+    },
     methods: {
         async getProjects() {
             this.loading = true;
@@ -139,9 +139,7 @@ export default defineComponent({
         openCreateDialog() {
             this.dialogCreate = true;
         },
-        closeDeleteDialog() {
-            this.dialogVisible = false;
-        },
+
         async createProject() {
             const post = {
                 project_id: this.objectDto.project_id,
@@ -162,12 +160,12 @@ export default defineComponent({
                 // Limpiar los campos del formulario
                 this.objectDto = {
                     project_id: null,
-                project_name: '',
-                project_description: '',
-                project_status: '',
-                wishlist_id: null,
-                project_team_id: null
- 
+                    project_name: '',
+                    project_description: '',
+                    project_status: '',
+                    wishlist_id: null,
+                    project_team_id: null
+
                 };
             } catch (error) {
                 console.error("No se ha podido eliminar el proyecto", this.objectDto.project_id, error)
@@ -182,20 +180,7 @@ export default defineComponent({
         console.log(this.projectArray)
         console.log('sel', this.projectId)
     },
-    watch: {
-    // Watch route changes and reload data if necessary
-    $route(to, from) {
-      if (to.name === 'GestorProyecto') {
-        this.getProjects();
-      }
-    }
-  },
-  onBeforeUnmount() {
-    // Clear data or do some cleanup if necessary
-    this.projectArray = [];
-    this.projectsNamesArray = [];
-    this.searchQuery = '';
-  }
+
 });
 </script>
 
@@ -205,28 +190,19 @@ export default defineComponent({
 
     <v-row class="month-table">
         <v-col cols="3">
-            <v-autocomplete
-            :items="projectsNamesArray"
-            item-value="projectArray.project_name"
-            class="mx-auto"
-            density="comfortable"
-            menu-icon=""
-            placeholder="Buscar Proyecto"
-            prepend-inner-icon="mdi-magnify"
-            style="max-width: 350px;"
-            theme="light"
-            variant="solo"
-            auto-select-first
-            v-model="searchQuery"
-            item-props
-            hint="Escriba para buscar"
-            rounded
-        ></v-autocomplete>
-    </v-col>
+            <v-combobox v-model="searchQuery" :items="projectsNamesArray" label="Proyecto" outlined
+                ></v-combobox>
+        </v-col>
+        <v-col cols="3">
+            <v-autocomplete :items="projectsNamesArray" item-value="projectArray.project_name" class="mx-auto"
+                density="comfortable" menu-icon="" placeholder="Buscar Proyecto" prepend-inner-icon="mdi-magnify"
+                style="max-width: 350px;" theme="light" variant="solo" auto-select-first v-model="searchQuery"
+                item-props hint="Escriba para buscar" rounded></v-autocomplete>
+        </v-col>
         <v-col cols="3">
             <v-btn variant="tonal" color="primary" @click="downloadPdf">Generar archivo .csv</v-btn>
         </v-col>
-        <v-col cols="6" class="text-right">
+        <v-col cols="3" class="text-right">
             <v-btn variant="tonal" color="primary" prepend-icon="mdi-folder-outline" @click="openCreateDialog">Agregar
                 Proyecto</v-btn>
         </v-col>
@@ -356,7 +332,7 @@ export default defineComponent({
                 <v-divider></v-divider>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn text="Cancelar" variant="plain" @click="closeDeleteDialog"></v-btn>
+                    <v-btn color="error" text="Cancelar" variant="plain" @click="closeDeleteDialog"></v-btn>
                     <v-btn color="primary" text="Crear proyecto" variant="tonal" @click="createProject"></v-btn>
                 </v-card-actions>
             </v-card>

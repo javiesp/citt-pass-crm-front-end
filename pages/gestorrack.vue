@@ -150,26 +150,13 @@ export default defineComponent({
   mounted() {
     this.getRack();
   },
-  watch: {
-    // Watch route changes and reload data if necessary
-    $route(to, from) {
-      if (to.name === 'GestorRack') {
-        this.getRack();
-      }
-    }
-  },
-  onBeforeUnmount() {
-    // Clear data or do some cleanup if necessary
-    this.rackArray = [];
-    this.rackNames = [];
-    this.searchQuery = '';
-  }
+
 });
 </script>
 
 <template>
   <h2>Gestor Rack</h2>
-  <v-row class="month-table" v-if="!loading">
+  <v-row class="month-table" >
     <v-col cols="3">
       <v-autocomplete
         :items="rackNames"
@@ -193,7 +180,7 @@ export default defineComponent({
       <v-btn variant="tonal" color="primary" @click="downloadPdf">Generar archivo .csv</v-btn>
     </v-col>
     <v-col cols="6" class="text-right">
-      <v-btn variant="tonal" color="primary" prepend-icon="mdi-folder-outline" @click="openCreateDialog">Agregar Inventario</v-btn>
+      <v-btn variant="tonal" color="primary" prepend-icon="mdi-folder-outline" @click="openCreateDialog">Agregar Rack</v-btn>
     </v-col>
     <v-col cols="12" sm="12">
       <v-table>
@@ -261,7 +248,7 @@ export default defineComponent({
         <v-divider></v-divider>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text="Cancelar" variant="plain" @click="closeCreateDialog"></v-btn>
+          <v-btn color="error" text="Cancelar" variant="plain" @click="closeCreateDialog"></v-btn>
           <v-btn color="primary" text="Guardar Inventario" variant="tonal" @click="saveRack"></v-btn>
         </v-card-actions>
       </v-card>
