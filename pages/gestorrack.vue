@@ -52,7 +52,7 @@ export default defineComponent({
       }
     },
 
-    // Metodo Descargar PDF
+    // Metodo Descargar PDF mejorar 
     downloadPdf() {
       const link = document.createElement('a');
       link.href = this.pdfUrl;
