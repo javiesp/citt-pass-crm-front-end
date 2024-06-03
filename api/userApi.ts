@@ -16,6 +16,11 @@ diffusion.interceptors.request.use();
 
 // 添加响应拦截器 xd 
 diffusion.interceptors.response.use();
+
+export const userLogin = (loginAuthDto?: any) => {
+  return diffusion.post('/users/login', loginAuthDto );
+};
+
 // Función para obtener todos los usuarios
 export const getAllUsers = (proyect_id: any) => {
   return diffusion.get('users/find-all-users', { params: { proyect_id } });
