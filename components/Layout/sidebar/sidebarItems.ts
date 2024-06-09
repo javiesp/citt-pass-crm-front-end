@@ -1,21 +1,9 @@
-
-
-import {
-  BorderAllIcon,
-  AlertCircleIcon,
-  CircleDotIcon,
-  BoxMultiple1Icon,
-  AdjustmentsHorizontalIcon,
-  LayoutDashboardIcon
-
-} from 'vue-tabler-icons';
+import { BorderAllIcon } from 'vue-tabler-icons';
 import { 
   IconCards
-  , IconTable 
   , IconPackages
   , IconShoppingBag
   , IconHeart
-  , IconUserCheck 
   , IconUsersGroup 
 } from '@tabler/icons-vue';
 
@@ -48,59 +36,34 @@ const sidebarItem: menu[] = [
     title: "Rack",
     icon: BorderAllIcon,
     to: "/gestorrack",
-  
   },
   {
     title: "Inventarios",
     icon: IconPackages,
     to: "/gestorinventario",
-
   },
-
+  {
+    title: "Producto item * aca poner producto  e item",
+    icon: IconPackages,
+    to: "",
+  },
   { header: 'GESTOR PROYECTO' },
   {
     title: "Proyectos",
     icon: IconUsersGroup,
     to: "/gestorproyecto",
-    //to: "/ui-components/alerts",
   },
-  { header: 'GESTOR WISH-LIST' },
+  { header: 'LISTA DE DESEOS' },
   {
     title: "Wish-list",
     icon: IconHeart,
     to: "/wishlist",
   },
   {
-    title: "Productos",
-    icon: IconShoppingBag,
-    to: "",
-  },
-  { header: 'PLANTILLAS' },
-  {
-    title: "Gestor Botones",
-    icon: IconPackages,
-    to: "/ui-components/buttons",
-  },
-  {
     title: "Gestor de productos",
     icon: IconShoppingBag,
-    to: "/ui-components/cards",
+    to: "/productos",
   },
-  {
-    title: "Lista de deseados",
-    icon: IconHeart,
-    to: "/ui-components/curousel",
-  },
-  {
-    title: "Tables",
-    icon: BorderAllIcon,
-    to: "/ui-components/tabels",
-  },
-
- 
-
 ];
 
 export default sidebarItem;
-
-

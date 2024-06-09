@@ -5,7 +5,8 @@ import {
   deleteInventory, 
   createInventory, 
   updateInventory,
-  getInventoryByRackId 
+  getInventoryByRackId,
+  getProducts
 } from '../api/inventoryApi';
 //importas el rack 
 import { getAllrack } from '../api/rackApi'
@@ -19,6 +20,7 @@ export default defineComponent({
       rackIds:[],   
       rackNames: [],
       rackArray: [],
+      productArray:[],
       rackId: null, // aca hay que guardar el rack id seleccionado
       inventoryId: ref(null),
       searchQuery: '',
@@ -49,12 +51,21 @@ export default defineComponent({
       try {
         const inventoryResponse = await getAllinventory();
         this.inventoryArray = inventoryResponse.data;
-        this.inventoryNames = this.inventoryArray.map(inventory => inventory.inventory_name);
       } catch (error) {
         console.error('Error al obtener Inventarios:', error);
         this.errorAlertVisible = true;
       } finally {
         this.loading = false;
+      }
+    },
+    async getProducts() {
+      try {
+        const productResponse = await getProducts();
+        this.productArray = productResponse.data;
+        console.log('ASDASDASDASD');
+        console.log(this.productArray);
+      } catch (error) {
+        console.error('Error al obtener PRODUCTOS:', error);
       }
     },
     async getRack(){
@@ -66,14 +77,6 @@ export default defineComponent({
       } catch (error) {
         console.error('Error al obtener Racks:', error);
       }
-    },
-    // una vez que obtinee el rack id, llamas la funcion que correcponde
-    async getInventoryByRackId() {
-      //aca creas la logica de la funcion
-      // aca seteas response = awati getInventoryByRackId(ACA LA ID DEL RACK QUE CONSIGUES DEL SELECTOR)
-      // la idea es que luego cuando logres qeu la funcion te retorne la data asignes
-      // this.inventoryArray = response
-      // deja ahcer commit
     },
     downloadPdf() {
       const link = document.createElement('a');
@@ -164,6 +167,8 @@ export default defineComponent({
   mounted() {
     this.getInventory();
     this.getRack();
+    console.log('aaaaaaaaaaaaa')
+    this.getProducts();
   }
 });
 </script>

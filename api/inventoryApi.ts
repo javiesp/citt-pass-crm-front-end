@@ -45,4 +45,7 @@ export const deleteInventory = (id: any) => {
     console.log('Datos enviados a la API:', updateInventoryDto);
     return diffusion.put('/inventory-management/update-inventory/' + id, updateInventoryDto);
   };
-  
+
+  export const getProducts = () => {
+    return diffusion.get('https://api-integracion.sbgtech.workers.dev/products');
+  };
