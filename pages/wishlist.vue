@@ -13,7 +13,7 @@ export default defineComponent({
       "Inventario Gamma",
     ];
     const selectedInventory = ref(null);
-    const showDetails = ref({}); // Initial state for showing details for each wishlist
+    const showDetails = ref({});
 
     const fetchWishlists = async () => {
       try {
@@ -85,7 +85,7 @@ export default defineComponent({
   
   <!-- Productos -->
   <v-row>
-    <v-col v-for="(wishlist, index) in wishlistArray" :key="wishlist._id">
+    <v-col cols="3" v-for="(wishlist, index) in wishlistArray" :key="wishlist._id">
       <v-card class="mx-auto" max-width="344">
         <v-img height="200px" src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" cover></v-img>
         <v-card-title>{{ wishlist.wishlist_name }}</v-card-title>
