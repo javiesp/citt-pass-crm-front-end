@@ -49,3 +49,7 @@ export const deleteInventory = (id: any) => {
   export const getProducts = () => {
     return diffusion.get('https://api-integracion.sbgtech.workers.dev/products');
   };
+
+  export const getWishlist = () => {
+    return diffusion.get('https://citt-pass-byteboosdt-api-production.up.railway.app/wishlist/find-all-wishList-types');
+  };

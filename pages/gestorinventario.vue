@@ -6,7 +6,7 @@ import {
   createInventory, 
   updateInventory,
   getInventoryByRackId,
-  getProducts
+  getWishlist
 } from '../api/inventoryApi';
 //importas el rack 
 import { getAllrack } from '../api/rackApi'
@@ -58,11 +58,11 @@ export default defineComponent({
         this.loading = false;
       }
     },
-    async getProducts() {
+    async getWishlist() {
       try {
-        const productResponse = await getProducts();
+        const productResponse = await getWishlist();
         this.productArray = productResponse.data;
-        console.log('ASDASDASDASD');
+        console.log('ACA MIRA');
         console.log(this.productArray);
       } catch (error) {
         console.error('Error al obtener PRODUCTOS:', error);
@@ -168,7 +168,7 @@ export default defineComponent({
     this.getInventory();
     this.getRack();
     console.log('aaaaaaaaaaaaa')
-    this.getProducts();
+    this.getWishlist();
   }
 });
 </script>

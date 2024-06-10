@@ -26,6 +26,10 @@ export const getAllUsers = (proyect_id: any) => {
   return diffusion.get('users/find-all-users', { params: { proyect_id } });
 };
 
+export const getChecklist = (proyect_id: any) => {
+  return diffusion.get('users/find-all-users', { params: { proyect_id } });
+};
+
 export const createUser = (createUserDto?: any) => {
   console.log(createUserDto);
   return diffusion.post('/roles/create-roles', createUserDto );
