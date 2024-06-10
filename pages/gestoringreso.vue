@@ -133,7 +133,10 @@ function href() {
             <div class="bg-primary pa-5">
               <v-row>
                 <v-col>
-                  <h1>Filtros</h1>
+                  <v-date-picker></v-date-picker>
+                </v-col>
+                <v-col>
+                  <v-date-picker></v-date-picker>
                 </v-col>
               </v-row>
               <h2 class="text-h5 mb-1">Últimos ingresos</h2>
