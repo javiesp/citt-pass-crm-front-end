@@ -28,5 +28,6 @@ diffusion.interceptors.response.use((response) => {
 
 // Función para obtener todos los usuarios
 export const getAllWishlists = () => {
-    return diffusion.get('/wish-list/find-all-wish-lists');
+    return diffusion.get('https://citt-pass-byteboosdt-api-production.up.railway.app/wishlist/find-all-wishList-types');
+    // return diffusion.get('/wish-list/find-all-wish-lists');
 };
