@@ -25,6 +25,7 @@ jobs:
       run: |
         npm ci
         npm run generate
+        npm run dev
       env:
         NUXT_APP_BASE_URL: ${{ vars.NUXT_APP_BASE_URL  }}
 

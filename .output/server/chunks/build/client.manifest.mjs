@@ -1,4 +1,4 @@
-{
+const client_manifest = {
   "_IngresoSemanal.fa7f560d.js": {
     "resourceType": "script",
     "module": true,
@@ -414,4 +414,6 @@
     "isDynamicEntry": true,
     "src": "pages/wishlist.vue"
   }
-}
+};
+
+export { client_manifest as default };
