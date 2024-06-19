@@ -3,11 +3,11 @@ import { Navigate } from "react-router-dom";
 import Loadable from "../layouts/loader/Loadable";
 import Login from "../views/auth/Login";
 
-/*Layouts**/
+/* Layouts */
 const FullLayout = Loadable(lazy(() => import("../layouts/FullLayout")));
-const BlankLayout = Loadable(lazy(() => import("../layouts/BlankLayout")));
-/** Pages ***/
+const BlankLayout = Loadable(lazy(() => import("../layouts/BlankLayout"));
 
+/* Pages */
 const Starter = Loadable(lazy(() => import("../views/Starter")));
 const About = Loadable(lazy(() => import("../views/About")));
 const Alerts = Loadable(lazy(() => import("../views/ui/Alerts")));
@@ -20,27 +20,27 @@ const Forms = Loadable(lazy(() => import("../views/ui/Forms")));
 const Breadcrumbs = Loadable(lazy(() => import("../views/ui/Breadcrumbs")));
 const Productos = Loadable(lazy(() => import("../views/Productos")));
 
-/** Auth Pages ***/
+/* Auth Pages */
 const Error = Loadable(lazy(() => import("../views/auth/Error")));
-/**Routes***/
 
+/* Routes */
 const ThemeRoutes = [
   {
-    path: "/", 
+    path: "/",
     element: <FullLayout />,
-    children: [ 
+    children: [
       { path: "/", element: <Navigate to="/login" /> },
-      { path: "/login", exact: true, element: <Login /> },
-      { path: "/about", exact: true, element: <About /> },
-      { path: "/ui/alerts", exact: true, element: <Alerts /> },
-      { path: "/badges", exact: true, element: <Badges /> },
-      { path: "/buttons", exact: true, element: <Buttons /> },
-      { path: "/cards", exact: true, element: <Cards /> },
-      { path: "/grid", exact: true, element: <Grid /> },
-      { path: "/table", exact: true, element: <Tables /> },
-      { path: "/forms", exact: true, element: <Forms /> },
-      { path: "/breadcrumbs", exact: true, element: <Breadcrumbs /> },
-      { path: "/productos", exact: true, element: <Productos /> }, // Ruta para Productos
+      { path: "/login", element: <Login /> },
+      { path: "/about", element: <About /> },
+      { path: "/ui/alerts", element: <Alerts /> },
+      { path: "/badges", element: <Badges /> },
+      { path: "/buttons", element: <Buttons /> },
+      { path: "/cards", element: <Cards /> },
+      { path: "/grid", element: <Grid /> },
+      { path: "/table", element: <Tables /> },
+      { path: "/forms", element: <Forms /> },
+      { path: "/breadcrumbs", element: <Breadcrumbs /> },
+      { path: "/productos", element: <Productos /> }, // Ruta para Productos
       { path: "*", element: <Navigate to="/auth/404" /> },
     ],
   },
@@ -53,6 +53,5 @@ const ThemeRoutes = [
     ],
   },
 ];
-
 
 export default ThemeRoutes;

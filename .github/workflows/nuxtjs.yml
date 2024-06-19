@@ -10,7 +10,6 @@ permissions:
 
 jobs:
   build-and-deploy:
-    concurrency: ci-${{ github.ref }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -36,5 +35,4 @@ jobs:
     - name: Deploy 🚀
       uses: JamesIves/github-pages-deploy-action@v4
       with:
-        branch: gh-pages
-        folder: .nuxt/dist
+        folder: .nuxt/dist  # Ajusta la ruta a tu directorio de producción
