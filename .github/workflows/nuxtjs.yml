@@ -29,10 +29,8 @@ jobs:
 
     - name: Build Project 🏗️
       run: npm run build
-      env:
-        NUXT_APP_BASE_URL: ${{ secrets.NUXT_APP_BASE_URL }}
 
     - name: Deploy 🚀
       uses: JamesIves/github-pages-deploy-action@v4
       with:
-        folder: .nuxt/dist  # Ajusta la ruta a tu directorio de producción
+        folder: ./dist  

@@ -31,8 +31,13 @@ export const userLogin = (loginAuthDto?: any) => {
 };
 
 // Función para obtener todos los usuarios
-export const getAllUsers = (proyect_id: any) => {
-  return diffusion.get('users/find-all-users', { params: { proyect_id } });
+export const getAllUsersById = (proyect_id: any) => {
+  return diffusion.get('users/find-users-by-project', { params: { proyect_id } });
+};
+
+// Función para obtener todos los usuarios
+export const getAllUsers = () => {
+  return diffusion.get('users/find-all-users');
 };
 
 export const getChecklist = (proyect_id: any) => {

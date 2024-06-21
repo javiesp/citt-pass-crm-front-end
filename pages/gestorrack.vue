@@ -5,6 +5,15 @@ import { getAllrack , deleteRack , updateRack, createRack} from '../api/rackApi'
 export default defineComponent({
   data() {
     return {
+      // data table
+      loading: false,
+      itemsPerPage: 5,
+      headers: [
+        { title: "ID", value: "rack_id" },
+        { title: "Tipo de rack", value: "rack_type" },
+        { title: "Nombre", value: "rack_name" },
+        { title: "Acciones", value: "actions" },
+      ],
       dialog: false,
       rackArray: [],
       rackNames: [],
@@ -91,11 +100,10 @@ export default defineComponent({
         this.errorAlertVisible = true;
       }
     },
-
-
     // Metodo Eliminar Rack
-    openDeleteDialog(rackId) {
-      this.rackId = rackId;
+    openDeleteDialog(item) {
+      this.rackId = item._id;
+      console.log('ITEM',this.rackId)
       this.dialogVisible = true;
     },
     closeDeleteDialog() {
@@ -114,11 +122,10 @@ export default defineComponent({
                 this.errorAlertVisible = true;
             }
     },
-
     // Metodo Actualizar Rack
-    openUpdateDialog(rackId) {
-      console.log('ERORRRRRRRRRR',this.rackId)
-      this.rackId = rackId; // Copiar los datos del inventario seleccionado
+    openUpdateDialog(item) {
+      this.rackId = item._id;
+      console.log('ITEM',this.rackId)
       this.dialogUpdateVisible = true;
       
     },
@@ -183,33 +190,26 @@ export default defineComponent({
       <v-btn variant="tonal" color="primary" prepend-icon="mdi-folder-outline" @click="openCreateDialog">Agregar Rack</v-btn>
     </v-col>
     <v-col cols="12" sm="12">
-      <v-table>
-        <thead>
-          <tr>
-            <th class="text-left">ID Rack</th>
-            <th class="text-left">Tipo</th>
-            <th class="text-left">Nombre</th>
-            <th class="text-left">Accion</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="rack in filteredRack" :key="rack.rack_name">
-            <td>{{ rack.rack_id }}</td>
-            <td>{{ rack.rack_type }}</td>
-            <td>{{ rack.rack_name }}</td>
-            <td>
-              <v-col>
-                <v-btn class="ml-2" color="primary" icon size="x-small" flat @click="openUpdateDialog(rack._id)">
-                  <v-icon>mdi-pencil</v-icon> 
-                </v-btn>
-                <v-btn class="ml-2" color="error" icon size="x-small" flat @click="openDeleteDialog(rack._id)">
-                  <v-icon>mdi-delete</v-icon> 
-                </v-btn>
-              </v-col>
-            </td>
-          </tr>
-        </tbody>
-      </v-table>
+      <v-card :variant="variant" class="mx-auto">
+        <v-divider />
+        <v-col>
+          <v-data-table
+            v-model:items-per-page="itemsPerPage"
+            :headers="headers"
+            :items="rackArray"
+            :loading="loading"
+          >
+            <template v-slot:item.actions="{ item }">
+              <v-btn class="ml-2" color="primary" icon size="x-small" flat @click="openUpdateDialog(item)">
+                <v-icon>mdi-pencil</v-icon>
+              </v-btn>
+              <v-btn class="ml-2" color="error" icon size="x-small" flat @click="openDeleteDialog(item)">
+                <v-icon>mdi-delete</v-icon>
+              </v-btn>
+            </template>
+          </v-data-table>
+        </v-col>
+      </v-card>
     </v-col>
   </v-row>
 

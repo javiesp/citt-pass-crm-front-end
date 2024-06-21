@@ -1,13 +1,24 @@
 <script> // setup lang="ts"
     import { IconEdit } from '@tabler/icons-vue';
     import { defineComponent } from 'vue'; 
-    import { getAllUsers } from '../api/userApi.ts';
+    import { getAllUsers, getAllUsersById } from '../api/userApi.ts';
     import { getAllProjects } from '../api/projectApi.ts';
 
     console.log("")
     export default defineComponent({
     data() {
         return {
+        // data table
+        loading: false,
+        itemsPerPage: 5,
+        headers: [
+          { title: "UID", value: "uid_user" },
+          { title: "Nombre", value: "name" },
+          { title: "Mail", value: "email" },
+          { title: "Teléfono", value: "phone" },
+          { title: "ID Proyecto", value: "proyect_id" },
+          { title: "Acciones", value: "actions" },
+        ],
         // VARAIBLES DESCARGA PDF
         name: 'DownloadPdfButton',
         props: {
@@ -39,7 +50,7 @@
         //     //{ title: "Email", key: "email", sortable: false },
         //     { title: "Phone", key: "phone"},
         //     //{ title: "Run", key: "run", sortable: false },
-        //     { title: "Proyecto", key: "proyect_id" },
+        //     { title: "Proyecto", key: "project_id" },
         // ],
         };
     },
@@ -47,9 +58,9 @@
         // GET API Y AGUARDAR EN USERSARRAY
         async getUsers() {
             this.loading = true;
-            const proyect_id = this.selectedProyect; 
+            const project_id = this.selectedProyect; 
             try {
-                const usersResponse = await getAllUsers(proyect_id);
+                const usersResponse = await getAllUsers();
                 this.usersArray = usersResponse.data;
                 this.totalRows = usersResponse.data.total;
                 console.log('ARRAY',this.usersArray)
@@ -72,7 +83,7 @@
             this.loading = false;
           }
         },
-        selectProjectId() {
+        async selectProjectId() {
           // Busca el project_id correspondiente al nombre seleccionado
           const selectedProject = this.projectArray.find(project => project.project_name === this.selectedProyect);
           if (selectedProject) {
@@ -81,15 +92,12 @@
           } else {
             console.error("No se encontró el projectId para el proyecto seleccionado");
           }
+          try {
+            const usersResponse = await getAllUsersById(this.projectId) 
+          } catch (error) {
+            console.log(error)
+          }
         },
-        // async selectProyect() {
-        //   this.projectsNames = []; // Reinicia el array de nombres de proyectos
-        //   this.projectArray.forEach(project => {
-        //       this.projectsNames.push(project.project_name); // Agrega cada nombre de proyecto al array
-        //       this.projectId = project.project_id;
-        //       console.log(this.projectId);
-        //   });
-        // },
         // DESCARGAR PDF
         downloadPdf() {
             // create element <a> for download PDF
@@ -116,7 +124,6 @@
     async created() {
         await this.getUsers();
         await this.getProjects();
-        await this.selectProyect()
         },
     });
 
@@ -163,7 +170,7 @@
         <!-- TABLA DE USUARIOS -->
         <v-col cols="12" sm="12">
         <UiChildCard title="Ingresos citt">
-            <v-table>
+            <!-- <v-table>
             <thead>
                 <tr>
                 <th class="text-left">UID usuario</th>
@@ -180,7 +187,7 @@
                 <td>{{ user.name }}</td>
                 <td>{{ user.phone }}</td>
                 <td>{{ user.email }}</td>
-                <td>{{ user.proyect_id }}</td>
+                <td>{{ user.project_id }}</td>
                 <td>
                   <v-col>
                     <v-btn
@@ -203,7 +210,27 @@
                 </td>
                 </tr>
             </tbody>
-            </v-table>
+            </v-table> -->
+            <v-card :variant="variant" class="mx-auto">
+              <v-divider />
+              <v-col>
+                <v-data-table
+                  v-model:items-per-page="itemsPerPage"
+                  :headers="headers"
+                  :items="usersArray"
+                  :loading="loading"
+                >
+                  <template v-slot:item.actions="{ item }">
+                    <v-btn class="ml-2" color="primary" icon size="x-small" flat @click="openUpdateDialog(item)">
+                      <v-icon>mdi-pencil</v-icon>
+                    </v-btn>
+                    <v-btn class="ml-2" color="error" icon size="x-small" flat @click="openDeleteDialog(item)">
+                      <v-icon>mdi-delete</v-icon>
+                    </v-btn>
+                  </template>
+                </v-data-table>
+              </v-col>
+            </v-card>
         </UiChildCard>
         </v-col>
     </v-row>
