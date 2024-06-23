@@ -10,7 +10,7 @@ export default defineComponent({
       dialogWishlist: false,
       productArray: [],
       productNames: [],
-      wishlistId: null, // Variable para almacenar el ID de la wishlist seleccionada
+      wishlistId: null, 
       wishlistArray: [],
       wishNames: [],
       productSearchQuery: "",
@@ -19,13 +19,15 @@ export default defineComponent({
       alertVisible: false,
       errorAlertVisible: false,
       loading: false,
-      selectedWishlist: "", // Nombre de la wishlist seleccionada
-      wishlistNameToIdMap: {} // Mapa de nombres de wishlists a IDs
+      selectedWishlist: "", 
+      wishlistNameToIdMap: {} 
     };
   },
   computed: {
     filteredProducts() {
+      console.log('INPUT: ', this.productSearchQuery)
       if (!this.productSearchQuery) {
+        console.log('OUTPUT: ', this.productArray.results)
         return this.productArray.results || [];
       }
       return (this.productArray.results || []).filter((product) =>
@@ -38,8 +40,10 @@ export default defineComponent({
       this.loading = true;
       try {
         const response = await getsbProducts();
+        console.log('INPUT: ', response);
         this.productArray = response.data;
         this.productNames = this.productArray.results.map((product) => product.name);
+        console.log('OUTPUT: ', this.productArray)
       } catch (error) {
         console.error("PRODUCT_ERROR:", error);
         this.errorAlertVisible = true;
@@ -50,13 +54,14 @@ export default defineComponent({
     async getWishlist() {
       try {
         const response = await getAllWishlists();
+        console.log('INPUT: ', response);
         this.wishlistArray = response.data;
-        // Crea un mapa de nombres de wishlists a IDs para buscar rápido por nombre
         this.wishlistNameToIdMap = this.wishlistArray.reduce((map, wishlist) => {
-          map[wishlist.wishlist_name] = wishlist.wishlist_id; // Usa `wishlist_id` directamente
+          map[wishlist.wishlist_name] = wishlist.wishlist_id; 
           return map;
         }, {});
         this.wishNames = this.wishlistArray.map((wishlist) => wishlist.wishlist_name);
+        console.log('OUTPUT: ', this.wishlistArray)
       } catch (error) {
         console.error("Error fetching wishlists:", error);
         this.errorAlertVisible = true;
@@ -67,27 +72,27 @@ export default defineComponent({
         id: product.id,
         name: product.name,
         price: product.price,
-        quantity: 1, // Se asume que la cantidad inicial es 1
+        quantity: 1, 
       };
+      console.log('INPUT: ', selectedProduct)
       this.selectedProducts.push(selectedProduct);
-      this.dialogWishlist = true; // Muestra el diálogo de la wishlist
+      this.dialogWishlist = true; 
+      console.log('OUTPUT: ', this.selectedProduct)
     },
     openCreateDialog() {
       this.dialog = true;
     },
     closeCreateDialog() {
-      this.dialogWishlist = false; // Cierra el diálogo de la wishlist
+      this.dialogWishlist = false; 
     },
     onWishlistChange(selectedName) {
-      this.selectedWishlist = selectedName; // Almacena el nombre de la wishlist seleccionada
+      this.selectedWishlist = selectedName; 
     },
     saveWishlistId() {
-      // Busca el ID de la wishlist usando el nombre y lo guarda
       if (this.selectedWishlist in this.wishlistNameToIdMap) {
         this.wishlistId = this.wishlistNameToIdMap[this.selectedWishlist];
-        this.dialogWishlist = false; // Cierra el diálogo después de guardar el ID
+        this.dialogWishlist = false; 
         console.log("Wishlist ID guardado:", this.wishlistId);
-        // Aquí puedes agregar el resto de la lógica para manejar la operación de guardar
       } else {
         console.error("Wishlist no encontrada:", this.selectedWishlist);
         this.errorAlertVisible = true;
@@ -95,8 +100,8 @@ export default defineComponent({
     },
   },
   mounted() {
-    this.getProduct(); // Obtiene los productos al montar el componente
-    this.getWishlist(); // Obtiene las wishlists al montar el componente
+    this.getProduct(); 
+    this.getWishlist(); 
   },
 });
 </script>
