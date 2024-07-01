@@ -1,16 +1,20 @@
-<script setup>
+<script setup lang="ts">
+
+const router = useRouter()
+
+function logout() {
+  console.log('LOGOUT')
+  localStorage.removeItem("email");
+  localStorage.removeItem("accessToken");
+  router.push('login');
+
+  console.log('SESION CERRADA')  
+}
+
 const userprofile = ref([
   {
     title: "Mi perfil",
     desc: "Configuración de la cuenta",
-  },
-  {
-    title: "Centro de notificaciones",
-    desc: "Notificaciones",
-  },
-  {
-    title: "Mis tareas",
-    desc: "To-do y tareas diarias",
   },
 ]);
 </script>
@@ -20,7 +24,7 @@ const userprofile = ref([
     <template v-slot:activator="{ props }">
       <v-btn class="custom-hover-primary" variant="text" v-bind="props" icon>
         <v-avatar size="35">
-          <img src="/images/profile/user2.jpg" width="35" alt="Julia" />
+          <img src="/images/profile/user2.jpg" width="35" alt="User" />
         </v-avatar>
       </v-btn>
     </template>
@@ -29,7 +33,7 @@ const userprofile = ref([
         <v-list-item class="py-2  mb-2" v-for="(item, i) in userprofile" :key="i" :value="item" :title="item.title"
           :subtitle="item.desc" rounded="md">
         </v-list-item>
-        <v-btn block color="error" class="mt-4 py-4">Cerrar sesión</v-btn>
+        <v-btn block color="error" class="mt-4 py-4" @click="logout">Cerrar sesión</v-btn>
       </v-list>
     </v-sheet>
   </v-menu>

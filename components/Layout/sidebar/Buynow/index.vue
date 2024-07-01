@@ -5,7 +5,7 @@
             <v-icon left>mdi-github</v-icon>
              Ver en GitHub
         </v-btn>
-        v1.1.11
+        v1.1.12
         </a>
     </div>
 </template>

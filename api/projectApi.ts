@@ -5,7 +5,7 @@ axios.defaults.validateStatus = function (status) {
 };
 
 const diffusion = axios.create({
-    baseURL: 'http://localhost:3005/',
+    baseURL: 'https://citt-pass-api-gateaway-backend-production.up.railway.app',
     timeout: 100000,
 });
 
@@ -27,7 +27,7 @@ diffusion.interceptors.response.use((response) => {
 });
 // Función para obtener todos los usuarios
 export const getAllProjects = () => {
-    return diffusion.get('/project/get-projects');//Listar
+    return diffusion.get('/project/get-project');//Listar
 };
 
 export const deleteProject = (id: any) => {

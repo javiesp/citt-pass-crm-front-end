@@ -3,6 +3,11 @@ import { markRaw, watch } from "vue";
 import sidebarItems from "./sidebarItems";
 
 const sidebarMenu = markRaw(sidebarItems);
+
+const emailStorage = localStorage.getItem('email')
+console.log('LOCAL STORAGE')
+console.log(emailStorage)
+
 </script>
 
 <template>
@@ -13,7 +18,7 @@ const sidebarMenu = markRaw(sidebarItems);
     <div class="sidebar_profile border-bottom">
       <v-list class="bg-muted">
         <v-list-item class="pa-4 pb-0 ml-1">
-          <v-list-item-title class="text-h6 mb-1">Wilson maldonado</v-list-item-title>
+          <v-list-item-title class="text-h6 mb-1">{{ emailStorage }}</v-list-item-title>
           <v-list-item-subtitle class="text-subtitle-1">Ingeniería en informática</v-list-item-subtitle>
           <template v-slot:prepend class="me-0">
             <v-avatar size="45" class="me-0">
