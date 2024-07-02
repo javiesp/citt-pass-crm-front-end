@@ -5,7 +5,7 @@ axios.defaults.validateStatus = function (status) {
 };
 
 const diffusion = axios.create({
-    baseURL: 'https://citt-pass-api-gateaway-backend-production.up.railway.app',
+    baseURL: 'http://localhost:3005/',
     timeout: 100000,
 });
 
@@ -26,8 +26,11 @@ diffusion.interceptors.response.use((response) => {
     return Promise.reject(error);
 });
 
-// Función para obtener todos los usuarios
 export const getAllWishlists = () => {
-    return diffusion.get('https://citt-pass-byteboosdt-api-production.up.railway.app/wishlist/find-all-wishList-types');
-    // return diffusion.get('/wish-list/find-all-wish-lists');
+    return diffusion.get('/wish-list/find-all-wishList-types');
+};
+
+export const updateWishlistProducts = (id: any, updateProductDto?: any) => {
+    console.log('Datos enviados a la API:', updateProductDto);
+    return diffusion.put('/wish-list/update-wishList-product/' + id, updateProductDto);
 };

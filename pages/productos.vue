@@ -1,7 +1,7 @@
 <script>
 import { defineComponent } from "vue";
 import { getsbProducts } from "../api/integracionApi";
-import { getAllWishlists } from "../api/wishlistApi";
+import { getAllWishlists, updateWishlistProducts } from "../api/wishlistApi";
 
 export default defineComponent({
   data() {
@@ -14,7 +14,7 @@ export default defineComponent({
       wishlistArray: [],
       wishNames: [],
       productSearchQuery: "",
-      selectedProducts: [],
+      selectedProducts: {},
       dialogVisible: false,
       alertVisible: false,
       errorAlertVisible: false,
@@ -68,16 +68,17 @@ export default defineComponent({
       }
     },
     addProductToWishlist(product) {
-      const selectedProduct = {
-        id: product.id,
-        name: product.name,
+      console.log('HOLA');
+      const productos = {
+        product_id: product.id,
+        product_name: product.name,
         price: product.price,
-        quantity: 1, 
-      };
-      console.log('INPUT: ', selectedProduct)
-      this.selectedProducts.push(selectedProduct);
-      this.dialogWishlist = true; 
-      console.log('OUTPUT: ', this.selectedProduct)
+        quantity: 2
+      }
+      this.selectedProducts = productos; 
+      console.log('INPUT: ', product);
+      this.dialogWishlist = true;
+      console.log('OUTPUT: ',this.selectedWishlist,'/', this.selectedProducts); 
     },
     openCreateDialog() {
       this.dialog = true;
@@ -85,17 +86,20 @@ export default defineComponent({
     closeCreateDialog() {
       this.dialogWishlist = false; 
     },
-    onWishlistChange(selectedName) {
-      this.selectedWishlist = selectedName; 
-    },
-    saveWishlistId() {
-      if (this.selectedWishlist in this.wishlistNameToIdMap) {
-        this.wishlistId = this.wishlistNameToIdMap[this.selectedWishlist];
+    async saveWishlistId() {
+      console.log('WISHLIST SELECCIONADA')
+      console.log(this.selectedWishlist)
+      console.log('PRODUCTOS SELECCIONADOS')
+      console.log(this.selectedProducts)
+
+      try {
+        const respose = await updateWishlistProducts(this.selectedWishlist, this.selectedProducts)
+        console.log(respose)
         this.dialogWishlist = false; 
-        console.log("Wishlist ID guardado:", this.wishlistId);
-      } else {
-        console.error("Wishlist no encontrada:", this.selectedWishlist);
-        this.errorAlertVisible = true;
+        this.selectedProducts = {};
+        console.log('AGREGADO')
+      } catch (error) {
+        console.log(error)
       }
     },
   },
@@ -179,10 +183,11 @@ export default defineComponent({
                 PRODUCTO: {{ product.name }} PRECIO: ${{ product.price }}
               </li>
               <v-select
-                :items="wishNames"
+                :items="wishlistArray"
                 label="Selecciona la wishlist"
                 v-model="selectedWishlist"
-                @change="onWishlistChange"
+                item-value="_id"
+                item-title="wishlist_name"
                 dense
               ></v-select>
             </ul>
