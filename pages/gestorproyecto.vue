@@ -14,7 +14,14 @@ export default defineComponent({
     return {
       // data table
       loading: false,
+      search: '',
       itemsPerPage: 5,
+      rowsPerPageItems: [
+        { title: "5", value: 5 },
+        { title: "10", value: 10 },
+        { title: "25", value: 25 },
+        { title: "50", value: 50 },
+      ],
       headers: [
         { title: "ID", value: "project_id" },
         { title: "Nombre", value: "project_name" },
@@ -226,23 +233,20 @@ export default defineComponent({
       ></v-combobox>
     </v-col>
     <v-col cols="3">
-      <v-autocomplete
-        :items="projectsNamesArray"
-        item-value="projectArray.project_name"
+      <v-text-field
+        v-model="search"
         class="mx-auto"
         density="comfortable"
         menu-icon=""
-        placeholder="Buscar Proyecto"
+        placeholder="Buscar proyecto"
         prepend-inner-icon="mdi-magnify"
-        style="max-width: 350px"
         theme="light"
         variant="solo"
         auto-select-first
-        v-model="searchQuery"
         item-props
         hint="Escriba para buscar"
         rounded
-      ></v-autocomplete>
+      ></v-text-field>
     </v-col>
     <v-col cols="3">
       <v-btn variant="tonal" color="primary" @click="downloadPdf"
@@ -259,62 +263,16 @@ export default defineComponent({
       >
     </v-col>
     <v-col cols="12" sm="12">
-      <!-- <v-table>
-        <thead>
-          <tr>
-            <th class="text-left">ID</th>
-            <th class="text-left">Proyecto</th>
-            <th class="text-left">Descripción</th>
-            <th class="text-left">Status</th>
-            <th class="text-left">Proyect team</th>
-            <th class="text-left">Acción</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="project in filteredRack" :key="project.project_id">
-            <td>{{ project.project_id }}</td>
-            <td>{{ project.project_name }}</td>
-            <td>{{ project.project_description }}</td>
-            <td>{{ project.project_status }}</td>
-            <td>{{ project.project_id_team }}</td>
-            <td>
-              <v-col>
-                <v-btn
-                  class="ml-2"
-                  color="primary"
-                  icon
-                  size="x-small"
-                  flat
-                  @click="openUpdateDialog(project._id)"
-                >
-                  <v-icon>mdi-pencil</v-icon>
-                </v-btn>
-                <v-btn
-                  class="ml-2"
-                  color="error"
-                  icon
-                  size="x-small"
-                  flat
-                  @click="openDeleteDialog(project._id)"
-                >
-                  <v-icon>mdi-delete</v-icon>
-                </v-btn>
-                <v-btn class="ml-2" color="warning" icon size="x-small" flat>
-                  <v-icon>mdi-refresh</v-icon> 
-                </v-btn> 
-              </v-col>
-            </td>
-          </tr>
-        </tbody>
-      </v-table> -->
       <v-card :variant="variant" class="mx-auto">
         <v-divider />
         <v-col>
           <v-data-table
             v-model:items-per-page="itemsPerPage"
+            :items-per-page-options="rowsPerPageItems"
             :headers="headers"
             :items="projectArray"
             :loading="loading"
+            :search="search"
           >
             <template v-slot:item.actions="{ item }">
               <v-btn class="ml-2" color="primary" icon size="x-small" flat @click="openUpdateDialog(item)">

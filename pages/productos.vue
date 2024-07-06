@@ -8,6 +8,7 @@ export default defineComponent({
     return {
       dialog: false,
       dialogWishlist: false,
+      loading: false,
       productArray: [],
       productNames: [],
       wishlistId: null, 
@@ -15,6 +16,7 @@ export default defineComponent({
       wishNames: [],
       productSearchQuery: "",
       selectedProducts: {},
+      productsFor: [],
       dialogVisible: false,
       alertVisible: false,
       errorAlertVisible: false,
@@ -37,13 +39,14 @@ export default defineComponent({
   },
   methods: {
     async getProduct() {
-      this.loading = true;
       try {
+        this.loading = true
         const response = await getsbProducts();
         console.log('INPUT: ', response);
         this.productArray = response.data;
         this.productNames = this.productArray.results.map((product) => product.name);
         console.log('OUTPUT: ', this.productArray)
+        this.loading = false
       } catch (error) {
         console.error("PRODUCT_ERROR:", error);
         this.errorAlertVisible = true;
@@ -76,6 +79,8 @@ export default defineComponent({
         quantity: 2
       }
       this.selectedProducts = productos; 
+      this.productsFor = this.selectedProducts
+      console.log('tu wea',this.productsFor)
       console.log('INPUT: ', product);
       this.dialogWishlist = true;
       console.log('OUTPUT: ',this.selectedWishlist,'/', this.selectedProducts); 
@@ -110,12 +115,9 @@ export default defineComponent({
 });
 </script>
 
-
-
-
-
 <template>
   <h2>Productos</h2>
+  
   <v-row class="month-table">
     <v-col cols="3">
       <v-autocomplete
@@ -145,43 +147,69 @@ export default defineComponent({
         >Ver wishlist</v-btn
       >
     </v-col>
-    <v-col>
-      <v-row>
-        <v-col
-          v-for="(product, index) in filteredProducts"
-          :key="index"
-          cols="12"
-          md="4"
-        >
-          <v-card>
-            <v-img
-              v-if="product.images && product.images.length > 0"
-              :src="product.images[0]"
-              height="200"
-            ></v-img>
-            <v-card-title>{{ product.name }}</v-card-title>
-            <v-card-text>
-              <p>Price: {{ product.price }}</p>
-              <p>Discount: {{ product.discount }}</p>
-              <v-btn icon @click="addProductToWishlist(product)">
-                <v-icon>mdi-heart</v-icon>
-              </v-btn>
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
+    <v-col v-if="loading" cols="12" class="text-center">
+      <v-progress-circular
+        :size="200"
+        :width="17"
+        color="primary"
+        indeterminate
+      ></v-progress-circular>
+    </v-col>
+    <v-col
+      v-else
+      v-for="(product, index) in filteredProducts"
+      :key="index"
+      cols="12"
+      md="4"
+    >
+      <v-card>
+        <v-img
+          v-if="product.images && product.images.length > 0"
+          :src="product.images[0]"
+          height="200"
+        ></v-img>
+        <v-card-title>{{ product.name }}</v-card-title>
+        <v-card-text>
+          <p>Price: {{ product.price }}</p>
+          <p>Discount: {{ product.discount }}</p>
+          <v-btn icon @click="addProductToWishlist(product)">
+            <v-icon>mdi-heart</v-icon>
+          </v-btn>
+        </v-card-text>
+      </v-card>
     </v-col>
   </v-row>
 
   <v-dialog v-model="dialogWishlist" max-width="500px">
       <template #default>
         <v-card>
-          <v-card-title>Wishlist</v-card-title>
+          <v-card-title>Agregar producto a lista de deseos</v-card-title>
           <v-card-text>
-            <ul>
-              <li v-for="product in selectedProducts" :key="product.id">
-                PRODUCTO: {{ product.name }} PRECIO: ${{ product.price }}
-              </li>
+            <v-list-item
+                :subtitle="precio"
+                :title="nombre"
+              >
+                <template v-slot:prepend>
+                  <v-avatar color="grey-lighten-1">
+                    <v-icon color="white">mdi-shopping</v-icon>
+                  </v-avatar>
+                </template>
+
+                <template v-slot:append>
+                  <v-col>
+                    <v-row>
+                      <v-btn rounded>+</v-btn>
+                      <v-btn rounded>-</v-btn>
+                    </v-row>
+                  </v-col>
+                </template>
+            </v-list-item>
+            <v-col>
+              <v-text>
+                Total: 1234234
+              </v-text>
+            </v-col>
+            <v-col>
               <v-select
                 :items="wishlistArray"
                 label="Selecciona la wishlist"
@@ -190,7 +218,7 @@ export default defineComponent({
                 item-title="wishlist_name"
                 dense
               ></v-select>
-            </ul>
+            </v-col>
           </v-card-text>
           <v-card-actions>
             <v-btn @click="closeCreateDialog">Cerrar</v-btn>

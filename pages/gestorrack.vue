@@ -7,7 +7,14 @@ export default defineComponent({
     return {
       // data table
       loading: false,
+      search: '',
       itemsPerPage: 5,
+      rowsPerPageItems: [
+        { title: "5", value: 5 },
+        { title: "10", value: 10 },
+        { title: "25", value: 25 },
+        { title: "50", value: 50 },
+      ],
       headers: [
         { title: "ID", value: "rack_id" },
         { title: "Tipo de rack", value: "rack_type" },
@@ -165,23 +172,20 @@ export default defineComponent({
   <h2>Gestor Rack</h2>
   <v-row class="month-table" >
     <v-col cols="3">
-      <v-autocomplete
-        :items="rackNames"
-        item-value="rackArray.rack_name"
+      <v-text-field
+        v-model="search"
         class="mx-auto"
         density="comfortable"
         menu-icon=""
         placeholder="Buscar Rack"
         prepend-inner-icon="mdi-magnify"
-        style="max-width: 350px;"
         theme="light"
         variant="solo"
         auto-select-first
-        v-model="searchQuery"
         item-props
         hint="Escriba para buscar"
         rounded
-      ></v-autocomplete>
+      ></v-text-field>
     </v-col>
     <v-col cols="3">
       <v-btn variant="tonal" color="primary" @click="downloadPdf">Generar archivo .csv</v-btn>
@@ -195,9 +199,11 @@ export default defineComponent({
         <v-col>
           <v-data-table
             v-model:items-per-page="itemsPerPage"
+            :items-per-page-options="rowsPerPageItems"
             :headers="headers"
             :items="rackArray"
             :loading="loading"
+            :search="search"
           >
             <template v-slot:item.actions="{ item }">
               <v-btn class="ml-2" color="primary" icon size="x-small" flat @click="openUpdateDialog(item)">

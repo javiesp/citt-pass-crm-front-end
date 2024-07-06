@@ -6,14 +6,16 @@ import img1 from "/images/profile/1.jpg";
 const checkInData = ref([]);
 const checkInArray = ref([]);
 const elementVisible = ref(false);
-
+const loading = ref(false);
 // Fetch the check-in data
 const fetchCheckIn = async () => {
   try {
+    loading.value = true;
     const response = await getAllcheckIn();
     checkInArray.value = response.data; // Aquí mapeas la respuesta de tu api
     console.log("CHECK IN");
     console.log(checkInArray.value);
+    loading.value = false;
   } catch (error) {
     console.error(error);
   }
@@ -144,27 +146,37 @@ function href() {
             </div>
 
             <div class="pa-4">
-              <v-list>
-                <v-list-item
-                  v-for="(checkIn, i) in checkInArray.slice(0, 8)" 
-                  :key="checkIn._id"
-                  @click="href"
-                >
-                  <v-list-item-title>
-                    <div class="d-flex align-center py-3">
-                      <div class="mr-3">
-                      </div>
-                      <div class="mx-3">
-                        <h4 class="text-h6 mt-n1 mb-1">{{ checkIn.uid_user }}</h4>
-                        <div class="truncate-text text-subtitle-2 textSecondary">
-                          Motivo: {{ checkIn.entry_reason }}
+              <v-col v-if="loading" cols="12" class="text-center">
+                <v-progress-circular
+                  :size="200"
+                  :width="17"
+                  color="primary"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+              <v-col v-else>
+                <v-list>
+                  <v-list-item
+                    v-for="(checkIn, i) in checkInArray.slice(0, 8)" 
+                    :key="checkIn._id"
+                    @click="href"
+                  >
+                    <v-list-item-title>
+                      <div class="d-flex align-center py-3">
+                        <div class="mr-3">
                         </div>
-                        <div class="text-muted">Fecha de entrada: {{ new Date(checkIn.entry_date).toLocaleDateString() }}</div>
+                        <div class="mx-3">
+                          <h4 class="text-h6 mt-n1 mb-1">{{ checkIn.uid_user }}</h4>
+                          <div class="truncate-text text-subtitle-2 textSecondary">
+                            Motivo: {{ checkIn.entry_reason }}
+                          </div>
+                          <div class="text-muted">Fecha de entrada: {{ new Date(checkIn.entry_date).toLocaleDateString() }}</div>
+                        </div>
                       </div>
-                    </div>
-                  </v-list-item-title>
-                </v-list-item>
-              </v-list>
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-col>
             </div>
           </v-card-text>
         </VCard>

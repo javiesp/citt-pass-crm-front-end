@@ -14,11 +14,15 @@ export default defineComponent({
     ];
     const selectedInventory = ref(null);
     const showDetails = ref({});
-
+    const loading = ref(false);
     const fetchWishlists = async () => {
       try {
+        loading.value = true;
+        console.log('cargando', loading.value)
         const response = await getAllWishlists();
         wishlistArray.value = response.data;
+        loading.value = false;
+        console.log('descargando', loading.value)
       } catch (error) {
         console.error("Error fetching wishlists:", error);
       }
@@ -59,18 +63,21 @@ export default defineComponent({
   <br />
   <v-row class="month-table">
     <v-col cols="3">
-      <v-combobox
-        v-model="selectedInventory"
-        :items="inventoryNames"
-        label="Proyecto"
-        outlined
-        @change="selectInventoryId"
-      ></v-combobox>
-    </v-col>
-    <v-col cols="3">
-      <v-btn variant="tonal" color="primary" @click="downloadPdf"
-        >Generar archivo .csv</v-btn
-      >
+      <v-autocomplete
+        v-model="search"
+        class="mx-auto"
+        density="comfortable"
+        menu-icon=""
+        placeholder="Buscar wishlist"
+        prepend-inner-icon="mdi-magnify"
+        style="max-width: 350px"
+        theme="light"
+        variant="solo"
+        auto-select-first
+        item-props
+        hint="Nombre Wishlist"
+        rounded
+      ></v-autocomplete>
     </v-col>
     <v-col cols="6" class="text-right">
       <v-btn
@@ -85,7 +92,15 @@ export default defineComponent({
   
   <!-- Productos -->
   <v-row>
-    <v-col cols="3" v-for="(wishlist, index) in wishlistArray" :key="wishlist._id">
+    <v-col v-if="loading" cols="12" class="text-center">
+      <v-progress-circular
+        :size="200"
+        :width="17"
+        color="primary"
+        indeterminate
+      ></v-progress-circular>
+    </v-col>
+    <v-col v-else cols="3" v-for="(wishlist, index) in wishlistArray" :key="wishlist._id">
       <v-card class="mx-auto" max-width="344">
         <v-img height="200px" src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" cover></v-img>
         <v-card-title>{{ wishlist.wishlist_name }}</v-card-title>
@@ -99,11 +114,27 @@ export default defineComponent({
           <div v-show="showDetails[wishlist._id]">
             <v-divider></v-divider>
             <v-card-text>
-              <ul>
-                <li v-for="product in wishlist.product" :key="product._id">
-                  {{ product.product_name }} - Precio: {{ product.price }} - Cantidad: {{ product.quantity }}
-                </li>
-              </ul>
+              <v-list-item
+                v-for="product in wishlist.product"
+                :key="product._id"
+                :subtitle="product.price"
+                :title="product.product_name"
+              >
+                <template v-slot:prepend>
+                  <v-avatar color="grey-lighten-1">
+                    <v-icon color="white">mdi-shopping</v-icon>
+                  </v-avatar>
+                </template>
+
+                <template v-slot:append>
+                  <v-btn
+                    color="grey-lighten-1"
+                    icon="mdi-trash-can-outline"
+                    variant="text"
+                  ></v-btn>
+                </template>
+              </v-list-item>
+
             </v-card-text>
           </div>
         </v-expand-transition>

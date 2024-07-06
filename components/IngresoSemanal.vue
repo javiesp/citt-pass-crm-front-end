@@ -11,6 +11,12 @@
         // data table
         loading: false,
         itemsPerPage: 5,
+        rowsPerPageItems: [
+          { title: "5", value: 5 },
+          { title: "10", value: 10 },
+          { title: "25", value: 25 },
+          { title: "50", value: 50 },
+        ],
         headers: [
           { title: "UID", value: "uid_user" },
           { title: "Nombre", value: "name" },
@@ -170,52 +176,12 @@
         <!-- TABLA DE USUARIOS -->
         <v-col cols="12" sm="12">
         <UiChildCard title="Ingresos citt">
-            <!-- <v-table>
-            <thead>
-                <tr>
-                <th class="text-left">UID usuario</th>
-                <th class="text-left">Alumno</th>
-                <th class="text-left">Teléfono</th>
-                <th class="text-left">Email</th>
-                <th class="text-left">Id Proyecto</th>
-                <th class="text-left">Acción</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="user in usersArray" :key="user.uid_user">
-                <td>{{ user.uid_user }}</td>
-                <td>{{ user.name }}</td>
-                <td>{{ user.phone }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.project_id }}</td>
-                <td>
-                  <v-col>
-                    <v-btn
-                     class="margin-left" 
-                     color="primary" 
-                     icon 
-                     size="x-small" 
-                     flat>
-                     <IconEdit stroke={2} />
-                    </v-btn>
-                    <v-btn
-                     class="margin-left" 
-                     color="primary" 
-                     icon 
-                     size="x-small" 
-                     flat>
-                     <BellIcon stroke-width="1.5"  />
-                    </v-btn>
-                  </v-col>
-                </td>
-                </tr>
-            </tbody>
-            </v-table> -->
             <v-card :variant="variant" class="mx-auto">
               <v-divider />
               <v-col>
                 <v-data-table
                   v-model:items-per-page="itemsPerPage"
+                  :items-per-page-options="rowsPerPageItems"
                   :headers="headers"
                   :items="usersArray"
                   :loading="loading"
