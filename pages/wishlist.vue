@@ -79,15 +79,6 @@ export default defineComponent({
         rounded
       ></v-autocomplete>
     </v-col>
-    <v-col cols="6" class="text-right">
-      <v-btn
-        variant="tonal"
-        color="primary"
-        prepend-icon="mdi-folder-outline"
-        @click="dialog = true"
-        >Agregar Wish-List</v-btn
-      >
-    </v-col>
   </v-row>
   
   <!-- Productos -->

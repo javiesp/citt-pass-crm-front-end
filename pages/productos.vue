@@ -1,13 +1,14 @@
 <script>
 import { defineComponent } from "vue";
 import { getsbProducts } from "../api/integracionApi";
-import { getAllWishlists, updateWishlistProducts } from "../api/wishlistApi";
+import { getAllWishlists, updateWishlistProducts, createWishlist } from "../api/wishlistApi";
 
 export default defineComponent({
   data() {
     return {
       dialog: false,
       dialogWishlist: false,
+      dialogCreateWishlist: false,
       loading: false,
       productArray: [],
       productNames: [],
@@ -22,7 +23,14 @@ export default defineComponent({
       errorAlertVisible: false,
       loading: false,
       selectedWishlist: "", 
-      wishlistNameToIdMap: {} 
+      wishlistNameToIdMap: {},
+      post: {
+        wishlist_id: null,
+        wishlist_name: null, 
+        budget: null,
+        product: null
+      }, 
+      ProductDto: [],
     };
   },
   computed: {
@@ -50,8 +58,6 @@ export default defineComponent({
       } catch (error) {
         console.error("PRODUCT_ERROR:", error);
         this.errorAlertVisible = true;
-      } finally {
-        this.loading = false;
       }
     },
     async getWishlist() {
@@ -76,7 +82,7 @@ export default defineComponent({
         product_id: product.id,
         product_name: product.name,
         price: product.price,
-        quantity: 2
+        quantity: 1
       }
       this.selectedProducts = productos; 
       this.productsFor = this.selectedProducts
@@ -84,6 +90,25 @@ export default defineComponent({
       console.log('INPUT: ', product);
       this.dialogWishlist = true;
       console.log('OUTPUT: ',this.selectedWishlist,'/', this.selectedProducts); 
+    },
+    async createWishlist() {
+      const post = {
+        wishlist_id: Math.random(),
+        wishlist_name: this.post.wishlist_name, 
+        budget: 0,
+        product: this.ProductDto
+      }
+      try {
+        this.loading = true
+        const response = await createWishlist(post);
+        console.log('POST')
+        console.log(response);
+        this.loading = false
+        this.dialogCreateWishlist = false;
+      } catch (error) {
+        console.error("PRODUCT_ERROR:", error);
+        this.errorAlertVisible = true;
+      }
     },
     openCreateDialog() {
       this.dialog = true;
@@ -98,11 +123,13 @@ export default defineComponent({
       console.log(this.selectedProducts)
 
       try {
+        this.loading = true;
         const respose = await updateWishlistProducts(this.selectedWishlist, this.selectedProducts)
         console.log(respose)
         this.dialogWishlist = false; 
         this.selectedProducts = {};
         console.log('AGREGADO')
+        this.loading = false;
       } catch (error) {
         console.log(error)
       }
@@ -138,14 +165,15 @@ export default defineComponent({
         rounded
       ></v-autocomplete>
     </v-col>
-    <v-col cols="6" class="text-right">
+    <v-col cols="6">
       <v-btn
         variant="tonal"
         color="primary"
         prepend-icon="mdi-folder-outline"
-        @click="openCreateDialog"
-        >Ver wishlist</v-btn
+        @click="dialogCreateWishlist = true"
       >
+        Crear wishlist
+      </v-btn>
     </v-col>
     <v-col v-if="loading" cols="12" class="text-center">
       <v-progress-circular
@@ -228,8 +256,31 @@ export default defineComponent({
       </template>
   </v-dialog>
 
-
-
+    <!-- Dialogo para añadir inventario -->
+  <div class="pa-4 text-center">
+    <v-dialog v-model="dialogCreateWishlist" max-width="600">
+      <v-card prepend-icon="mdi-heart" title="Crear lista de deseos">
+        <!-- Campos de texto -->
+        <v-card-text>
+          <v-row dense>
+            <v-col cols="12" md="12" sm="6">
+              <v-text-field 
+                v-model="post.wishlist_name"
+                label="Nombre de la lista" 
+                required
+              ></v-text-field>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn text="Cerrar" variant="plain" @click="dialogCreateWishlist = false"></v-btn>
+          <v-btn color="primary" text="Crear" variant="tonal" @click="createWishlist"></v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
 
   <v-alert
     v-model="errorAlertVisible"
