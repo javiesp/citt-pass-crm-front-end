@@ -38,6 +38,9 @@ export default defineComponent({
       ProductDto: [],
       count: 0,
       totalPrice: 0,
+      productName: null,
+      productStock: null,
+      wihslistBudget: null
     };
   },
   computed: {
@@ -84,27 +87,44 @@ export default defineComponent({
       }
     },
     addProductToWishlist(product) {
-      console.log('HOLA');
+      console.log('HOLA', product);
       const productos = {
         product_id: product.id,
         product_name: product.name,
         price: product.price,
-        quantity: 1
+        quantity: this.count
       }
       this.selectedProducts = productos; 
-      this.productsFor = this.selectedProducts
-      console.log('tu wea',this.productsFor)
+      this.productName = this.selectedProducts.product_name;
+      this.productStock = product.stock;
       console.log('INPUT: ', product);
       this.dialogWishlist = true;
       console.log('OUTPUT: ',this.selectedWishlist,'/', this.selectedProducts); 
     },
     incrementCount() {
-      console.log('COUNT');
-      this.count++;
-      console.log('Contador:', this.count);
+      if (this.count < this.productStock) {
+        this.count++;
+        this.totalPrice += this.selectedProducts.price;
+        this.selectedProducts.quantity = this.count;
+        
+        console.log('Producto incrementado:', this.selectedProducts.name);
+        console.log('Contador actual:', this.count);
+        console.log('Precio Total:', this.totalPrice);
+      } else {
+        console.log('No se puede incrementar más, stock insuficiente');
+      }
+    },
 
-      this.totalPrice += this.selectedProducts.price;
-      console.log('Precio Total:', this.totalPrice);
+    decrementCount() {
+      if (this.count > 0) {
+        this.count--;
+        this.totalPrice -= this.selectedProducts.price;
+        console.log('Producto decrementado:', this.selectedProducts.name);
+        console.log('Contador actual:', this.count);
+        console.log('Precio Total:', this.totalPrice);
+      } else {
+        console.log('No se puede decrementar más, cantidad mínima alcanzada');
+      }
     },
     async createWishlist() {
       const post = {
@@ -132,39 +152,51 @@ export default defineComponent({
       this.dialogWishlist = false; 
     },
     async saveWishlistId() {
-      console.log('WISHLIST SELECCIONADA')
-      console.log(this.selectedWishlist)
-      console.log('PRODUCTOS SELECCIONADOS')
-      console.log(this.selectedProducts)
+      console.log('WISHLIST SELECCIONADA');
+      console.log(this.selectedWishlist);
+      console.log('PRODUCTOS SELECCIONADOS');
+      console.log(this.selectedProducts);
 
       try {
         this.loading = true;
-        const respose = await updateWishlistProducts(this.selectedWishlist, this.selectedProducts)
-        console.log(respose)
-        this.dialogWishlist = false; 
+
+        // Buscar la wishlist seleccionada en el array
+        const selectedWishlistObj = this.wishlistArray.find(wishlist => wishlist._id === this.selectedWishlist);
+
+        if (!selectedWishlistObj) {
+          throw new Error("Wishlist no encontrada");
+        }
+
+        const currentBudget = selectedWishlistObj.budget || 0;
+        console.log("Presupuesto actual", currentBudget);
+
+        // Primero, actualiza los productos de la wishlist
+        const response1 = await updateWishlistProducts(this.selectedWishlist, this.selectedProducts);
+        console.log(response1);
+
+        // Luego, actualiza el presupuesto de la wishlist
+        const finalBudget = currentBudget + this.totalPrice;
+        console.log("Presupuesto final", finalBudget);
+
+        const put = {
+          budget: finalBudget
+        };
+
+        const response2 = await updateWishlist(this.selectedWishlist, put);
+        console.log('PUT');
+        console.log(response2);
+
+        this.dialogWishlist = false;
         this.selectedProducts = {};
-        console.log('AGREGADO')
+        console.log('AGREGADO');
         this.loading = false;
       } catch (error) {
-        console.log(error)
+        console.log(error);
+        this.loading = false;
       }
-
-      this.updateWishlist();
-      console.log('PASS')
-    },
-    async updateWishlist() {
-      console.log('PRECIO', this.totalPrice);
-      const put = {
-        budget: this.totalPrice
-      };
-      try {
-        const updateResponse = await updateWishlist(this.selectedWishlist, put);
-        console.log('PUT');
-        console.log(updateResponse);
-      } catch (error) {
-        console.log(error)
-      }
+      console.log('PASS');
     }
+
   },
   mounted() {
     this.getProduct(); 
@@ -246,8 +278,8 @@ export default defineComponent({
           <v-card-text>
             <v-list-item
                 :subtitle="precio"
-                :title="nombre"
               >
+                <v-list-item-title>{{ productName }}</v-list-item-title>
                 <template v-slot:prepend>
                   <v-avatar color="grey-lighten-1">
                     <v-icon color="white">mdi-shopping</v-icon>
@@ -257,8 +289,8 @@ export default defineComponent({
                 <template v-slot:append>
                   <v-col>
                     <v-row>
-                      <v-btn rounded>-</v-btn>
-                      <v-btn rounded @click="incrementCount">+</v-btn>
+                      <v-btn density="compact" icon="mdi-minus" @click="decrementCount"></v-btn>
+                      <v-btn density="compact" icon="mdi-plus" @click="incrementCount"></v-btn>
                     </v-row>
                   </v-col>
                 </template>
@@ -281,7 +313,7 @@ export default defineComponent({
           </v-card-text>
           <v-card-actions>
             <v-btn @click="closeCreateDialog">Cerrar</v-btn>
-            <v-btn @click="saveWishlistId">Guardar</v-btn> <!-- Botón de guardar -->
+            <v-btn color="primary" @click="saveWishlistId">Guardar</v-btn> <!-- Botón de guardar -->
           </v-card-actions>
         </v-card>
       </template>

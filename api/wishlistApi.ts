@@ -36,7 +36,10 @@ export const updateWishlistProducts = (id: any, updateProductDto?: any) => {
 };
 
 export const updateWishlist = (id: any, updateWishListDto?: any) => {
-    return diffusion.put('/wish-list/update-wishList-product/' + id, updateWishListDto);
+    console.log("wihslist")
+    console.log(updateWishListDto)
+    console.log(updateWishListDto.budget)
+    return diffusion.put('/wish-list/update-wishList-type/' + id, updateWishListDto);
 };
 
 export const createWishlist = (createWishListDto?: any) => {
