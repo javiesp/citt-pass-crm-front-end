@@ -24,8 +24,10 @@ export default {
       console.log("INICIANDO SESION");
       console.log(this.loginDto);
 
-      if (!this.loginDto.email && !this.loginDto.hashed_password)
+      if (!this.loginDto.email && !this.loginDto.hashed_password) {
+        this.loading = false;
         return (this.dialog = true);
+      }
       console.log(this.dialog);
 
       try {
@@ -47,6 +49,7 @@ export default {
       } catch (error) {
         console.error("Error al obtener Inventarios:", error);
         this.dialogError = true;
+        
       } finally {
         this.loading = false;
       }
