@@ -45,3 +45,8 @@ export const getCheckInByDateRange = async (startDate: string, endDate: string) 
         throw error; 
     }
 };
+
+export const createProject = (createCheckInDto?: any) => {
+    console.log(createCheckInDto);
+    return diffusion.post('/check-in/create-check-in', createCheckInDto );
+};

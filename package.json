@@ -12,16 +12,20 @@
     "nuxt": "3.7.4"
   },
   "dependencies": {
+    "@date-io/dayjs": "^3.0.0",
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@mdi/font": "^6.5.95",
     "@nuxt/vite-builder": "^3.7.4",
+    "@syncfusion/ej2-vue-calendars": "^26.1.40",
     "@tabler/icons-vue": "^3.3.0",
     "apexcharts": "3.36.3",
     "axios": "^1.6.8",
+    "dayjs": "^1.11.11",
     "sass": "^1.49.9",
     "vue": "3.3.4",
     "vue-tabler-icons": "2.9.0",
+    "vue2-datepicker": "^3.11.1",
     "vue3-apexcharts": "1.4.1",
     "vue3-perfect-scrollbar": "1.6.0",
     "vuetify": "3.3.19"

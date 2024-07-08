@@ -3,6 +3,8 @@
     import { defineComponent } from 'vue'; 
     import { getAllUsers, getAllUsersById } from '../api/userApi.ts';
     import { getAllProjects } from '../api/projectApi.ts';
+    import { createProject } from "../api/checkInApi";
+
 
     console.log("")
     export default defineComponent({
@@ -24,6 +26,7 @@
           { title: "Teléfono", value: "phone" },
           { title: "ID Proyecto", value: "proyect_id" },
           { title: "Acciones", value: "actions" },
+          { title: "Lista", value: "checkin" },
         ],
         // VARAIBLES DESCARGA PDF
         name: 'DownloadPdfButton',
@@ -39,6 +42,7 @@
         },
         // VARIEABLES 
         dialog: false,
+        dialogCheckin: false,  
         usersArray: [],
         projectArray: [],
         projectsNames: [],
@@ -50,14 +54,8 @@
         userRole: ['Admin citt', 'Profesor', 'Alumno', 'CIA', 'MMT'],
         uidUser: ['OIUUYFASD', 'ASDIUAD908', '908DKJHAS'],
         loading: false, 
-        // headers: [
-        //     { title: "UID User", key: "uid_user" },
-        //     { title: "Nombre", key: "name"},
-        //     //{ title: "Email", key: "email", sortable: false },
-        //     { title: "Phone", key: "phone"},
-        //     //{ title: "Run", key: "run", sortable: false },
-        //     { title: "Proyecto", key: "project_id" },
-        // ],
+        userId: null,
+        entryReason: null,
         };
     },
     methods: {
@@ -87,6 +85,30 @@
             console.error('Error al obtener proyectos:', error);
           } finally {
             this.loading = false;
+          }
+        },
+        async editItem(item) {
+          this.dialogCheckin = true;
+          this.userId = item.uid_user;
+          console.log(this.userId);
+        },
+        async createCheckIn() {
+          console.log('CREATE CHECKIN')
+          const post = {
+            uid_user: this.userId,
+            entry_date: null,
+            entry_reason: this.entryReason,
+            times_entered: null
+          }; 
+          try {
+            this.loading = true;
+            const response = await createProject(post);
+            console.log(response);
+            console.log('REGISTRADO');
+            this.loading = false;
+            this.dialogCheckin = false;
+          } catch (error) {
+            console.log(error)
           }
         },
         async selectProjectId() {
@@ -194,6 +216,11 @@
                       <v-icon>mdi-delete</v-icon>
                     </v-btn>
                   </template>
+                  <template v-slot:item.checkin="{ item }">
+                    <v-btn class="ml-2" color="primary" flat @click="editItem(item)">
+                      Ingresar
+                    </v-btn>
+                  </template>
                 </v-data-table>
               </v-col>
             </v-card>
@@ -201,6 +228,25 @@
         </v-col>
     </v-row>
 
+    <!-- dialog ingreso -->
+    <v-dialog v-model="dialogCheckin" max-width="600">
+      <v-card>
+        <v-card-title>Registrar ingreso citt</v-card-title>
+        <v-card-text>
+          <v-row>
+            <v-col>
+              <v-textarea v-model="entryReason" label="Motivo"></v-textarea>
+            </v-col>
+          </v-row>
+          <v-btn class="ml-2" flat @click="dialogCheckin = false">
+            cancelar
+          </v-btn>
+          <v-btn class="ml-2" color="primary" flat @click="createCheckIn">
+            Registrar
+          </v-btn>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
     <!-- ABRIR DIALOG -->
     <div class="pa-4 text-center">
     <v-dialog
@@ -345,37 +391,3 @@
     </v-dialog>
   </div>
 </template>
-
-
-
-
-
-
-<!-- <template>
-    <v-card>
-      <v-card-title class="text-h6 text-md-h5 text-lg-h4">Gestor de usuarios</v-card-title>
-      <v-divider />
-      <v-card-text class="pa-0">
-        <v-data-table-server
-          :headers="headers"
-          :items="usersArray"
-          :loading="loading"
-          :items-length="totalRows"
-        >
-          <template v-slot:item.actions="{ item }">
-            <v-row justify="space-between">
-              <v-btn color="black" icon variant="text" @click="editItem(item)">
-                <v-icon>mdi-pencil-outline</v-icon>
-              </v-btn>
-              <v-btn color="black" icon variant="text" @click="update(item)">
-                <v-icon>mdi-key</v-icon>
-              </v-btn>
-              <v-btn color="black" icon variant="text" @click="deleteItem(item)">
-                <v-icon>mdi-delete</v-icon>
-              </v-btn>
-            </v-row>
-          </template>
-        </v-data-table-server>
-      </v-card-text>
-    </v-card>
-</template> -->
