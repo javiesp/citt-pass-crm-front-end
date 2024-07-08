@@ -3,6 +3,8 @@ import { onMounted, ref, computed } from "vue";
 import { getAllcheckIn } from "../api/checkInApi";
 import img1 from "/images/profile/1.jpg";
 
+const checkInHeader = ['Fecha de entrada', 'Motivo'];
+
 const checkInData = ref([]);
 const checkInArray = ref([]);
 const elementVisible = ref(false);
@@ -12,7 +14,7 @@ const fetchCheckIn = async () => {
   try {
     loading.value = true;
     const response = await getAllcheckIn();
-    checkInArray.value = response.data; // Aquí mapeas la respuesta de tu api
+    checkInArray.value = response.data;
     console.log("CHECK IN");
     console.log(checkInArray.value);
     loading.value = false;
@@ -20,6 +22,30 @@ const fetchCheckIn = async () => {
     console.error(error);
   }
 };
+
+function saveFile(blob: any, fname: any) {
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = fname + '.csv';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+function createCsv() {
+  const arrayValue = checkInArray.value;
+  let cvsContent = "id,uid_user,entry_date,entry_reason,times_entered";
+
+  checkInArray.value.forEach((checkin) => {
+    let row = checkin._id + "," + checkin.uid_user + ","  + checkin.entry_date + ","  + checkin.entry_reason + ","  + checkin.times_entered + "\n"  
+    cvsContent += row
+  });
+
+  var data = new Blob([cvsContent], {type: 'text/csv'});
+
+  const todayDate = "ingresos_citt_" + Date.now();   
+  saveFile(data, todayDate)
+}
 
 onMounted(fetchCheckIn);
 
@@ -130,6 +156,7 @@ function href() {
 
       <!-- Ultimos ingresos al citt -->
       <v-col cols="4">
+        <v-btn @click="createCsv"  variant="tonal" color="primary">Descargar ingresos</v-btn>
         <VCard elevation="10" class="overflow-hidden">
           <v-card-text class="pa-0">
             <div class="bg-primary pa-5">
@@ -137,14 +164,10 @@ function href() {
                 <v-col>
                   <v-date-picker></v-date-picker>
                 </v-col>
-                <v-col>
-                  <v-date-picker></v-date-picker>
-                </v-col>
               </v-row>
               <h2 class="text-h5 mb-1">Últimos ingresos</h2>
               <h5 class="text-subtitle-1">Ingresos diarios</h5>
             </div>
-
             <div class="pa-4">
               <v-col v-if="loading" cols="12" class="text-center">
                 <v-progress-circular
