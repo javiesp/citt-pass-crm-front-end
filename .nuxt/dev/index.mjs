@@ -1041,13 +1041,6 @@ const assets = {
     "size": 24600,
     "path": "../../.output/public/images/products/payment.svg"
   },
-  "/images/svgs/sidebar-buynow-bg.svg": {
-    "type": "image/svg+xml",
-    "etag": "\"6907-WEobvLeSUI1MCWppxaNjEJqRJOY\"",
-    "mtime": "2024-06-03T02:13:53.066Z",
-    "size": 26887,
-    "path": "../../.output/public/images/svgs/sidebar-buynow-bg.svg"
-  },
   "/images/profile/1.jpg": {
     "type": "image/jpeg",
     "etag": "\"1b35-dwWyYdJSMK6TyL+TquzoPikw/34\"",
@@ -1187,6 +1180,13 @@ const assets = {
     "mtime": "2024-06-03T02:13:53.066Z",
     "size": 2196,
     "path": "../../.output/public/images/profile/user2.jpg"
+  },
+  "/images/svgs/sidebar-buynow-bg.svg": {
+    "type": "image/svg+xml",
+    "etag": "\"6907-WEobvLeSUI1MCWppxaNjEJqRJOY\"",
+    "mtime": "2024-06-03T02:13:53.066Z",
+    "size": 26887,
+    "path": "../../.output/public/images/svgs/sidebar-buynow-bg.svg"
   }
 };
 
