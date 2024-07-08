@@ -43,7 +43,7 @@ export default {
         localStorage.setItem("accessToken", accessToken);
 
         console.log(loginResponse);
-        this.$router.push("/");
+        this.$router.push("/gestoringreso");
       } catch (error) {
         console.error("Error al obtener Inventarios:", error);
         this.dialogError = true;
