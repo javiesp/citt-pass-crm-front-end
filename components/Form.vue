@@ -82,7 +82,15 @@ export default {
                   Inicia sesión con tu cuenta para continuar
                 </h6>
                 <v-row align="center" justify="center">
-                  <v-col cols="12" sm="8">
+                  <v-col v-if="loading" cols="12" class="text-center">
+                    <v-progress-circular
+                      :size="100"
+                      :width="10"
+                      color="primary"
+                      indeterminate
+                    ></v-progress-circular>
+                  </v-col>
+                  <v-col v-else cols="12" sm="8">
                     <v-text-field
                       v-model="loginDto.email"
                       label="Email"
