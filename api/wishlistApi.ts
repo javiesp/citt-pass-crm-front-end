@@ -5,7 +5,7 @@ axios.defaults.validateStatus = function (status) {
 };
 
 const diffusion = axios.create({
-    baseURL: 'https://citt-pass-api-gateaway-backend-production.up.railway.app',
+    baseURL: 'http://localhost:3005',
     timeout: 100000,
 });
 
@@ -33,6 +33,10 @@ export const getAllWishlists = () => {
 export const updateWishlistProducts = (id: any, updateProductDto?: any) => {
     console.log('Datos enviados a la API:', updateProductDto);
     return diffusion.put('/wish-list/update-wishList-product/' + id, updateProductDto);
+};
+
+export const updateWishlist = (id: any, updateWishListDto?: any) => {
+    return diffusion.put('/wish-list/update-wishList-product/' + id, updateWishListDto);
 };
 
 export const createWishlist = (createWishListDto?: any) => {

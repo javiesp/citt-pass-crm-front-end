@@ -1,7 +1,12 @@
 <script>
 import { defineComponent } from "vue";
 import { getsbProducts } from "../api/integracionApi";
-import { getAllWishlists, updateWishlistProducts, createWishlist } from "../api/wishlistApi";
+import { 
+  getAllWishlists, 
+  updateWishlistProducts, 
+  createWishlist,
+  updateWishlist
+} from "../api/wishlistApi";
 
 export default defineComponent({
   data() {
@@ -31,6 +36,8 @@ export default defineComponent({
         product: null
       }, 
       ProductDto: [],
+      count: 0,
+      totalPrice: 0,
     };
   },
   computed: {
@@ -91,13 +98,21 @@ export default defineComponent({
       this.dialogWishlist = true;
       console.log('OUTPUT: ',this.selectedWishlist,'/', this.selectedProducts); 
     },
+    incrementCount() {
+      console.log('COUNT');
+      this.count++;
+      console.log('Contador:', this.count);
+
+      this.totalPrice += this.selectedProducts.price;
+      console.log('Precio Total:', this.totalPrice);
+    },
     async createWishlist() {
       const post = {
         wishlist_id: Math.random(),
         wishlist_name: this.post.wishlist_name, 
         budget: 0,
         product: this.ProductDto
-      }
+      };
       try {
         this.loading = true
         const response = await createWishlist(post);
@@ -133,7 +148,23 @@ export default defineComponent({
       } catch (error) {
         console.log(error)
       }
+
+      this.updateWishlist();
+      console.log('PASS')
     },
+    async updateWishlist() {
+      console.log('PRECIO', this.totalPrice);
+      const put = {
+        budget: this.totalPrice
+      };
+      try {
+        const updateResponse = await updateWishlist(this.selectedWishlist, put);
+        console.log('PUT');
+        console.log(updateResponse);
+      } catch (error) {
+        console.log(error)
+      }
+    }
   },
   mounted() {
     this.getProduct(); 
@@ -226,15 +257,15 @@ export default defineComponent({
                 <template v-slot:append>
                   <v-col>
                     <v-row>
-                      <v-btn rounded>+</v-btn>
                       <v-btn rounded>-</v-btn>
+                      <v-btn rounded @click="incrementCount">+</v-btn>
                     </v-row>
                   </v-col>
                 </template>
             </v-list-item>
             <v-col>
               <v-text>
-                Total: 1234234
+                Total: {{ totalPrice }}
               </v-text>
             </v-col>
             <v-col>
