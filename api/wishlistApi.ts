@@ -37,4 +37,9 @@ export const updateWishlistProducts = (id: any, updateProductDto?: any) => {
 
 export const createWishlist = (createWishListDto?: any) => {
     return diffusion.post('/wish-list/create-wishList-type', createWishListDto );
-  };
+};
+
+export const deleteWishlist = (id: any) => {
+    return diffusion.delete('/wish-list/delete-wishList-type/'+id);
+};
+  

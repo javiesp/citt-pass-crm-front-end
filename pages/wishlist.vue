@@ -1,61 +1,68 @@
 <script>
-import { defineComponent, ref, onMounted } from "vue";
-import { getAllWishlists } from "../api/wishlistApi";
+import { getAllWishlists, deleteWishlist } from "../api/wishlistApi";
 
-export default defineComponent({
+export default {
   name: "WishlistCard",
-  setup() {
-    const dialog = ref(false);
-    const wishlistArray = ref([]);
-    const inventoryNames = [
-      "Inventario Alpha",
-      "Inventario Beta",
-      "Inventario Gamma",
-    ];
-    const selectedInventory = ref(null);
-    const showDetails = ref({});
-    const loading = ref(false);
-    const fetchWishlists = async () => {
+  data() {
+    return {
+      dialogDelete: false,
+      dialog: false,
+      wishlistArray: [],
+      inventoryNames: [
+        "Inventario Alpha",
+        "Inventario Beta",
+        "Inventario Gamma",
+      ],
+      selectedInventory: null,
+      showDetails: {},
+      wishlistId: null,
+      loading: false,
+    };
+  },
+  methods: {
+    async fetchWishlists() {
       try {
-        loading.value = true;
-        console.log('cargando', loading.value)
+        this.loading = true;
+        console.log("cargando", this.loading);
         const response = await getAllWishlists();
-        wishlistArray.value = response.data;
-        loading.value = false;
-        console.log('descargando', loading.value)
+        this.wishlistArray = response.data;
+        this.loading = false;
+        console.log("descargando", this.loading);
       } catch (error) {
         console.error("Error fetching wishlists:", error);
       }
-    };
-
-    const selectInventoryId = () => {
-      console.log("Selected Inventory:", selectedInventory.value);
-    };
-
-    const downloadPdf = () => {
+    },
+    openDelete(item) {
+      console.log("ITEM");
+      console.log(item);
+      this.wishlistId = item;
+      this.dialogDelete = true;
+    },
+    async deleteWishlist() {
+      try {
+        const response = deleteWishlist(this.wishlistId);
+        console.log('DELETED', this.wishlistId);
+        console.log(response);
+        this.dialogDelete = false;
+        this.fetchWishlists();
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    selectInventoryId() {
+      console.log("Selected Inventory:", this.selectedInventory);
+    },
+    downloadPdf() {
       console.log("Download PDF");
-    };
-
-    const toggleDetails = (wishlistId) => {
-      showDetails.value[wishlistId] = !showDetails.value[wishlistId];
-    };
-
-    onMounted(() => {
-      fetchWishlists();
-    });
-
-    return {
-      dialog,
-      wishlistArray,
-      inventoryNames,
-      selectedInventory,
-      showDetails,
-      selectInventoryId,
-      downloadPdf,
-      toggleDetails,
-    };
+    },
+    toggleDetails(wishlistId) {
+      this.showDetails[wishlistId] = !this.showDetails[wishlistId];
+    },
   },
-});
+  mounted() {
+    this.fetchWishlists();
+  },
+};
 </script>
 
 <template>
@@ -80,7 +87,7 @@ export default defineComponent({
       ></v-autocomplete>
     </v-col>
   </v-row>
-  
+
   <!-- Productos -->
   <v-row>
     <v-col v-if="loading" cols="12" class="text-center">
@@ -91,15 +98,31 @@ export default defineComponent({
         indeterminate
       ></v-progress-circular>
     </v-col>
-    <v-col v-else cols="3" v-for="(wishlist, index) in wishlistArray" :key="wishlist._id">
+    <v-col
+      v-else
+      cols="3"
+      v-for="(wishlist, index) in wishlistArray"
+      :key="wishlist._id"
+    >
       <v-card class="mx-auto" max-width="344">
-        <v-img height="200px" src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" cover></v-img>
+        <v-img
+          height="200px"
+          src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+          cover
+        ></v-img>
         <v-card-title>{{ wishlist.wishlist_name }}</v-card-title>
         <v-card-subtitle>Presupuesto: {{ wishlist.budget }}</v-card-subtitle>
         <v-card-actions>
-          <v-btn color="orange-lighten-2" @click="toggleDetails(wishlist._id)">Ver Productos</v-btn>
+          <v-btn color="orange-lighten-2" @click="toggleDetails(wishlist._id)"
+            >Ver Productos</v-btn
+          >
           <v-spacer></v-spacer>
-          <v-btn :icon="showDetails[wishlist._id] ? 'mdi-chevron-up' : 'mdi-chevron-down'" @click="toggleDetails(wishlist._id)"></v-btn>
+          <v-btn
+            :icon="
+              showDetails[wishlist._id] ? 'mdi-chevron-up' : 'mdi-chevron-down'
+            "
+            @click="toggleDetails(wishlist._id)"
+          ></v-btn>
         </v-card-actions>
         <v-expand-transition>
           <div v-show="showDetails[wishlist._id]">
@@ -122,17 +145,17 @@ export default defineComponent({
                     color="grey-lighten-1"
                     icon="mdi-trash-can-outline"
                     variant="text"
+                    click="dialogDelete = true"
                   ></v-btn>
                 </template>
               </v-list-item>
-
             </v-card-text>
           </div>
         </v-expand-transition>
         <v-col>
-          <v-btn 
-            @click="openModal" 
-            color="red" 
+          <v-btn
+            @click="openDelete(wishlist._id)"
+            color="red"
             density="compact"
           >
             <v-icon>mdi-trash-can-outline</v-icon>
@@ -142,21 +165,19 @@ export default defineComponent({
     </v-col>
   </v-row>
 
-  <v-dialog v-model="modalOpen" persistent max-width="500px">
-        <v-card>
-          <v-card-title>
-            <span>Confirmar Eliminación</span>
-          </v-card-title>
-          <v-card-text>
-            ¿Estás seguro de que deseas eliminar esto?
-          </v-card-text>
-          <v-card-actions>
-            <v-btn color="red" @click="confirmDeletion">Eliminar</v-btn>
-            <v-btn @click="closeModal">Cancelar</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-  
+  <v-dialog v-model="dialogDelete" persistent max-width="500px">
+    <v-card>
+      <v-card-title>
+        <span>Confirmar Eliminación</span>
+      </v-card-title>
+      <v-card-text> ¿Estás seguro de que deseas eliminar esto? </v-card-text>
+      <v-card-actions>
+        <v-btn @click="dialogDelete = false">Cancelar</v-btn>
+        <v-btn color="red" @click="deleteWishlist">Eliminar</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   <!-- Dialogo para añadir inventario -->
   <div class="pa-4 text-center">
     <v-dialog v-model="dialog" max-width="600">
@@ -182,7 +203,12 @@ export default defineComponent({
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn text="Close" variant="plain" @click="dialog = false"></v-btn>
-          <v-btn color="primary" text="Save" variant="tonal" @click="dialog = false"></v-btn>
+          <v-btn
+            color="primary"
+            text="Save"
+            variant="tonal"
+            @click="dialog = false"
+          ></v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
