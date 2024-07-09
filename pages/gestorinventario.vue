@@ -33,6 +33,7 @@ export default defineComponent({
       ],
       // variables
       dialog: false,
+      dialogRack: true,
       inventoryArray: [],
       inventoryNames: [],
       rackIds: [],
@@ -46,6 +47,7 @@ export default defineComponent({
       dialogUpdateVisible: false,
       alertVisible: false,
       errorAlertVisible: false,
+      selectedItem: {},
       objectDto: {
         inventory_id: null,
         inventory_name: "",
@@ -191,6 +193,20 @@ export default defineComponent({
         this.errorAlertVisible = true;
       }
     },
+    async selectProject() {
+      console.log("SELECTED")
+      console.log(this.selectedItem)
+      try {
+        this.loading = true;
+        const response = await getInventoryByRackId(this.selectedItem);
+        console.log(response);
+        this.inventoryArray = response.data;
+        this.loading = false;
+        this.dialogRack = false;
+      } catch (error) {
+        console.error(error);
+      }
+    },
     openCreateDialog() {
       this.dialog = true;
     },
@@ -212,15 +228,6 @@ export default defineComponent({
 
   <v-row class="month-table">
     <v-col cols="3">
-      <!-- aca no va mostrar el nombre, ya que le estoy pasando el objeto, necesito mostrar el nombre -->
-      <v-select
-        v-model="rackId"
-        label="Rack Nombre"
-        :items="rackNames"
-        item-value="_id"
-      ></v-select>
-    </v-col>
-    <v-col cols="3">
       <v-text-field
         v-model="search"
         class="mx-auto"
@@ -237,11 +244,6 @@ export default defineComponent({
       ></v-text-field>
     </v-col>
     <v-col cols="3">
-      <v-btn variant="tonal" color="primary" @click="downloadPdf"
-        >Generar archivo .csv</v-btn
-      >
-    </v-col>
-    <v-col cols="3" class="text-right">
       <v-btn
         variant="tonal"
         color="primary"
@@ -397,4 +399,36 @@ export default defineComponent({
   >
     Oops! Ha ocurrido un problema.
   </v-alert>
+
+  <v-dialog v-model="dialogRack" persistent width="600">
+      <v-card>
+        <v-card-title>
+          <span class="my-letra">Rack</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12">
+                <v-autocomplete 
+                  v-model="selectedItem"
+                  label="Selecciona un rack..." 
+                  :items="rackArray" 
+                  item-value="rack_id"
+                  item-title="rack_name"
+                  variant="underlined"
+                  @change="selectItem"
+                ></v-autocomplete>
+                <p class="letra-abajo">Es necesario que seleccione su grupo para poder gestionar</p>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" :rounded="true" elevation="2" variant="text" @click="selectProject">
+            Login
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 </template>

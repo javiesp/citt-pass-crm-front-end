@@ -34,8 +34,8 @@ export const searchInventoryByName = (inventory_name?: any) => {
     return diffusion.get("/inventory-management/find-one-inventory", { params: { inventory_name: inventory_name } })
 };
 
-export const getInventoryByRackId = (rack_id?: any) => {
-  return diffusion.get("/inventory-management/get-inventory-by-rack-id", { params: { rack_id: rack_id } })
+export const getInventoryByRackId = (rack_id: any) => {
+  return diffusion.get("/inventory-management/find-inventory-by-rack-id", { params: { "rack_id": rack_id } })
 };
 
 export const deleteInventory = (id: any) => {

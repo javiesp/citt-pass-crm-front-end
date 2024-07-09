@@ -147,8 +147,9 @@ export default defineComponent({
       }
     },
     openDeleteDialog(projectId) {
-      this.projectId = projectId;
+      this.projectId = projectId._id;
       this.dialogVisible = true;
+      console.log('MIRA ACA')
       console.log(this.projectId);
     },
     closeDeleteDialog() {
@@ -225,14 +226,6 @@ export default defineComponent({
 
   <v-row class="month-table">
     <v-col cols="3">
-      <v-combobox
-        v-model="searchQuery"
-        :items="projectsNamesArray"
-        label="Proyecto"
-        outlined
-      ></v-combobox>
-    </v-col>
-    <v-col cols="3">
       <v-text-field
         v-model="search"
         class="mx-auto"
@@ -249,11 +242,6 @@ export default defineComponent({
       ></v-text-field>
     </v-col>
     <v-col cols="3">
-      <v-btn variant="tonal" color="primary" @click="downloadPdf"
-        >Generar archivo .csv</v-btn
-      >
-    </v-col>
-    <v-col cols="3" class="text-right">
       <v-btn
         variant="tonal"
         color="primary"

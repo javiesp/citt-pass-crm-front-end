@@ -93,27 +93,6 @@ export default {
 <template>
   <h2>Lista de deseos</h2>
   <br />
-  <v-row class="month-table">
-    <v-col cols="3">
-      <v-autocomplete
-        :items="wishNames"
-        item-value="wishlist_name"
-        class="mx-auto"
-        density="comfortable"
-        menu-icon=""
-        placeholder="Buscar Producto"
-        prepend-inner-icon="mdi-magnify"
-        style="max-width: 350px"
-        theme="light"
-        variant="solo"
-        auto-select-first
-        v-model="productSearchQuery"
-        hint="Escriba para buscar"
-        rounded
-      ></v-autocomplete>
-    </v-col>
-  </v-row>
-
   <!-- Productos -->
   <v-row>
     <v-col v-if="loading" cols="12" class="text-center">

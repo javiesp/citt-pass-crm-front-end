@@ -205,6 +205,7 @@ export default defineComponent({
     resetFields() {
       this.totalPrice = 0;
       this.count = 0;
+      this.post.wishlist_name = '';
     }
   },
   mounted() {
