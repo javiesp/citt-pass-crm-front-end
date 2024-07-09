@@ -27,6 +27,7 @@ export default defineComponent({
       alertVisible: false,
       errorAlertVisible: false,
       loading: false,
+      isDisabled: true,
       selectedWishlist: "", 
       wishlistNameToIdMap: {},
       post: {
@@ -100,21 +101,24 @@ export default defineComponent({
       console.log('INPUT: ', product);
       this.dialogWishlist = true;
       console.log('OUTPUT: ',this.selectedWishlist,'/', this.selectedProducts); 
+      this.isDisabled = false
     },
     incrementCount() {
-      if (this.count < this.productStock) {
-        this.count++;
-        this.totalPrice += this.selectedProducts.price;
-        this.selectedProducts.quantity = this.count;
-        
-        console.log('Producto incrementado:', this.selectedProducts.name);
-        console.log('Contador actual:', this.count);
-        console.log('Precio Total:', this.totalPrice);
-      } else {
-        console.log('No se puede incrementar más, stock insuficiente');
-      }
-    },
 
+        this.isDisabled = true;
+        if (this.count < this.productStock) {
+          this.count++;
+          this.totalPrice += this.selectedProducts.price;
+          this.selectedProducts.quantity = this.count;
+          
+          console.log('Producto incrementado:', this.selectedProducts.name);
+          console.log('Contador actual:', this.count);
+          console.log('Precio Total:', this.totalPrice);
+        } else {
+          console.log('No se puede incrementar más, stock insuficiente');
+        }
+
+    },
     decrementCount() {
       if (this.count > 0) {
         this.count--;
@@ -123,6 +127,7 @@ export default defineComponent({
         console.log('Contador actual:', this.count);
         console.log('Precio Total:', this.totalPrice);
       } else {
+        this.isDisabled = false
         console.log('No se puede decrementar más, cantidad mínima alcanzada');
       }
     },
@@ -195,8 +200,12 @@ export default defineComponent({
         this.loading = false;
       }
       console.log('PASS');
+      this.resetFields();
+    },
+    resetFields() {
+      this.totalPrice = 0;
+      this.count = 0;
     }
-
   },
   mounted() {
     this.getProduct(); 
@@ -307,13 +316,14 @@ export default defineComponent({
                 v-model="selectedWishlist"
                 item-value="_id"
                 item-title="wishlist_name"
+                :disabled="!isDisabled"
                 dense
               ></v-select>
             </v-col>
           </v-card-text>
           <v-card-actions>
             <v-btn @click="closeCreateDialog">Cerrar</v-btn>
-            <v-btn color="primary" @click="saveWishlistId">Guardar</v-btn> <!-- Botón de guardar -->
+            <v-btn color="primary" :disabled="!isDisabled" @click="saveWishlistId">Guardar</v-btn> <!-- Botón de guardar -->
           </v-card-actions>
         </v-card>
       </template>

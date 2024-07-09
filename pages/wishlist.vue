@@ -17,7 +17,26 @@ export default {
       showDetails: {},
       wishlistId: null,
       loading: false,
+      productSearchQuery: '',
+      wishNames: []
     };
+  },
+  computed: {
+    filteredProducts() {
+      console.log('INPUT: ', this.productSearchQuery);
+      if (!this.productSearchQuery) {
+        console.log('OUTPUT: ', this.wishlistArray);
+        return this.wishlistArray;
+      }
+      return this.wishlistArray.map((wishlist) => {
+        return {
+          ...wishlist,
+          products: wishlist.products.filter((product) =>
+            product.name.toLowerCase().includes(this.productSearchQuery.toLowerCase())
+          ),
+        };
+      }).filter(wishlist => wishlist.products.length > 0);
+    },
   },
   methods: {
     async fetchWishlists() {
@@ -26,10 +45,16 @@ export default {
         console.log("cargando", this.loading);
         const response = await getAllWishlists();
         this.wishlistArray = response.data;
+        this.wishlistNameToIdMap = this.wishlistArray.reduce((map, wishlist) => {
+          map[wishlist.wishlist_name] = wishlist.wishlist_id; 
+          return map;
+        }, {});
+        this.wishNames = this.wishlistArray.map((wishlist) => wishlist.wishlist_name);
         this.loading = false;
         console.log("descargando", this.loading);
       } catch (error) {
         console.error("Error fetching wishlists:", error);
+        this.loading = false; // Ensure loading is set to false on error as well
       }
     },
     openDelete(item) {
@@ -71,18 +96,19 @@ export default {
   <v-row class="month-table">
     <v-col cols="3">
       <v-autocomplete
-        v-model="search"
+        :items="wishNames"
+        item-value="wishlist_name"
         class="mx-auto"
         density="comfortable"
         menu-icon=""
-        placeholder="Buscar wishlist"
+        placeholder="Buscar Producto"
         prepend-inner-icon="mdi-magnify"
         style="max-width: 350px"
         theme="light"
         variant="solo"
         auto-select-first
-        item-props
-        hint="Nombre Wishlist"
+        v-model="productSearchQuery"
+        hint="Escriba para buscar"
         rounded
       ></v-autocomplete>
     </v-col>
@@ -134,6 +160,7 @@ export default {
                 :subtitle="product.price"
                 :title="product.product_name"
               >
+                <v-list-item-content>Cantidad: {{ product.quantity }}</v-list-item-content>
                 <template v-slot:prepend>
                   <v-avatar color="grey-lighten-1">
                     <v-icon color="white">mdi-shopping</v-icon>
