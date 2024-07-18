@@ -10,7 +10,8 @@ import {
 } from "../api/projectApi";
 
 export default defineComponent({
-  data() {
+  name: "projectItem",
+  data () {
     return {
       // data table
       loading: false,

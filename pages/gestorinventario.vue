@@ -12,7 +12,8 @@ import {
 import { getAllrack } from "../api/rackApi";
 
 export default defineComponent({
-  data() {
+  name: "inventoryItem",
+  data () {
     return {
       // data table
       loading: false,

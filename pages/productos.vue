@@ -9,7 +9,8 @@ import {
 } from "../api/wishlistApi";
 
 export default defineComponent({
-  data() {
+  name: "productItem",
+  data () {
     return {
       dialog: false,
       dialogWishlist: false,

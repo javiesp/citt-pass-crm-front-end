@@ -5,7 +5,8 @@ axios.defaults.validateStatus = function (status) {
 };
 
 const diffusion = axios.create({
-    baseURL: 'https://citt-pass-api-gateaway-backend-production.up.railway.app',
+    // baseURL: 'https://citt-pass-api-gateaway-backend-production.up.railway.app',
+    baseURL: 'http://localhost:3005/',
     timeout: 100000,
 });
 

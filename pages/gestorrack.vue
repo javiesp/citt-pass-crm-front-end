@@ -3,7 +3,8 @@ import { defineComponent} from 'vue';
 import { getAllrack , deleteRack , updateRack, createRack} from '../api/rackApi';
 
 export default defineComponent({
-  data() {
+  name: "rackItem",
+  data () { 
     return {
       // data table
       loading: false,

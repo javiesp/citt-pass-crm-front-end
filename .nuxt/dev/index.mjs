@@ -971,20 +971,6 @@ const assets = {
     "size": 60051,
     "path": "../../.output/public/images/big/img4.jpg"
   },
-  "/images/products/empty-shopping-cart.svg": {
-    "type": "image/svg+xml",
-    "etag": "\"431c-L2YP9QSlacz/HDgpbwgeSAe3QrM\"",
-    "mtime": "2024-06-03T02:13:53.058Z",
-    "size": 17180,
-    "path": "../../.output/public/images/products/empty-shopping-cart.svg"
-  },
-  "/images/products/payment.svg": {
-    "type": "image/svg+xml",
-    "etag": "\"6018-z14nkBT/n4fShml09dvn0nXJMEQ\"",
-    "mtime": "2024-06-03T02:13:53.058Z",
-    "size": 24600,
-    "path": "../../.output/public/images/products/payment.svg"
-  },
   "/images/backgrounds/bg-1.jpg": {
     "type": "image/jpeg",
     "etag": "\"abe5-Rz+erx+f/xOpZ9gWZ5FWOveQzgw\"",
@@ -1040,6 +1026,27 @@ const assets = {
     "mtime": "2024-06-03T02:13:53.057Z",
     "size": 4235,
     "path": "../../.output/public/images/logos/dark-logo-text.svg"
+  },
+  "/images/products/empty-shopping-cart.svg": {
+    "type": "image/svg+xml",
+    "etag": "\"431c-L2YP9QSlacz/HDgpbwgeSAe3QrM\"",
+    "mtime": "2024-06-03T02:13:53.058Z",
+    "size": 17180,
+    "path": "../../.output/public/images/products/empty-shopping-cart.svg"
+  },
+  "/images/products/payment.svg": {
+    "type": "image/svg+xml",
+    "etag": "\"6018-z14nkBT/n4fShml09dvn0nXJMEQ\"",
+    "mtime": "2024-06-03T02:13:53.058Z",
+    "size": 24600,
+    "path": "../../.output/public/images/products/payment.svg"
+  },
+  "/images/svgs/sidebar-buynow-bg.svg": {
+    "type": "image/svg+xml",
+    "etag": "\"6907-WEobvLeSUI1MCWppxaNjEJqRJOY\"",
+    "mtime": "2024-06-03T02:13:53.066Z",
+    "size": 26887,
+    "path": "../../.output/public/images/svgs/sidebar-buynow-bg.svg"
   },
   "/images/profile/1.jpg": {
     "type": "image/jpeg",
@@ -1180,13 +1187,6 @@ const assets = {
     "mtime": "2024-06-03T02:13:53.066Z",
     "size": 2196,
     "path": "../../.output/public/images/profile/user2.jpg"
-  },
-  "/images/svgs/sidebar-buynow-bg.svg": {
-    "type": "image/svg+xml",
-    "etag": "\"6907-WEobvLeSUI1MCWppxaNjEJqRJOY\"",
-    "mtime": "2024-06-03T02:13:53.066Z",
-    "size": 26887,
-    "path": "../../.output/public/images/svgs/sidebar-buynow-bg.svg"
   }
 };
 

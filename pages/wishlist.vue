@@ -2,8 +2,8 @@
 import { getAllWishlists, deleteWishlist } from "../api/wishlistApi";
 
 export default {
-  name: "WishlistCard",
-  data() {
+  name: "wishlistItem",
+  data () {
     return {
       dialogDelete: false,
       dialog: false,
