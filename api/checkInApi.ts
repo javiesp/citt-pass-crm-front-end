@@ -47,6 +47,23 @@ export const getCheckInByDateRange = async (startDate: string, endDate: string) 
     }
 };
 
+export const getCheckInsByDay = (date: any) => {
+    return diffusion.get('/check-in/find-by-day', {
+        params: {
+            date
+        }
+    });
+};
+
+export const getCheckInsByDayAndUser = (date: any, uidUser: any) => {
+    return diffusion.get('/check-in/find-by-day-and-user', {
+        params: {
+            date,
+            uid_user: uidUser
+        }
+    });
+};
+
 export const createProject = (createCheckInDto?: any) => {
     console.log(createCheckInDto);
     return diffusion.post('/check-in/create-check-in', createCheckInDto );

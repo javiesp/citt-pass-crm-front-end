@@ -23,6 +23,8 @@
     "axios": "^1.6.8",
     "dayjs": "^1.11.11",
     "sass": "^1.49.9",
+    "shortid": "^2.2.16",
+    "uuid": "^10.0.0",
     "vue": "3.3.4",
     "vue-tabler-icons": "2.9.0",
     "vue2-datepicker": "^3.11.1",

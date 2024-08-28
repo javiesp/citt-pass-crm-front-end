@@ -1,5 +1,4 @@
 <script>
-// setup lang="ts"
 import { IconEdit } from "@tabler/icons-vue";
 import { defineComponent } from "vue";
 import {
@@ -9,9 +8,14 @@ import {
   deleteUser,
   getChecklist,
 } from "../api/userApi.ts";
+import { 
+  getAllcheckIn,
+  getCheckInsByDay,
+  getCheckInsByDayAndUser
+} from "../api/checkInApi";
 import { getAllProjects } from "../api/projectApi.ts";
-import { getAllcheckIn } from "../api/checkInApi";
 import { createProject } from "../api/checkInApi";
+import shortid from 'shortid';
 
 console.log("");
 export default defineComponent({
@@ -55,6 +59,8 @@ export default defineComponent({
       dialogProject: true,
       dialogDelete: false,
       selectedItem: {},
+      selectItem: null,
+      variant: null,
       checkInArray: [],
       usersArray: [],
       projectArray: [],
@@ -71,6 +77,7 @@ export default defineComponent({
       UID_USER: [],
       entryReason: null,
       entryDate: null,
+      assited: false,
       post: {
         uid_user: null,
         email: null,
@@ -84,18 +91,35 @@ export default defineComponent({
     };
   },
   methods: {
+    async checkIfAttendedToday(uid_user) {
+      try {
+        const today = new Date();
+        const formattedToday = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()}`;
+
+        const checkInsResponse = await getCheckInsByDayAndUser(formattedToday, uid_user);
+        const checkIns = checkInsResponse.data;
+
+        return checkIns.length > 0; // Return true or false based on attendance
+      } catch (error) {
+        console.error(`Error checking attendance for user ${uid_user}:`, error);
+        return false;
+      }
+    },
     // GET API Y AGUARDAR EN USERSARRAY
     async getUsers() {
       this.loading = true;
       try {
         const usersResponse = await getAllUsers();
         this.usersArray = usersResponse.data;
-        await this.getCheckIn();
-        this.usersArray.forEach(user => {
-          user.asistioHoy = this.checkIfAttendedToday(user.uid_user);
+
+        // Add the attendance status to each user
+        const attendancePromises = this.usersArray.map(async (user) => {
+          user.asistioHoy = await this.checkIfAttendedToday(user.uid_user);
         });
+
+        await Promise.all(attendancePromises);
       } catch (error) {
-        console.error("Error al obtener usuarios:", error);
+        console.error("Error fetching users:", error);
       } finally {
         this.loading = false;
       }
@@ -128,13 +152,6 @@ export default defineComponent({
         console.log(error);
       }
     },
-    checkIfAttendedToday(uid_user) {
-      const today = new Date().toISOString().split('T')[0];
-      return this.checkInArray.some(checkIn => {
-        const entryDate = new Date(checkIn.entry_date.$date).toISOString().split('T')[0];
-        return checkIn.uid_user === uid_user && entryDate === today;
-      });
-    },
     async createCheckIn() {
       console.log("CREATE CHECKIN");
       const post = {
@@ -150,13 +167,16 @@ export default defineComponent({
         console.log("REGISTRADO");
         this.loading = false;
         this.dialogCheckin = false;
+        get
       } catch (error) {
         console.log(error);
       }
     },
     async createUser() {
+      const id = shortid.generate();     
+
       const create = {
-        uid_user: this.post.uid_user,
+        uid_user: id,
         email: this.post.email,
         phone: this.post.phone,
         name: this.post.name,
@@ -165,7 +185,7 @@ export default defineComponent({
         proyect_id: this.post.project_id,
       };
       try {
-        const resposne = await createUser(create);
+        const response = await createUser(create);
         this.dialog = false;
       } catch (error) {
         console.log(error);
@@ -181,6 +201,13 @@ export default defineComponent({
         const usersResponse = await getAllUsersById(proyect_id);
         this.usersArray = usersResponse.data;
         this.totalRows = usersResponse.data.total;
+
+        // Add the attendance status to each user
+        const attendancePromises = this.usersArray.map(async (user) => {
+          user.asistioHoy = await this.checkIfAttendedToday(user.uid_user);
+        });
+
+        await Promise.all(attendancePromises);
         console.log("ARRAY", this.usersArray);
       } catch (error) {
         console.error("Error al obtener usuarios:", error);
@@ -272,8 +299,7 @@ components: {
     </v-col>
     <!-- TABLA DE USUARIOS -->
     <v-col cols="12" sm="12">
-      <UiChildCard title="Ingresos citt">
-        <v-card :variant="variant" class="mx-auto">
+        <v-card class="mx-auto">
           <v-divider />
           <v-col>
             <v-data-table
@@ -283,6 +309,7 @@ components: {
               :items="usersArray"
               :loading="loading"
               :search="search"
+              item-key="uid_user"
             >
               <template v-slot:item.actions="{ item }">
                 <v-btn
@@ -309,15 +336,25 @@ components: {
               <template v-slot:item.asist="{ item }">
                 <v-switch
                   v-model="item.asistioHoy"
-                  color="red"
                   inset
-                  disabled
+                  color="primary"
                 ></v-switch>
               </template>
+
+              <!-- <template v-slot:item.asist="{ item }">
+                <div class="text-end">
+                  <v-chip
+                    :color="item.asist ? 'green' : 'green'"
+                    :text="item.asist ? 'No asiste' : 'Asstio'"
+                    class="text-uppercase"
+                    size="small"
+                    label
+                  ></v-chip>
+                </div>
+              </template> -->
             </v-data-table>
           </v-col>
         </v-card>
-      </UiChildCard>
     </v-col>
   </v-row>
 
@@ -401,7 +438,7 @@ components: {
               ></v-autocomplete>
             </v-col>
 
-            <v-col cols="12" sm="6">
+            <!-- <v-col cols="12" sm="6">
               <v-select
                 v-model="post.uid_user"
                 :items="uidUser"
@@ -410,7 +447,7 @@ components: {
                 hint="UID registrada por arduino"
                 required
               ></v-select>
-            </v-col>
+            </v-col> -->
           </v-row>
 
           <small class="text-caption text-medium-emphasis"

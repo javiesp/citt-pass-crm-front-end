@@ -161,7 +161,7 @@ function href() {
             <v-btn @click="createCsv"  variant="tonal" color="primary">Descargar ingresos</v-btn>
           </v-col>
           <v-col>
-            <h1>dshjg</h1>
+            <v-spacer></v-spacer>
           </v-col>
         </v-row>
         
@@ -170,7 +170,7 @@ function href() {
             <div class="bg-primary pa-5">
               <v-row>
                 <v-col>
-                  <v-date-picker></v-date-picker>
+                  <!-- <v-date-picker></v-date-picker> -->
                 </v-col>
               </v-row>
               <h2 class="text-h5 mb-1">Últimos ingresos</h2>
