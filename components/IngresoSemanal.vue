@@ -243,7 +243,7 @@ export default defineComponent({
     logout() {
       localStorage.removeItem("project_id");
       this.dialogProject = true;
-    },        
+    },           
 
     // DESCARGAR PDF
     downloadPdf() {
