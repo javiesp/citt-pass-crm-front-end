@@ -2,10 +2,11 @@ import { lazy } from "react";
 import { Navigate } from "react-router-dom";
 import Loadable from "../layouts/loader/Loadable";
 import Login from "../views/auth/Login";
+import Colaborators  from "~/pages/colaborators.vue";
 
 /* Layouts */
 const FullLayout = Loadable(lazy(() => import("../layouts/FullLayout")));
-const BlankLayout = Loadable(lazy(() => import("../layouts/BlankLayout"));
+const BlankLayout = Loadable(lazy(() => import("../layouts/BlankLayout")));
 
 /* Pages */
 const Starter = Loadable(lazy(() => import("../views/Starter")));
@@ -19,6 +20,7 @@ const Tables = Loadable(lazy(() => import("../views/ui/Tables")));
 const Forms = Loadable(lazy(() => import("../views/ui/Forms")));
 const Breadcrumbs = Loadable(lazy(() => import("../views/ui/Breadcrumbs")));
 const Productos = Loadable(lazy(() => import("../views/Productos")));
+// const Colaborators = Loadable(lazy(() => import("../pages/colaborators")));
 
 /* Auth Pages */
 const Error = Loadable(lazy(() => import("../views/auth/Error")));
@@ -40,7 +42,8 @@ const ThemeRoutes = [
       { path: "/table", element: <Tables /> },
       { path: "/forms", element: <Forms /> },
       { path: "/breadcrumbs", element: <Breadcrumbs /> },
-      { path: "/productos", element: <Productos /> }, // Ruta para Productos
+      { path: "/productos", element: <Productos /> },
+      { path: "/colaborators", element: <Colaborators /> }, // Path for "Colaborators"
       { path: "*", element: <Navigate to="/auth/404" /> },
     ],
   },

@@ -262,9 +262,6 @@ export default defineComponent({
   },
 });
 
-components: {
-  IconEdit; // Registra el componente IconEdit en el componente Vue
-}
 </script>
 
 <template>
@@ -288,13 +285,14 @@ components: {
     </v-col>
     <!-- BOTONERA -->
     <v-col cols="3">
-      <p class="font-weight-medium">Agregar usuario</p>
+      <v-spacer></v-spacer>
       <v-btn
         variant="tonal"
         color="primary"
         prepend-icon="mdi-account"
         @click="dialog = true"
-        >Registrar</v-btn
+        text="Registrar nuevo usuario"
+        ></v-btn
       >
     </v-col>
     <!-- TABLA DE USUARIOS -->
