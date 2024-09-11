@@ -56,7 +56,7 @@ export default defineComponent({
       // VARIEABLES
       dialog: false,
       dialogCheckin: false,
-      dialogProject: true,
+      dialogProject: false,
       dialogDelete: false,
       selectedItem: {},
       selectItem: null,
@@ -107,9 +107,11 @@ export default defineComponent({
     },
     // GET API Y AGUARDAR EN USERSARRAY
     async getUsers() {
+      let local_project = localStorage.getItem('project_id');
+      console.log("get id", local_project)
       this.loading = true;
       try {
-        const usersResponse = await getAllUsers();
+        const usersResponse = await getAllUsersById(local_project);
         this.usersArray = usersResponse.data;
 
         // Add the attendance status to each user
@@ -165,9 +167,9 @@ export default defineComponent({
         const response = await createProject(post);
         console.log(response);
         console.log("REGISTRADO");
-        this.loading = false;
+        window.location.reload();
         this.dialogCheckin = false;
-        get
+        this.loading = false;
       } catch (error) {
         console.log(error);
       }
@@ -186,23 +188,30 @@ export default defineComponent({
       };
       try {
         const response = await createUser(create);
+        this.getUsers();
         this.dialog = false;
       } catch (error) {
         console.log(error);
       }
     },
-    async selectProject() {
-      console.log("SELECTED");
-      console.log(this.selectedItem.id);
+    selectProject() {
       this.dialogProject = false;
       this.loading = true;
+
       const proyect_id = this.selectedItem.id;
+      localStorage.setItem("project_id", proyect_id);
+
+      this.getProjectById();
+    },
+    async getProjectById() {
+      let local_project = localStorage.getItem('project_id');
+      console.log("get id", local_project)
+
       try {
-        const usersResponse = await getAllUsersById(proyect_id);
+        const usersResponse = await getAllUsersById(local_project);
         this.usersArray = usersResponse.data;
         this.totalRows = usersResponse.data.total;
 
-        // Add the attendance status to each user
         const attendancePromises = this.usersArray.map(async (user) => {
           user.asistioHoy = await this.checkIfAttendedToday(user.uid_user);
         });
@@ -224,11 +233,16 @@ export default defineComponent({
       try {
         this.loading = true;
         const response = await deleteUser(this.itemId);
+        this.getUsers();
         this.dialogDelete = false;
         this.loading = false;
       } catch (error) {
         console.error(error);
       }
+    },
+    logout() {
+      localStorage.removeItem("project_id");
+      this.dialogProject = true;
     },
 
     // DESCARGAR PDF
@@ -255,10 +269,19 @@ export default defineComponent({
     },
   },
   async created() {
+    let local_project = localStorage.getItem('project_id');
+
+    if (!local_project || local_project.trim() === '') {
+      this.dialogProject = true;
+    } else {
+        this.dialogProject = false;
+    }
+    
     await this.getUsers();
     await this.getProjects();
-    console.log('CHECK IN')
-    await this.getCheckIn();
+    // console.log('CHECK IN')
+    // await this.getCheckIn();
+    // const local = 
   },
 });
 
@@ -292,6 +315,17 @@ export default defineComponent({
         prepend-icon="mdi-account"
         @click="dialog = true"
         text="Registrar nuevo usuario"
+        ></v-btn
+      >
+    </v-col>
+    <v-col cols="3">
+      <v-spacer></v-spacer>
+      <v-btn
+        variant="tonal"
+        color="red"
+        prepend-icon="mdi-logout"
+        @click="logout"
+        text="cambiar de proyecto"
         ></v-btn
       >
     </v-col>

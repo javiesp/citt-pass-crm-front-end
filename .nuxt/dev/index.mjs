@@ -936,41 +936,6 @@ const assets = {
     "size": 487,
     "path": "../../.output/public/_nuxt/wishlistApi.b9eacd87.js"
   },
-  "/images/backgrounds/bg-1.jpg": {
-    "type": "image/jpeg",
-    "etag": "\"abe5-Rz+erx+f/xOpZ9gWZ5FWOveQzgw\"",
-    "mtime": "2024-08-27T23:59:41.434Z",
-    "size": 44005,
-    "path": "../../.output/public/images/backgrounds/bg-1.jpg"
-  },
-  "/images/backgrounds/bg-2.jpg": {
-    "type": "image/jpeg",
-    "etag": "\"272fd-LRNQ65Vf4YzhB9MiOcpaQbuKIls\"",
-    "mtime": "2024-08-27T23:59:41.435Z",
-    "size": 160509,
-    "path": "../../.output/public/images/backgrounds/bg-2.jpg"
-  },
-  "/images/backgrounds/errorimg.svg": {
-    "type": "image/svg+xml",
-    "etag": "\"9730-oMOKsu6u7BluGG960TI8P751jnU\"",
-    "mtime": "2024-08-27T23:59:41.436Z",
-    "size": 38704,
-    "path": "../../.output/public/images/backgrounds/errorimg.svg"
-  },
-  "/images/backgrounds/login-register.jpg": {
-    "type": "image/jpeg",
-    "etag": "\"86061-YLOaGiXtD+JByHU5h/vDSKQtLOs\"",
-    "mtime": "2024-08-27T23:59:41.440Z",
-    "size": 548961,
-    "path": "../../.output/public/images/backgrounds/login-register.jpg"
-  },
-  "/images/backgrounds/u5.jpg": {
-    "type": "image/jpeg",
-    "etag": "\"d3c8-5iEhMvf2glSNKoKG/2QlcWPRCIY\"",
-    "mtime": "2024-08-27T23:59:41.441Z",
-    "size": 54216,
-    "path": "../../.output/public/images/backgrounds/u5.jpg"
-  },
   "/images/big/blog-bg.jpg": {
     "type": "image/jpeg",
     "etag": "\"be25-crXLkJEAB4/QIjRyyWaESpGegv4\"",
@@ -1005,6 +970,41 @@ const assets = {
     "mtime": "2024-08-27T23:59:41.444Z",
     "size": 60051,
     "path": "../../.output/public/images/big/img4.jpg"
+  },
+  "/images/backgrounds/bg-1.jpg": {
+    "type": "image/jpeg",
+    "etag": "\"abe5-Rz+erx+f/xOpZ9gWZ5FWOveQzgw\"",
+    "mtime": "2024-08-27T23:59:41.434Z",
+    "size": 44005,
+    "path": "../../.output/public/images/backgrounds/bg-1.jpg"
+  },
+  "/images/backgrounds/bg-2.jpg": {
+    "type": "image/jpeg",
+    "etag": "\"272fd-LRNQ65Vf4YzhB9MiOcpaQbuKIls\"",
+    "mtime": "2024-08-27T23:59:41.435Z",
+    "size": 160509,
+    "path": "../../.output/public/images/backgrounds/bg-2.jpg"
+  },
+  "/images/backgrounds/errorimg.svg": {
+    "type": "image/svg+xml",
+    "etag": "\"9730-oMOKsu6u7BluGG960TI8P751jnU\"",
+    "mtime": "2024-08-27T23:59:41.436Z",
+    "size": 38704,
+    "path": "../../.output/public/images/backgrounds/errorimg.svg"
+  },
+  "/images/backgrounds/login-register.jpg": {
+    "type": "image/jpeg",
+    "etag": "\"86061-YLOaGiXtD+JByHU5h/vDSKQtLOs\"",
+    "mtime": "2024-08-27T23:59:41.440Z",
+    "size": 548961,
+    "path": "../../.output/public/images/backgrounds/login-register.jpg"
+  },
+  "/images/backgrounds/u5.jpg": {
+    "type": "image/jpeg",
+    "etag": "\"d3c8-5iEhMvf2glSNKoKG/2QlcWPRCIY\"",
+    "mtime": "2024-08-27T23:59:41.441Z",
+    "size": 54216,
+    "path": "../../.output/public/images/backgrounds/u5.jpg"
   },
   "/images/logos/citt_logo.png": {
     "type": "image/png",
