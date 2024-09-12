@@ -17,7 +17,7 @@ const fetchCheckIn = async () => {
     checkInArray.value = response.data;
     console.log("CHECK IN");
     console.log(checkInArray.value);
-    loading.value = false;
+    loading.value = false;  
   } catch (error) {
     console.error(error);
   }
