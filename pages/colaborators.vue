@@ -4,12 +4,11 @@ import { ref } from 'vue';
 let hublink = 'https://github.com/';
 let photourl = 'https://avatars.githubusercontent.com/';
 
-// Example users list with different icons
 const users = ref([
     { name: "Javiera Espina", email: "ja.espinam@duocuc.cl", rol: "Desarrollador Full-Stack - Ingeniero de Software", icon: "mdi-code-tags", githublink: hublink + "javiesp", photo: photourl + "u/69701833?s=400&u=b147c29edb264c4b6697d98aa9a2b0c4b28b974b&v=4" },
     { name: "Wilson Maldonado", email: "wi.maldonado@duocuc.cl", rol: "Desarollador Frontend", icon: "mdi-laptop", githublink: hublink + "MaldoWilson", photo: photourl + "u/127255876?v=4" },
     { name: "Bryan Delgado", email: "bry.delgado@duocuc.cl", rol: "Desarollador Backend", icon: "mdi-database", githublink: hublink + "Jegal33", photo: photourl + "u/94422503?v=4" },
-    { name: "Benjamin Astroza", email: "be.astroza@duocuc.cl", rol: "Desarollador Backend", icon: "mdi-database", githublink: hublink + "seiya20depegaso", photo: photourl + "u/144739512?v=4" }
+    { name: "Benjamin Astroza", email: "be.astroza@duocuc.cl", rol: "Desarollador Backend", icon: "mdi-database", githublink: hublink + "seiya20depegaso", photo: photourl + "u/144739512?v=4" },
 ]);
 
 console.log("usuarios", users)
@@ -21,10 +20,6 @@ console.log("usuarios", users)
             <v-col cols="12">
                 <h2>Colaboradores</h2>
             </v-col>
-
-
-
-            <!-- Display the list of users -->
             <v-col cols="12" md="6" v-for="(user, index) in users" :key="index">
                 <v-card class="mx-auto" :subtitle="user.email" :title="user.name">
 
@@ -37,7 +32,6 @@ console.log("usuarios", users)
 
                     </template>
                     <template v-slot:append>
-                        <!-- Optional append icon, can be adjusted or removed -->
                         <v-icon :icon="user.icon"></v-icon>
                     </template>
                     <v-card-text>{{ user.rol }}</v-card-text>

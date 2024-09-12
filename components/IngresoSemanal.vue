@@ -8,7 +8,7 @@ import {
   deleteUser,
   getChecklist,
 } from "../api/userApi.ts";
-import { 
+import {
   getAllcheckIn,
   getCheckInsByDay,
   getCheckInsByDayAndUser
@@ -88,6 +88,8 @@ export default defineComponent({
         project_id: null,
       },
       itemId: null,
+      errorText: '',
+      passwordVisible: false
     };
   },
   methods: {
@@ -175,7 +177,7 @@ export default defineComponent({
       }
     },
     async createUser() {
-      const id = shortid.generate();     
+      const id = shortid.generate();
 
       const create = {
         uid_user: id,
@@ -229,6 +231,74 @@ export default defineComponent({
       this.itemId = item._id;
       console.log(this.itemId);
     },
+    rutFormat(value) {
+      let rut = value.replace(/^0+/, ''); 
+      rut = rut.replace(/\./g, '').replace(/-/g, ''); 
+
+      if (rut.length > 1) { 
+        let cuerpo = rut.slice(0, -1); 
+        let dv = rut.slice(-1); 
+
+        cuerpo = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+        return `${cuerpo}-${dv}`; 
+      }
+      return value;
+    },
+    
+    validateRut(value) {
+      const rutFormateado = this.rutFormat(value);
+      const regex = /^[0-9]{1,2}\.[0-9]{3}\.[0-9]{3}-[0-9kK]$/; 
+      if (!regex.test(rutFormateado)) {
+        return "El RUT ingresado es inválido"; 
+      }
+      return true; 
+    },
+    phoneFormat(value) {
+      let phone = value.replace(/\D/g, '');
+
+      if (phone.startsWith('9') && (phone.length === 8 || phone.length === 9)) {
+        if (phone.length === 9) {
+          return phone.slice(0, 1) + ' ' + phone.slice(1, 5) + ' ' + phone.slice(5);
+        } else if (phone.length === 8) {
+          return phone.slice(0, 1) + ' ' + phone.slice(1, 4) + ' ' + phone.slice(4);
+        }
+      }
+
+      return value; 
+    },
+    validateEmail(value) {
+      if (!value) {
+        return "El correo es obligatorio";
+      }
+      
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      
+      if (!emailRegex.test(value)) {
+        return "El correo debe tener un formato válido y no contener espacios ni símbolos inválidos";
+      }
+
+      return true; 
+    },
+    validatePassword(value) {
+      if (!value) {
+        return "La contraseña es obligatoria";
+      }
+
+      if (value.length < 9) {
+        return "La contraseña debe tener al menos 9 caracteres";
+      }
+
+      const hasLetterOrSymbolOrNumber = /[a-zA-Z0-9!@#$%^&*()_+{}\[\]:;"'<>,.?~`-]/.test(value);
+      if (!hasLetterOrSymbolOrNumber) {
+        return "La contraseña debe contener al menos una letra, símbolo o número";
+      }
+
+      return true; 
+    },
+    isFormValid() {
+      return this.post.name && this.post.email && this.post.phone && this.post.password && this.post.project_id;
+    },
     async deleteItem() {
       try {
         this.loading = true;
@@ -243,18 +313,16 @@ export default defineComponent({
     logout() {
       localStorage.removeItem("project_id");
       this.dialogProject = true;
-    },                             
-
+    },
     // DESCARGAR PDF
     downloadPdf() {
-      // create element <a> for download PDF
       console.log("PDFURLLLL");
       console.log(this.pdfUrl);
       const link = document.createElement("a");
       link.href = this.pdfUrl;
       link.target = "_blank";
       link.download = this.pdfFileName;
-      // Simulate a click on the element <a>
+
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -274,14 +342,11 @@ export default defineComponent({
     if (!local_project || local_project.trim() === '') {
       this.dialogProject = true;
     } else {
-        this.dialogProject = false;
+      this.dialogProject = false;
     }
-    
+
     await this.getUsers();
     await this.getProjects();
-    // console.log('CHECK IN')
-    // await this.getCheckIn();
-    // const local = 
   },
 });
 
@@ -291,102 +356,43 @@ export default defineComponent({
   <v-row class="month-table">
     <!-- SELECTOR DE PROYECTO -->
     <v-col cols="3">
-      <v-text-field
-        v-model="search"
-        class="mx-auto"
-        density="comfortable"
-        menu-icon=""
-        placeholder="Buscar Usuario"
-        prepend-inner-icon="mdi-magnify"
-        theme="light"
-        variant="solo"
-        auto-select-first
-        item-props
-        hint="Escriba para buscar"
-        rounded
-      ></v-text-field>
+      <v-text-field v-model="search" class="mx-auto" density="comfortable" menu-icon="" placeholder="Buscar Usuario"
+        prepend-inner-icon="mdi-magnify" theme="light" variant="solo" auto-select-first item-props
+        hint="Escriba para buscar" rounded></v-text-field>
     </v-col>
     <!-- BOTONERA -->
     <v-col cols="3">
       <v-spacer></v-spacer>
-      <v-btn
-        variant="tonal"
-        color="primary"
-        prepend-icon="mdi-account"
-        @click="dialog = true"
-        text="Registrar nuevo usuario"
-        ></v-btn
-      >
+      <v-btn variant="tonal" color="primary" prepend-icon="mdi-account" @click="dialog = true"
+        text="Registrar nuevo usuario"></v-btn>
     </v-col>
     <v-col cols="3">
       <v-spacer></v-spacer>
-      <v-btn
-        variant="tonal"
-        color="red"
-        prepend-icon="mdi-logout"
-        @click="logout"
-        text="cambiar de proyecto"
-        ></v-btn
-      >
+      <v-btn variant="tonal" color="red" prepend-icon="mdi-logout" @click="logout" text="cambiar de proyecto"></v-btn>
     </v-col>
     <!-- TABLA DE USUARIOS -->
     <v-col cols="12" sm="12">
-        <v-card class="mx-auto">
-          <v-divider />
-          <v-col>
-            <v-data-table
-              v-model:items-per-page="itemsPerPage"
-              :items-per-page-options="rowsPerPageItems"
-              :headers="headers"
-              :items="usersArray"
-              :loading="loading"
-              :search="search"
-              item-key="uid_user"
-            >
-              <template v-slot:item.actions="{ item }">
-                <v-btn
-                  class="ml-2"
-                  color="error"
-                  icon
-                  size="x-small"
-                  flat
-                  @click="openDeleteDialog(item)"
-                >
-                  <v-icon>mdi-delete</v-icon>
-                </v-btn>
-              </template>
-              <template v-slot:item.checkin="{ item }">
-                <v-btn
-                  class="ml-2"
-                  color="primary"
-                  flat
-                  @click="editItem(item)"
-                >
-                  Ingresar
-                </v-btn>
-              </template>
-              <template v-slot:item.asist="{ item }">
-                <v-switch
-                  v-model="item.asistioHoy"
-                  inset
-                  color="primary"
-                ></v-switch>
-              </template>
-
-              <!-- <template v-slot:item.asist="{ item }">
-                <div class="text-end">
-                  <v-chip
-                    :color="item.asist ? 'green' : 'green'"
-                    :text="item.asist ? 'No asiste' : 'Asstio'"
-                    class="text-uppercase"
-                    size="small"
-                    label
-                  ></v-chip>
-                </div>
-              </template> -->
-            </v-data-table>
-          </v-col>
-        </v-card>
+      <v-card class="mx-auto">
+        <v-divider />
+        <v-col>
+          <v-data-table v-model:items-per-page="itemsPerPage" :items-per-page-options="rowsPerPageItems"
+            :headers="headers" :items="usersArray" :loading="loading" :search="search" item-key="uid_user">
+            <template v-slot:item.actions="{ item }">
+              <v-btn class="ml-2" color="error" icon size="x-small" flat @click="openDeleteDialog(item)">
+                <v-icon>mdi-delete</v-icon>
+              </v-btn>
+            </template>
+            <template v-slot:item.checkin="{ item }">
+              <v-btn class="ml-2" color="primary" flat @click="editItem(item)">
+                Ingresar
+              </v-btn>
+            </template>
+            <template v-slot:item.asist="{ item }">
+              <v-switch v-model="item.asistioHoy" inset color="primary"></v-switch>
+            </template>
+          </v-data-table>
+        </v-col>
+      </v-card>
     </v-col>
   </v-row>
 
@@ -416,75 +422,52 @@ export default defineComponent({
         <v-card-text>
           <v-row dense>
             <v-col cols="12" md="4" sm="6">
-              <v-text-field
-                v-model="post.name"
-                label="Nombre*"
-                required
-              ></v-text-field>
+              <v-text-field v-model="post.name" label="Nombre*" required></v-text-field>
             </v-col>
 
             <v-col cols="12" md="4" sm="6">
-              <v-text-field
-                v-model="post.email"
+              <v-text-field 
+                v-model="post.email" 
                 hint="email@duocuc.cl/ email@profesor.duoc.cl"
-                label="Email"
+                label="Email*"
+                :rules="[validateEmail]" 
+                required
               ></v-text-field>
             </v-col>
 
             <v-col cols="12" md="4" sm="6">
               <v-text-field
                 v-model="post.phone"
-                hint="Ej: 9 1112223345"
+                hint="Ej: +56 9 XXXX XXXX"
                 label="Teléfono*"
-                persistent-hint
                 required
+                :rules="[validatePhone]"
+                @input="post.phone = phoneFormat(post.phone)"
               ></v-text-field>
             </v-col>
 
             <v-col cols="12" md="4" sm="6">
-              <v-text-field
-                v-model="post.hashed_password"
-                label="Contrasenia"
+              <v-text-field 
+                v-model="post.password"
+                hint="Debe tener al menos 9 caracteres y contener al menos una letra, símbolo o número"
+                label="Contraseña*"
+                :rules="[validatePassword]"
                 required
-              ></v-text-field>
-            </v-col>
-
-            <v-col cols="12" md="4" sm="6">
-              <v-text-field
-                v-model="post.run"
-                hint="Ej: 11.111.111-1"
-                label="RUN*"
-                required
+                :type="passwordVisible ? 'text' : 'password'"  
+                append-icon="mdi-eye"  
+                @click:append="passwordVisible = !passwordVisible"  
               ></v-text-field>
             </v-col>
 
             <v-col cols="12" sm="6">
-              <v-autocomplete
-                v-model="post.project_id"
-                label="Selecciona un proyecto..."
-                :items="projectArray"
-                item-value="project_id"
-                item-title="project_name"
-                variant="underlined"
-                @change="selectItem"
-              ></v-autocomplete>
+              <v-autocomplete v-model="post.project_id" label="Selecciona un proyecto..." :items="projectArray"
+                item-value="project_id" item-title="project_name" variant="underlined"
+                @change="selectItem"></v-autocomplete>
             </v-col>
 
-            <!-- <v-col cols="12" sm="6">
-              <v-select
-                v-model="post.uid_user"
-                :items="uidUser"
-                label="UID"
-                auto-select-first
-                hint="UID registrada por arduino"
-                required
-              ></v-select>
-            </v-col> -->
           </v-row>
 
-          <small class="text-caption text-medium-emphasis"
-            >* Indica que el campo es obligatorio</small
-          >
+          <small class="text-caption text-medium-emphasis">* Indica que el campo es obligatorio</small>
         </v-card-text>
 
         <v-divider></v-divider>
@@ -494,12 +477,13 @@ export default defineComponent({
 
           <v-btn text="Cerrar" variant="plain" @click="dialog = false"></v-btn>
 
-          <v-btn
-            color="primary"
-            text="Crear usuario"
-            variant="tonal"
+          <v-btn 
+            color="primary" 
+            text="Crear usuario" 
+            variant="tonal" 
             @click="createUser"
-          ></v-btn>
+            :disabled="!isFormValid()"
+            ></v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -514,15 +498,9 @@ export default defineComponent({
         <v-container>
           <v-row>
             <v-col cols="12">
-              <v-autocomplete
-                v-model="selectedItem.id"
-                label="Selecciona un proyecto..."
-                :items="projectArray"
-                item-value="project_id"
-                item-title="project_name"
-                variant="underlined"
-                @change="selectItem"
-              ></v-autocomplete>
+              <v-autocomplete v-model="selectedItem.id" label="Selecciona un proyecto..." :items="projectArray"
+                item-value="project_id" item-title="project_name" variant="underlined"
+                @change="selectItem"></v-autocomplete>
               <p class="letra-abajo">
                 Es necesario que seleccione su grupo para poder gestionar
               </p>
@@ -532,13 +510,7 @@ export default defineComponent({
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn
-          color="primary"
-          :rounded="true"
-          elevation="2"
-          variant="text"
-          @click="selectProject"
-        >
+        <v-btn color="primary" :rounded="true" elevation="2" variant="text" @click="selectProject">
           Login
         </v-btn>
       </v-card-actions>
