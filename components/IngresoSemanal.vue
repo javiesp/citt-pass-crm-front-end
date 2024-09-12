@@ -89,7 +89,8 @@ export default defineComponent({
       },
       itemId: null,
       errorText: '',
-      passwordVisible: false
+      passwordVisible: false,
+      studentName: null
     };
   },
   methods: {
@@ -161,7 +162,7 @@ export default defineComponent({
       const post = {
         uid_user: this.userId,
         entry_date: null,
-        entry_reason: this.entryReason,
+        entry_reason: this.studentName + ' ' + this.entryReason,
         times_entered: null,
       };
       try {
@@ -259,13 +260,13 @@ export default defineComponent({
 
       if (phone.startsWith('9') && (phone.length === 8 || phone.length === 9)) {
         if (phone.length === 9) {
-          return phone.slice(0, 1) + ' ' + phone.slice(1, 5) + ' ' + phone.slice(5);
+          return phone.slice(0, 1) + phone.slice(1, 5) + phone.slice(5);
         } else if (phone.length === 8) {
-          return phone.slice(0, 1) + ' ' + phone.slice(1, 4) + ' ' + phone.slice(4);
+          return phone.slice(0, 1) + phone.slice(1, 4) + phone.slice(4);
         }
       }
 
-      return value; 
+      return value;
     },
     validateEmail(value) {
       if (!value) {
@@ -402,6 +403,9 @@ export default defineComponent({
       <v-card-title>Registrar ingreso citt</v-card-title>
       <v-card-text>
         <v-row>
+          <v-col>
+            <v-text-field v-model="studentName" label="Nombre de estudiante"></v-text-field>
+          </v-col>
           <v-col>
             <v-textarea v-model="entryReason" label="Motivo"></v-textarea>
           </v-col>

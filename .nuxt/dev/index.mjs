@@ -707,9 +707,9 @@ const errorHandler = (async function errorhandler(error, event) {
 const assets = {
   "/favicon.ico": {
     "type": "image/vnd.microsoft.icon",
-    "etag": "\"1a4-xoftjZBmleL/2aBtkBwjpjCk1Ns\"",
-    "mtime": "2024-09-07T18:22:27.171Z",
-    "size": 420,
+    "etag": "\"7ae7-StayyWT694IZg/uWj/qzgKKz3so\"",
+    "mtime": "2024-09-12T00:39:02.798Z",
+    "size": 31463,
     "path": "../../.output/public/favicon.ico"
   },
   "/_nuxt/Alerts.5346157e.js": {
@@ -971,6 +971,27 @@ const assets = {
     "size": 54216,
     "path": "../../.output/public/images/backgrounds/u5.jpg"
   },
+  "/images/logos/citt_logo.png": {
+    "type": "image/png",
+    "etag": "\"305c-l1/pK2FISjVytFdGplUyFehinKk\"",
+    "mtime": "2024-09-07T18:22:27.182Z",
+    "size": 12380,
+    "path": "../../.output/public/images/logos/citt_logo.png"
+  },
+  "/images/logos/dark-logo-icon.svg": {
+    "type": "image/svg+xml",
+    "etag": "\"36c-SV1PaCxKxziiTDr3vFysEhoFlH0\"",
+    "mtime": "2024-09-07T18:22:27.182Z",
+    "size": 876,
+    "path": "../../.output/public/images/logos/dark-logo-icon.svg"
+  },
+  "/images/logos/dark-logo-text.svg": {
+    "type": "image/svg+xml",
+    "etag": "\"108b-hub2caGRhBjKtjn/80czSMlKS+I\"",
+    "mtime": "2024-09-07T18:22:27.183Z",
+    "size": 4235,
+    "path": "../../.output/public/images/logos/dark-logo-text.svg"
+  },
   "/images/big/blog-bg.jpg": {
     "type": "image/jpeg",
     "etag": "\"be25-crXLkJEAB4/QIjRyyWaESpGegv4\"",
@@ -1006,27 +1027,6 @@ const assets = {
     "size": 60051,
     "path": "../../.output/public/images/big/img4.jpg"
   },
-  "/images/logos/citt_logo.png": {
-    "type": "image/png",
-    "etag": "\"305c-l1/pK2FISjVytFdGplUyFehinKk\"",
-    "mtime": "2024-09-07T18:22:27.182Z",
-    "size": 12380,
-    "path": "../../.output/public/images/logos/citt_logo.png"
-  },
-  "/images/logos/dark-logo-icon.svg": {
-    "type": "image/svg+xml",
-    "etag": "\"36c-SV1PaCxKxziiTDr3vFysEhoFlH0\"",
-    "mtime": "2024-09-07T18:22:27.182Z",
-    "size": 876,
-    "path": "../../.output/public/images/logos/dark-logo-icon.svg"
-  },
-  "/images/logos/dark-logo-text.svg": {
-    "type": "image/svg+xml",
-    "etag": "\"108b-hub2caGRhBjKtjn/80czSMlKS+I\"",
-    "mtime": "2024-09-07T18:22:27.183Z",
-    "size": 4235,
-    "path": "../../.output/public/images/logos/dark-logo-text.svg"
-  },
   "/images/products/empty-shopping-cart.svg": {
     "type": "image/svg+xml",
     "etag": "\"431c-L2YP9QSlacz/HDgpbwgeSAe3QrM\"",
@@ -1040,13 +1040,6 @@ const assets = {
     "mtime": "2024-09-07T18:22:27.184Z",
     "size": 24600,
     "path": "../../.output/public/images/products/payment.svg"
-  },
-  "/images/svgs/sidebar-buynow-bg.svg": {
-    "type": "image/svg+xml",
-    "etag": "\"6907-WEobvLeSUI1MCWppxaNjEJqRJOY\"",
-    "mtime": "2024-09-07T18:22:27.188Z",
-    "size": 26887,
-    "path": "../../.output/public/images/svgs/sidebar-buynow-bg.svg"
   },
   "/images/profile/1.jpg": {
     "type": "image/jpeg",
@@ -1187,6 +1180,13 @@ const assets = {
     "mtime": "2024-09-07T18:22:27.188Z",
     "size": 2196,
     "path": "../../.output/public/images/profile/user2.jpg"
+  },
+  "/images/svgs/sidebar-buynow-bg.svg": {
+    "type": "image/svg+xml",
+    "etag": "\"6907-WEobvLeSUI1MCWppxaNjEJqRJOY\"",
+    "mtime": "2024-09-07T18:22:27.188Z",
+    "size": 26887,
+    "path": "../../.output/public/images/svgs/sidebar-buynow-bg.svg"
   }
 };
 
