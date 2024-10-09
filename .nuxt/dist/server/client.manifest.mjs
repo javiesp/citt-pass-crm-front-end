@@ -7,12 +7,12 @@ export default {
     "module": true,
     "resourceType": "script"
   },
-  "C:/Users/espin/javidev/frontend/citt-pass-crm-front-end/node_modules/nuxt/dist/app/entry.js": {
+  "C:/Users/Public/javidev/citt-pass-crm-front-end/node_modules/nuxt/dist/app/entry.js": {
     "resourceType": "script",
     "module": true,
     "prefetch": true,
     "preload": true,
     "isEntry": true,
-    "file": "C:/Users/espin/javidev/frontend/citt-pass-crm-front-end/node_modules/nuxt/dist/app/entry.js"
+    "file": "C:/Users/Public/javidev/citt-pass-crm-front-end/node_modules/nuxt/dist/app/entry.js"
   }
 }

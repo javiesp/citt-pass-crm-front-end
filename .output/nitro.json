@@ -1,6 +1,6 @@
 {
-  "date": "2024-06-19T17:42:28.925Z",
-  "preset": "node-server",
+  "date": "2024-10-09T00:40:28.065Z",
+  "preset": "static",
   "framework": {
     "name": "nitro",
     "version": "2.9.6"
@@ -9,6 +9,6 @@
     "nitro": "2.9.6"
   },
   "commands": {
-    "preview": "node ./server/index.mjs"
+    "preview": "npx serve ./public"
   }
 }
