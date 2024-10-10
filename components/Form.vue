@@ -19,35 +19,36 @@ export default {
     };
   },
   methods: {
+    navigate(){
+      this.$router.push("/gestoringreso");
+    },
     async login() {
       this.loading = true;
       console.log("INICIANDO SESION");
-      console.log(this.loginDto);
+      console.log('LOGIN DTO', this.loginDto);
 
-      if (!this.loginDto.email && !this.loginDto.hashed_password) {
+      if (!this.loginDto.email || !this.loginDto.hashed_password) {
         this.loading = false;
-        return (this.dialog = true);
+        this.dialog = true; // Muestra el diálogo si faltan credenciales
+        return;
       }
-      console.log(this.dialog);
 
       try {
         const loginResponse = await userLogin(this.loginDto);
 
         this.mail = this.loginDto.email;
-
         this.loginArray = loginResponse.data;
         this.bearerToken = this.loginArray.accessToken;
-        console.log("RESPONSE");
 
         const accessToken = this.loginArray.accessToken;
 
         localStorage.setItem("email", this.mail);
         localStorage.setItem("accessToken", accessToken);
 
-        console.log(loginResponse);
-        this.$router.push("/gestoringreso");
+        this.navigate();
+        console.log('Success !!!')
       } catch (error) {
-        console.error("Error al obtener Inventarios:", error);
+        console.error("Error al iniciar:", error);
         this.dialogError = true;
         
       } finally {
@@ -60,6 +61,7 @@ export default {
   },
 };
 </script>
+
 <template>
   <v-container>
     <v-row align="center" justify="center">
