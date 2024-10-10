@@ -47,7 +47,7 @@ function createCsv() {
   saveFile(data, todayDate)
 }
 
-onMounted(fetchCheckIn);
+// onMounted(fetchCheckIn);
 
 const chartOptions = computed(() => {
   return {
@@ -108,6 +108,8 @@ const Chart = {
 onMounted(() => {
   setTimeout(() => (elementVisible.value = true), 10);
 });
+
+fetchCheckIn();
 
 function href() {
   return undefined; 
@@ -197,11 +199,11 @@ function href() {
                         <div class="mr-3">
                         </div>
                         <div class="mx-3">
-                          <h4 class="text-h6 mt-n1 mb-1">{{ checkIn.uid_user }}</h4>
-                          <div class="truncate-text text-subtitle-2 textSecondary">
-                            Motivo: {{ checkIn.entry_reason }}
-                          </div>
+                          <h4 class="text-h6 mt-n1 mb-1">{{ checkIn.entry_reason }}</h4>
                           <div class="text-muted">Fecha de entrada: {{ new Date(checkIn.entry_date).toLocaleDateString() }}</div>
+                          <div class="truncate-text text-subtitle-2 textSecondary">
+                            id: {{ checkIn.uid_user }}
+                          </div>
                         </div>
                       </div>
                     </v-list-item-title>

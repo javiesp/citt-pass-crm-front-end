@@ -147,6 +147,7 @@ export default defineComponent({
     async editItem(item) {
       this.dialogCheckin = true;
       this.userId = item.uid_user;
+      this.studentName = item.name;
       console.log(this.userId);
     },
     async getCheckIn() {
@@ -162,7 +163,7 @@ export default defineComponent({
       const post = {
         uid_user: this.userId,
         entry_date: null,
-        entry_reason: this.studentName + ' ' + this.entryReason,
+        entry_reason: this.studentName + ': ' + this.entryReason,
         times_entered: null,
       };
       try {
@@ -219,6 +220,7 @@ export default defineComponent({
           user.asistioHoy = await this.checkIfAttendedToday(user.uid_user);
         });
 
+        console.log('asistencia',this.asistioHoy)
         await Promise.all(attendancePromises);
         console.log("ARRAY", this.usersArray);
       } catch (error) {
@@ -404,9 +406,6 @@ export default defineComponent({
       <v-card-text>
         <v-row>
           <v-col>
-            <v-text-field v-model="studentName" label="Nombre de estudiante"></v-text-field>
-          </v-col>
-          <v-col>
             <v-textarea v-model="entryReason" label="Motivo"></v-textarea>
           </v-col>
         </v-row>
@@ -506,7 +505,7 @@ export default defineComponent({
                 item-value="project_id" item-title="project_name" variant="underlined"
                 @change="selectItem"></v-autocomplete>
               <p class="letra-abajo">
-                Es necesario que seleccione su grupo para poder gestionar
+                Es necesario que seleccione su proyecto para poder gestionar
               </p>
             </v-col>
           </v-row>
