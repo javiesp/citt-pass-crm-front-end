@@ -50,6 +50,16 @@ export const createUser = (createUserDto?: any) => {
   return diffusion.post('/users/create-user', createUserDto );
 };
 
+export const updateUser = (id: string, updateUserDto: any) => {
+  console.log(updateUserDto);
+  return diffusion.put(`/users/update-user/${id}`, updateUserDto); 
+};
+
+export const updateUserPassword = (id: string, updateUserDto: any) => {
+  console.log(updateUserDto);
+  return diffusion.put(`/users/update-user-password/${id}`, updateUserDto );
+};
+
 export const deleteUser = (id: any) => {
   return diffusion.delete('/users/delete-user/'+id);
 };

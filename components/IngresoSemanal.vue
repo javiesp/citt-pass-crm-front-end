@@ -2,11 +2,10 @@
 import { IconEdit } from "@tabler/icons-vue";
 import { defineComponent } from "vue";
 import {
-  getAllUsers,
   getAllUsersById,
   createUser,
   deleteUser,
-  getChecklist,
+  updateUser
 } from "../api/userApi.ts";
 import {
   getAllcheckIn,
@@ -58,6 +57,8 @@ export default defineComponent({
       dialogCheckin: false,
       dialogProject: false,
       dialogDelete: false,
+      dialogUpdate: false,
+      errorAlertVisible: false,
       selectedItem: {},
       selectItem: null,
       variant: null,
@@ -93,6 +94,18 @@ export default defineComponent({
       studentName: null
     };
   },
+  async created() {
+    let local_project = localStorage.getItem('project_id');
+
+    if (!local_project || local_project.trim() === '') {
+      this.dialogProject = true;
+    } else {
+      this.dialogProject = false;
+    }
+
+    await this.getUsers();
+    await this.getProjects();
+  },
   methods: {
     async checkIfAttendedToday(uid_user) {
       try {
@@ -125,6 +138,7 @@ export default defineComponent({
         await Promise.all(attendancePromises);
       } catch (error) {
         console.error("Error fetching users:", error);
+        this.errorAlertVisible = true;
       } finally {
         this.loading = false;
       }
@@ -145,10 +159,34 @@ export default defineComponent({
       }
     },
     async editItem(item) {
+      this.post = {
+        uid_user: item.uid_user,
+        email: item.email,
+        phone: item.phone,
+        name: item.name,
+        hashed_password: item.hashed_password,
+        run: item.run,
+        project_id: item.project_id,
+      }
+
       this.dialogCheckin = true;
       this.userId = item.uid_user;
       this.studentName = item.name;
       console.log(this.userId);
+    },
+    async updateItem(item) {
+      this.post = {
+        uid_user: item.uid_user,
+        email: item.email,
+        phone: item.phone,
+        name: item.name,
+        hashed_password: item.hashed_password,
+        run: item.run,
+        project_id: item.project_id,
+      }
+
+      this.itemId = item._id;
+      this.dialogUpdate = true;
     },
     async getCheckIn() {
       try {
@@ -198,6 +236,27 @@ export default defineComponent({
         console.log(error);
       }
     },
+    async updateUser() {
+      console.log(this.post)
+      const id = this.itemId;
+      const put = {
+        email: this.post.email,
+        phone: this.post.phone,
+        name: this.post.name,
+        run: this.post.run,
+        proyect_id: this.post.project_id,
+      };
+
+      try {
+        const response = await updateUser(id, put);
+        this.getUsers();
+        this.dialogUpdate = false;
+      } catch (error) {
+        console.log(error);
+        this.errorAlertVisible = true; 
+      }
+    },
+    
     selectProject() {
       this.dialogProject = false;
       this.loading = true;
@@ -222,6 +281,7 @@ export default defineComponent({
 
         console.log('asistencia',this.asistioHoy)
         await Promise.all(attendancePromises);
+        window.location.reload(); // Testeo
         console.log("ARRAY", this.usersArray);
       } catch (error) {
         console.error("Error al obtener usuarios:", error);
@@ -299,6 +359,29 @@ export default defineComponent({
 
       return true; 
     },
+    formatRun() {
+      const rawRun = this.post.run.replace(/[^0-9kK]/g, '');
+
+      if (rawRun.length < 2) {
+        this.post.run = '';
+        return;
+      }
+
+      const body = rawRun.slice(0, -1);
+      const dv = rawRun.slice(-1).toUpperCase();
+
+      const formattedBody = body.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+      this.post.run = `${formattedBody}-${dv}`;
+    },
+    validateRun(value) {
+      const rutPattern = /^(?:\d{1,2}(?:\.\d{3}){2}-[0-9kK])$/;
+
+      if (!rutPattern.test(value)) {
+        return 'El RUT debe estar en el formato 1.111.111-1';
+      }
+      return true; 
+    },
     isFormValid() {
       return this.post.name && this.post.email && this.post.phone && this.post.password && this.post.project_id;
     },
@@ -339,18 +422,6 @@ export default defineComponent({
       }
     },
   },
-  async created() {
-    let local_project = localStorage.getItem('project_id');
-
-    if (!local_project || local_project.trim() === '') {
-      this.dialogProject = true;
-    } else {
-      this.dialogProject = false;
-    }
-
-    await this.getUsers();
-    await this.getProjects();
-  },
 });
 
 </script>
@@ -378,11 +449,21 @@ export default defineComponent({
       <v-card class="mx-auto">
         <v-divider />
         <v-col>
-          <v-data-table v-model:items-per-page="itemsPerPage" :items-per-page-options="rowsPerPageItems"
-            :headers="headers" :items="usersArray" :loading="loading" :search="search" item-key="uid_user">
+          <v-data-table 
+            v-model:items-per-page="itemsPerPage" 
+            :items-per-page-options="rowsPerPageItems"
+            :headers="headers" 
+            :items="usersArray" 
+            :loading="loading" 
+            :search="search" 
+            item-key="uid_user"
+          >
             <template v-slot:item.actions="{ item }">
               <v-btn class="ml-2" color="error" icon size="x-small" flat @click="openDeleteDialog(item)">
                 <v-icon>mdi-delete</v-icon>
+              </v-btn>
+              <v-btn class="ml-2" color="primary" icon size="x-small" flat @click="updateItem(item)">
+                <v-icon>mdi-pencil</v-icon>
               </v-btn>
             </template>
             <template v-slot:item.checkin="{ item }">
@@ -451,6 +532,16 @@ export default defineComponent({
 
             <v-col cols="12" md="4" sm="6">
               <v-text-field 
+                v-model="post.run"
+                hint="Ingresa el RUT sin puntos ni guion"
+                label="RUT*"
+                :rules="[validateRun]"
+                required
+              ></v-text-field>
+            </v-col>
+
+            <v-col cols="12" md="4" sm="6">
+              <v-text-field 
                 v-model="post.password"
                 hint="Debe tener al menos 9 caracteres y contener al menos una letra, símbolo o número"
                 label="Contraseña*"
@@ -491,6 +582,75 @@ export default defineComponent({
       </v-card>
     </v-dialog>
   </div>
+  <!-- ABRIR DIALOG UPDATE -->
+  <div class="pa-4 text-center">
+    <v-dialog v-model="dialogUpdate" max-width="600">
+      <v-card prepend-icon="mdi-account" title="Crear Usuario">
+        <v-card-text>
+          <v-row dense>
+            <v-col cols="12" md="4" sm="6">
+              <v-text-field v-model="post.name" label="Nombre*" required></v-text-field>
+            </v-col>
+
+            <v-col cols="12" md="4" sm="6">
+              <v-text-field 
+                v-model="post.email" 
+                hint="email@duocuc.cl/ email@profesor.duoc.cl"
+                label="Email*"
+                :rules="[validateEmail]" 
+                required
+              ></v-text-field>
+            </v-col>
+
+            <v-col cols="12" md="4" sm="6">
+              <v-text-field
+                v-model="post.phone"
+                hint="Ej: +56 9 XXXX XXXX"
+                label="Teléfono*"
+                required
+                :rules="[validatePhone]"
+                @input="post.phone = phoneFormat(post.phone)"
+              ></v-text-field>
+            </v-col>
+
+            <v-col cols="12" md="4" sm="6">
+              <v-text-field 
+                v-model="post.run"
+                hint="Ingresa el RUT sin puntos ni guion"
+                label="RUT*"
+                :rules="[validateRun]"
+                required
+              ></v-text-field>
+            </v-col>
+
+            <v-col cols="12" sm="6">
+              <v-autocomplete v-model="post.project_id" label="Selecciona un proyecto..." :items="projectArray"
+                item-value="project_id" item-title="project_name" variant="underlined"
+                @change="selectItem"></v-autocomplete>
+            </v-col>
+
+          </v-row>
+
+          <small class="text-caption text-medium-emphasis">* Indica que el campo es obligatorio</small>
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn text="Cerrar" variant="plain" @click="dialogUpdate = false"></v-btn>
+
+          <v-btn 
+            color="primary" 
+            text="Crear usuario" 
+            variant="tonal" 
+            @click="updateUser"
+            ></v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
   <!-- Elegir proyecto -->
   <v-dialog v-model="dialogProject" persistent width="600">
     <v-card>
@@ -502,8 +662,7 @@ export default defineComponent({
           <v-row>
             <v-col cols="12">
               <v-autocomplete v-model="selectedItem.id" label="Selecciona un proyecto..." :items="projectArray"
-                item-value="project_id" item-title="project_name" variant="underlined"
-                @change="selectItem"></v-autocomplete>
+                item-value="project_id" item-title="project_name" variant="underlined"></v-autocomplete>
               <p class="letra-abajo">
                 Es necesario que seleccione su proyecto para poder gestionar
               </p>
@@ -532,4 +691,48 @@ export default defineComponent({
       </v-card-actions>
     </v-card>
   </v-dialog>
+
+  <!--Alerta-->
+  <v-alert
+    v-model="errorAlertVisible"
+    dismissible
+    color="red"
+    elevation="2"
+    colored-border
+    icon="mdi-alert"
+    timeout="5000"
+  >
+    Oops! Ha ocurrido un problema.
+  </v-alert>
+
+  <v-dialog v-model="dialogRack" persistent width="600">
+      <v-card>
+        <v-card-title>
+          <span class="my-letra">Rack</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12">
+                <v-autocomplete 
+                  v-model="selectedItem"
+                  label="Selecciona un proyecto..."
+                  :items="rackArray" 
+                  item-value="rack_id"
+                  item-title="rack_name"
+                  variant="underlined"
+                ></v-autocomplete>
+                <p class="letra-abajo">Es necesario que seleccione su grupo para poder gestionar</p>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" :rounded="true" elevation="2" variant="text" @click="selectProject">
+            Login
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 </template>

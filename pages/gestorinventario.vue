@@ -8,14 +8,12 @@ import {
   getInventoryByRackId,
   getWishlist,
 } from "../api/inventoryApi";
-//importas el rack
 import { getAllrack } from "../api/rackApi";
 
 export default defineComponent({
   name: "inventoryItem",
   data () {
     return {
-      // data table
       loading: false,
       search: '',
       itemsPerPage: 5,
@@ -32,9 +30,9 @@ export default defineComponent({
         { title: "Rack ID", value: "rack_id" },
         { title: "Acciones", value: "actions" },
       ],
-      // variables
       dialog: false,
       dialogRack: true,
+      selectItem: null,
       inventoryArray: [],
       inventoryNames: [],
       rackIds: [],
@@ -98,8 +96,6 @@ export default defineComponent({
       try {
         const rackResponse = await getAllrack();
         this.rackArray = rackResponse.data;
-        this.rackNames = this.rackArray.map((rack) => rack.rack_name);
-        this.rackIds = this.rackArray.map((rack) => rack.rack_id);
       } catch (error) {
         console.error("Error al obtener Racks:", error);
       }
@@ -122,7 +118,6 @@ export default defineComponent({
         console.log("CREATED", createResponse);
         this.alertVisible = true;
 
-        // Limpiar los campos del formulario
         this.objectDto = {
           inventory_id: null,
           inventory_name: "",
@@ -146,7 +141,6 @@ export default defineComponent({
       this.dialogVisible = false;
     },
     async confirmDeleteInventory() {
-      console.log("aaaaaaaaaaaaaaaaa", this.inventoryId);
       try {
         const deleteResponse = await deleteInventory(this.inventoryId);
         this.dialogVisible = false;
@@ -196,7 +190,7 @@ export default defineComponent({
     },
     async selectProject() {
       console.log("SELECTED")
-      console.log(this.selectedItem)
+      console.log(this.selectedItem,'<---')
       try {
         this.loading = true;
         const response = await getInventoryByRackId(this.selectedItem);
@@ -214,11 +208,13 @@ export default defineComponent({
     closeCreateDialog() {
       this.dialog = false;
     },
+    customTitle() {
+      return "Seleccione un rack";
+    }
   },
   mounted() {
     this.getInventory();
     this.getRack();
-    console.log("aaaaaaaaaaaaa");
     this.getWishlist();
   },
 });
@@ -252,6 +248,10 @@ export default defineComponent({
         @click="openCreateDialog"
         >Agregar Inventario</v-btn
       >
+    </v-col>
+    <v-col cols="3">
+      <v-spacer></v-spacer>
+      <v-btn variant="tonal" color="red" prepend-icon="mdi-logout" @click="dialogRack = true" text="cambiar de rack"></v-btn>
     </v-col>
     <v-col cols="12" sm="12">
       <v-card :variant="variant" class="mx-auto">
@@ -392,7 +392,6 @@ export default defineComponent({
     v-model="errorAlertVisible"
     dismissible
     color="red"
-    border="left"
     elevation="2"
     colored-border
     icon="mdi-alert"
@@ -412,12 +411,11 @@ export default defineComponent({
               <v-col cols="12">
                 <v-autocomplete 
                   v-model="selectedItem"
-                  label="Selecciona un rack..." 
+                  label="Selecciona un proyecto..."
                   :items="rackArray" 
                   item-value="rack_id"
                   item-title="rack_name"
                   variant="underlined"
-                  @change="selectItem"
                 ></v-autocomplete>
                 <p class="letra-abajo">Es necesario que seleccione su grupo para poder gestionar</p>
               </v-col>
