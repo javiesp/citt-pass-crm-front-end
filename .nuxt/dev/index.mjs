@@ -1013,6 +1013,20 @@ const assets = {
     "size": 60051,
     "path": "../../.output/public/images/big/img4.jpg"
   },
+  "/images/products/empty-shopping-cart.svg": {
+    "type": "image/svg+xml",
+    "etag": "\"431c-L2YP9QSlacz/HDgpbwgeSAe3QrM\"",
+    "mtime": "2024-10-08T22:53:45.912Z",
+    "size": 17180,
+    "path": "../../.output/public/images/products/empty-shopping-cart.svg"
+  },
+  "/images/products/payment.svg": {
+    "type": "image/svg+xml",
+    "etag": "\"6018-z14nkBT/n4fShml09dvn0nXJMEQ\"",
+    "mtime": "2024-10-08T22:53:45.913Z",
+    "size": 24600,
+    "path": "../../.output/public/images/products/payment.svg"
+  },
   "/images/logos/citt_logo.png": {
     "type": "image/png",
     "etag": "\"19f21-j8UiI2u2RsZQ5vydBjBxifdI4e4\"",
@@ -1033,20 +1047,6 @@ const assets = {
     "mtime": "2024-10-08T22:53:45.912Z",
     "size": 4235,
     "path": "../../.output/public/images/logos/dark-logo-text.svg"
-  },
-  "/images/products/empty-shopping-cart.svg": {
-    "type": "image/svg+xml",
-    "etag": "\"431c-L2YP9QSlacz/HDgpbwgeSAe3QrM\"",
-    "mtime": "2024-10-08T22:53:45.912Z",
-    "size": 17180,
-    "path": "../../.output/public/images/products/empty-shopping-cart.svg"
-  },
-  "/images/products/payment.svg": {
-    "type": "image/svg+xml",
-    "etag": "\"6018-z14nkBT/n4fShml09dvn0nXJMEQ\"",
-    "mtime": "2024-10-08T22:53:45.913Z",
-    "size": 24600,
-    "path": "../../.output/public/images/products/payment.svg"
   },
   "/images/profile/1.jpg": {
     "type": "image/jpeg",

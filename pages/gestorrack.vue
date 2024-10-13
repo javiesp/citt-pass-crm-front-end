@@ -108,6 +108,8 @@ export default defineComponent({
         this.dialog = false;
         this.getRack();
         console.log("CREATED", createResponse);
+
+        this.clearInput();
         this.alertVisible = true;  
 
         // Limpiar los campos del formulario
@@ -155,6 +157,7 @@ export default defineComponent({
       
     },
     closeUpdateDialog() {
+      this.clearInput();
       this.dialogUpdateVisible = false;
     },
     async updateRack() {
@@ -171,14 +174,23 @@ export default defineComponent({
                 this.dialogVisible = false
                 this.getRack()
                 console.log("UPDATED",updateResponse)
+
+                this.clearInput();
                 this.alertVisible = true; 
                 this.dialogUpdateVisible = false;
             } catch (error) {
                 console.error("No se ha podido actualizar el rack", this.rackId, error)
+                this.clearInput();
                 this.errorAlertVisible = true;
             }
     },
-
+    clearInput() {
+      this.objectDto = {
+        rack_id: null,
+        rack_type: null,
+        rack_name: null,
+      }
+    }
   },
   mounted() {
     this.getRack();
@@ -271,7 +283,7 @@ export default defineComponent({
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="error" text="Cancelar" variant="plain" @click="closeCreateDialog"></v-btn>
-          <v-btn color="primary" text="Guardar Inventario" variant="tonal" @click="saveRack"></v-btn>
+          <v-btn color="primary" text="Guardar rack" variant="tonal" @click="saveRack"></v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

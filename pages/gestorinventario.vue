@@ -52,6 +52,7 @@ export default defineComponent({
         inventory_name: "",
         rack_id: null,
       },
+      max: 12312312,
     };
   },
   computed: {
@@ -65,6 +66,18 @@ export default defineComponent({
           .includes(this.searchQuery.toLowerCase())
       );
     },
+  },
+  async created() {
+    let local_project = localStorage.getItem('rack_id_cach');
+
+    if (!local_project || local_project.trim() === '') {
+      this.dialogRack = true;
+    } else {
+      this.dialogRack = false;
+    }
+
+    await this.getUsers();
+    await this.getProjects();
   },
   methods: {
     async getInventory() {
@@ -109,20 +122,29 @@ export default defineComponent({
       link.click();
       document.body.removeChild(link);
     },
+    getRandomInt() {
+        const rand = Math.floor(Math.random() * this.max); 
+        this.objectDto.inventory_id = rand; 
+        console.log('NUMERO', rand);
+        return rand;
+    },
     async saveInventory() {
-      console.log("Guardar inventario", this.objectDto);
+      this.getRandomInt();
+      const post = {
+        inventory_id: this.objectDto.inventory_id,
+        inventory_name: this.objectDto.inventory_name,
+        rack_id: this.objectDto.rack_id,
+      }
+
+      console.log(post)
       try {
-        const createResponse = await createInventory(this.objectDto);
-        this.dialog = false;
+        const createResponse = await createInventory(post);
         this.getInventory();
         console.log("CREATED", createResponse);
+        
+        this.cleanInput();
         this.alertVisible = true;
-
-        this.objectDto = {
-          inventory_id: null,
-          inventory_name: "",
-          rack_id: null,
-        };
+        this.dialog = false;
       } catch (error) {
         console.error(
           "No se ha podido crear el inventario",
@@ -157,17 +179,21 @@ export default defineComponent({
       }
     },
     openUpdateDialog(items) {
-      console.log("ITEM", items._id);
-      this.inventoryId = items._id; // Copiar los datos del inventario seleccionado
+      this.objectDto = {
+        inventory_name: items.inventory_name,
+        rack_id: items.rack_id,
+      };
+
+      this.inventoryId = items._id; 
       this.dialogUpdateVisible = true;
     },
     closeUpdateDialog() {
       this.dialogUpdateVisible = false;
+      this.cleanInput();
     },
     async updateInventory() {
       console.log("DTO", this.objectDto);
       const put = {
-        inventory_id: this.objectDto.inventory_id,
         inventory_name: this.objectDto.inventory_name,
         rack_id: this.objectDto.rack_id,
       };
@@ -176,7 +202,10 @@ export default defineComponent({
         const updateResponse = await updateInventory(this.inventoryId, put);
         this.dialogVisible = false;
         this.getInventory();
+
         console.log("UPDATED", updateResponse);
+
+        this.cleanInput();
         this.alertVisible = true;
         this.dialogUpdateVisible = false;
       } catch (error) {
@@ -190,12 +219,14 @@ export default defineComponent({
     },
     async selectProject() {
       console.log("SELECTED")
-      console.log(this.selectedItem,'<---')
+      localStorage.setItem("rack_id_cach", this.selectedItem);
+      console.log(this.selectedItem, '<---')
       try {
         this.loading = true;
         const response = await getInventoryByRackId(this.selectedItem);
         console.log(response);
         this.inventoryArray = response.data;
+
         this.loading = false;
         this.dialogRack = false;
       } catch (error) {
@@ -210,6 +241,15 @@ export default defineComponent({
     },
     customTitle() {
       return "Seleccione un rack";
+    },
+    cleanInput() {
+      this.objectDto = {
+        inventory_id: null,
+        inventory_name: null,
+        rack_id: null
+      }
+
+      console.log(this.objectDto)
     }
   },
   mounted() {
@@ -305,13 +345,6 @@ export default defineComponent({
           <v-row dense>
             <v-col cols="12" md="4" sm="6">
               <v-text-field
-                label="Inventario ID"
-                required
-                v-model="objectDto.inventory_id"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" md="4" sm="6">
-              <v-text-field
                 label="Nombre Inventario"
                 required
                 v-model="objectDto.inventory_name"
@@ -353,13 +386,6 @@ export default defineComponent({
       <v-card prepend-icon="mdi-folder-outline" title="Actualizar Inventario">
         <v-card-text>
           <v-row dense>
-            <v-col cols="12" md="4" sm="6">
-              <v-text-field
-                label="ID"
-                required
-                v-model="objectDto.inventory_id"
-              ></v-text-field>
-            </v-col>
             <v-col cols="12" md="4" sm="6">
               <v-text-field
                 label="Nombre Inventario"

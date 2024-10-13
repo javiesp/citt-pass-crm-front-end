@@ -210,7 +210,9 @@ export default defineComponent({
         console.log(response);
         console.log("REGISTRADO");
         window.location.reload();
+
         this.dialogCheckin = false;
+        this.clearInput();
         this.loading = false;
       } catch (error) {
         console.log(error);
@@ -230,7 +232,9 @@ export default defineComponent({
       };
       try {
         const response = await createUser(create);
+        
         this.getUsers();
+        this.clearInput();
         this.dialog = false;
       } catch (error) {
         console.log(error);
@@ -250,11 +254,17 @@ export default defineComponent({
       try {
         const response = await updateUser(id, put);
         this.getUsers();
+
+        this.clearInput();
         this.dialogUpdate = false;
       } catch (error) {
         console.log(error);
         this.errorAlertVisible = true; 
       }
+    },
+    closeUpdate() {
+      this.clearInput();
+      this.dialogUpdate = false;
     },
     
     selectProject() {
@@ -413,6 +423,17 @@ export default defineComponent({
       link.click();
       document.body.removeChild(link);
     },
+    clearInput() {
+      this.post = {
+        uid_user: null,
+        email: null,
+        phone: null,
+        name: null,
+        hashed_password: null,
+        run: null,
+        project_id: null,
+      }
+    }
   },
   watch: {
     selectedProyect: function (newValue, oldValue) {
@@ -639,7 +660,7 @@ export default defineComponent({
         <v-card-actions>
           <v-spacer></v-spacer>
 
-          <v-btn text="Cerrar" variant="plain" @click="dialogUpdate = false"></v-btn>
+          <v-btn text="Cerrar" variant="plain" @click="closeUpdate()"></v-btn>
 
           <v-btn 
             color="primary" 

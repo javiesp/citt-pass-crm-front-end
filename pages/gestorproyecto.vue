@@ -60,6 +60,7 @@ export default defineComponent({
         wishlist_id: null,
         project_team_id: null,
       },
+      max: 238452345,
     };
   },
   computed: {
@@ -114,13 +115,25 @@ export default defineComponent({
       link.click();
       document.body.removeChild(link);
     },
+
     openUpdateDialog(item) {
+      this.objectDto = {
+        project_name: item.project_name,
+        project_description: item.project_description,
+        project_status: item.project_status,
+        wishlist_id: item.wishlist_id,
+        project_team_id: item.project_team_id,
+      },
+
       this.projectId = item._id;
       this.dialogUpdateVisible = true;
     },
+
     closeUpdateDialog() {
+      this.clearInput();
       this.dialogUpdateVisible = false;
     },
+
     async updateProject() {
       console.log(this.objectDto);
       const put = {
@@ -133,9 +146,11 @@ export default defineComponent({
 
       try {
         const updateResponse = await updateProject(this.projectId, put);
-        this.dialogVisible = false;
         this.getProjects();
         console.log("UPDATED", updateResponse);
+
+        this.clearInput();
+        this.dialogVisible = false;
         this.alertVisible = true;
         this.dialogUpdateVisible = false;
       } catch (error) {
@@ -154,7 +169,7 @@ export default defineComponent({
       console.log(this.projectId);
     },
     closeDeleteDialog() {
-      this.dialogVisible = false;
+      this.dialogCreate = false;
     },
     async deleteProject() {
       console.log("aaaaaaaaaaaaaaaaa", this.projectId);
@@ -176,8 +191,14 @@ export default defineComponent({
     openCreateDialog() {
       this.dialogCreate = true;
     },
-
+    getRandomInt() {
+        const rand = Math.floor(Math.random() * this.max); 
+        this.objectDto.project_id = rand; 
+        console.log('NUMERO', rand);
+        return rand;
+    },
     async createProject() {
+      this.getRandomInt();
       const post = {
         project_id: this.objectDto.project_id,
         project_name: this.objectDto.project_name,
@@ -188,21 +209,15 @@ export default defineComponent({
       };
       console.log("asd", this.objectDto);
       try {
-        console.log("llego hasta este punto bien");
         const createResponse = await createProject(post);
-        this.dialogCreate = false;
+
         this.getProjects();
+
         console.log("CREATED", createResponse);
+
+        this.clearInput();
+        this.dialogCreate = false;
         this.alertVisible = true;
-        // Limpiar los campos del formulario
-        this.objectDto = {
-          project_id: null,
-          project_name: "",
-          project_description: "",
-          project_status: "",
-          wishlist_id: null,
-          project_team_id: null,
-        };
       } catch (error) {
         console.error(
           "No se ha podido eliminar el proyecto",
@@ -212,6 +227,17 @@ export default defineComponent({
         this.errorAlertVisible = true;
       }
     },
+
+    clearInput() {
+      this.objectDto = {
+        project_id: null,
+        project_name: null,
+        project_description: null,
+        project_status: null,
+        wishlist_id: null,
+        project_team_id: null,
+      } 
+    }
   },
   watch: {},
   async created() {
@@ -289,25 +315,29 @@ export default defineComponent({
                 v-model="objectDto.project_name"
               ></v-text-field>
             </v-col>
-            <v-col cols="12" md="6">
-              <v-text-field
-                label="Descripcion"
-                v-model="objectDto.project_description"
-              ></v-text-field>
-            </v-col>
             <v-col cols="12" md="4">
               <v-combobox
                 hint="Status"
                 label="Status"
                 v-model="objectDto.project_status"
                 :items="statusArray"
+                variant="outlined"
               ></v-combobox>
             </v-col>
-            <v-col cols="12" md="4">
+            <v-col cols="12" md="10">
+              <v-textarea
+                label="Descripcion"
+                v-model="objectDto.project_description"
+                variant="outlined"
+                required
+              ></v-textarea>
+            </v-col>
+            <!-- <v-col cols="12" md="4">
               <v-combobox
                 hint="Proyect Team"
                 label="Wishlist"
                 v-model="objectDto.wishlist_id"
+                variant="outlined"
               ></v-combobox>
             </v-col>
             <v-col cols="12" md="4">
@@ -315,8 +345,9 @@ export default defineComponent({
                 hint="Proyect Team"
                 label="Proyect Team"
                 v-model="objectDto.project_team_id"
+                variant="outlined"
               ></v-combobox>
-            </v-col>
+            </v-col> -->
           </v-row>
         </v-card-text>
       </v-card-text>
@@ -345,22 +376,9 @@ export default defineComponent({
           <v-row>
             <v-col cols="12" md="4">
               <v-text-field
-                label="ID del Proyecto"
-                v-model="objectDto.project_id"
-                required
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" md="4">
-              <v-text-field
                 label="Nombre Proyecto"
                 v-model="objectDto.project_name"
-                required
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" md="4">
-              <v-text-field
-                label="Descripcion"
-                v-model="objectDto.project_description"
+                variant="outlined"
                 required
               ></v-text-field>
             </v-col>
@@ -370,14 +388,24 @@ export default defineComponent({
                 label="Status"
                 v-model="objectDto.project_status"
                 :items="statusArray"
+                variant="outlined"
                 required
               ></v-combobox>
             </v-col>
-            <v-col cols="12" md="4">
+            <v-col cols="12" md="10">
+              <v-textarea
+                label="Descripcion"
+                v-model="objectDto.project_description"
+                variant="outlined"
+                required
+              ></v-textarea>
+            </v-col>
+            <!-- <v-col cols="12" md="4">
               <v-combobox
                 hint="Proyect Team"
                 label="Wishlist"
                 v-model="objectDto.wishlist_id"
+                variant="outlined"
               ></v-combobox>
             </v-col>
             <v-col cols="12" md="4">
@@ -385,8 +413,9 @@ export default defineComponent({
                 hint="Proyect Team"
                 label="Proyect Team"
                 v-model="objectDto.project_team_id"
+                variant="outlined"
               ></v-combobox>
-            </v-col>
+            </v-col> -->
           </v-row>
         </v-card-text>
         <v-divider></v-divider>
