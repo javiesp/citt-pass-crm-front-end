@@ -39,6 +39,7 @@ export default defineComponent({
         rack_name: '',
       },
       loading: false,
+      max: 2934875
     };
   },
   computed: {
@@ -87,7 +88,20 @@ export default defineComponent({
     closeCreateDialog() {
       this.dialog = false;
     },
+    getRandomInt() {
+        const rand = Math.floor(Math.random() * this.max); 
+        this.objectDto.rack_id = rand; 
+        console.log('NUMERO', rand);
+        return rand;
+    },
     async saveRack() {
+      this.getRandomInt();
+
+      const post = {
+        rack_id: this.objectDto.rack_id,
+        rack_type: this.objectDto.rack_type,
+        rack_name: this.objectDto.rack_name,
+      }
       console.log('Guardar Rack', this.objectDto);
       try {
         const createResponse = await createRack(this.objectDto);
@@ -98,7 +112,7 @@ export default defineComponent({
 
         // Limpiar los campos del formulario
         this.objectDto = {
-          rack_id: null,
+          rack_id: this.rackId,
           rack_type: '',
           rack_name: '',
         };
@@ -118,7 +132,6 @@ export default defineComponent({
       this.dialogVisible = false;
     },
     async confirmDeleteRack() {
-      console.log('aaaaaaaaaaaaaaaaa', this.rackId)
       try {
                 const deleteResponse = await deleteRack(this.rackId);
                 this.dialogVisible = false
@@ -132,8 +145,12 @@ export default defineComponent({
     },
     // Metodo Actualizar Rack
     openUpdateDialog(item) {
+      this.objectDto = {
+        rack_type: item.rack_type,
+        rack_name: item.rack_name,
+      };
+
       this.rackId = item._id;
-      console.log('ITEM',this.rackId)
       this.dialogUpdateVisible = true;
       
     },
@@ -143,10 +160,11 @@ export default defineComponent({
     async updateRack() {
             console.log('ERORRRRRRRRRR',this.objectDto)
             const put = {
-              rack_id: this.objectDto.rack_id,
               rack_type: this.objectDto.rack_type,
               rack_name: this.objectDto.rack_name,
             }
+
+            console.log(put)
 
             try {
                 const updateResponse = await updateRack(this.rackId, put);
@@ -242,9 +260,6 @@ export default defineComponent({
         <v-card-text>
           <v-row dense>
             <v-col cols="12" md="4" sm="6">
-              <v-text-field label="Rack Id" required v-model="objectDto.rack_id"></v-text-field>
-            </v-col>
-            <v-col cols="12" md="4" sm="6">
               <v-text-field label="Tipo Rack" required v-model="objectDto.rack_type"></v-text-field>
             </v-col>
             <v-col cols="12" md="4" sm="6">
@@ -269,9 +284,6 @@ export default defineComponent({
       <v-card prepend-icon="mdi-folder-outline" title="Actualizar Rack">
         <v-card-text>
           <v-row dense>
-            <v-col cols="12" md="4" sm="6">
-              <v-text-field label="ID Rack" required v-model="objectDto.rack_id"></v-text-field>
-            </v-col>
             <v-col cols="12" md="4" sm="6">
               <v-text-field label="Tipo Rack" required v-model="objectDto.rack_type"></v-text-field>
             </v-col>
