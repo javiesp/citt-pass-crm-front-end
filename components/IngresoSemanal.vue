@@ -726,34 +726,4 @@ export default defineComponent({
     Oops! Ha ocurrido un problema.
   </v-alert>
 
-  <v-dialog v-model="dialogRack" persistent width="600">
-      <v-card>
-        <v-card-title>
-          <span class="my-letra">Rack</span>
-        </v-card-title>
-        <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col cols="12">
-                <v-autocomplete 
-                  v-model="selectedItem"
-                  label="Selecciona un proyecto..."
-                  :items="rackArray" 
-                  item-value="rack_id"
-                  item-title="rack_name"
-                  variant="underlined"
-                ></v-autocomplete>
-                <p class="letra-abajo">Es necesario que seleccione su grupo para poder gestionar</p>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" :rounded="true" elevation="2" variant="text" @click="selectProject">
-            Login
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
 </template>

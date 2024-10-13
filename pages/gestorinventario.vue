@@ -433,19 +433,23 @@ export default defineComponent({
         </v-card-title>
         <v-card-text>
           <v-container>
-            <v-row>
-              <v-col cols="12">
-                <v-autocomplete 
-                  v-model="selectedItem"
-                  label="Selecciona un proyecto..."
-                  :items="rackArray" 
-                  item-value="rack_id"
-                  item-title="rack_name"
-                  variant="underlined"
-                ></v-autocomplete>
-                <p class="letra-abajo">Es necesario que seleccione su grupo para poder gestionar</p>
-              </v-col>
-            </v-row>
+            <v-col cols="12">
+              <v-autocomplete 
+                v-model="selectedItem"
+                label="Selecciona un proyecto..."
+                :items="rackArray" 
+                item-value="rack_id"
+                item-title="rack_name"
+                variant="underlined"
+                :display-typed-values="false"
+              >
+                <template v-slot:selection="data">
+                  <span v-if="data.selectedItem">{{ data.selectedItem.rack_name }}</span>
+                  <span v-else>No hay proyecto seleccionado</span>
+                </template>
+              </v-autocomplete>
+              <p class="letra-abajo">Es necesario que seleccione su grupo para poder gestionar</p>
+            </v-col>
           </v-container>
         </v-card-text>
         <v-card-actions>
