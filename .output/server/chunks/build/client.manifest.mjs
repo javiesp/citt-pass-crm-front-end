@@ -1,10 +1,10 @@
 const client_manifest = {
-  "_IngresoSemanal.b12ce8ef.js": {
+  "_IngresoSemanal.24eec9b0.js": {
     "resourceType": "script",
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "IngresoSemanal.b12ce8ef.js",
+    "file": "IngresoSemanal.24eec9b0.js",
     "imports": [
       "_userApi.248f1fe6.js",
       "_axios.4d564c32.js",
@@ -12,12 +12,12 @@ const client_manifest = {
       "node_modules/nuxt/dist/app/entry.js"
     ]
   },
-  "_UiChildCard.vue.59883287.js": {
+  "_UiChildCard.vue.0b1cc50d.js": {
     "resourceType": "script",
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "UiChildCard.vue.59883287.js",
+    "file": "UiChildCard.vue.0b1cc50d.js",
     "imports": [
       "node_modules/nuxt/dist/app/entry.js"
     ]
@@ -81,7 +81,7 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "auth.3507c728.js",
+    "file": "auth.c4998e07.js",
     "imports": [
       "node_modules/nuxt/dist/app/entry.js"
     ],
@@ -93,7 +93,7 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "blank.ab9721f6.js",
+    "file": "blank.1d872c12.js",
     "imports": [
       "node_modules/nuxt/dist/app/entry.js"
     ],
@@ -105,7 +105,7 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "default.25a307ed.js",
+    "file": "default.2fb7c9e7.js",
     "imports": [
       "node_modules/nuxt/dist/app/entry.js"
     ],
@@ -162,7 +162,7 @@ const client_manifest = {
       "layouts/blank.vue",
       "layouts/default.vue"
     ],
-    "file": "entry.4c01c827.js",
+    "file": "entry.5cb16beb.js",
     "isEntry": true,
     "src": "node_modules/nuxt/dist/app/entry.js"
   },
@@ -200,7 +200,7 @@ const client_manifest = {
     "assets": [
       "citt_logo.3e785fd1.png"
     ],
-    "file": "Login.8b0d8765.js",
+    "file": "Login.d59813bd.js",
     "imports": [
       "_userApi.248f1fe6.js",
       "node_modules/nuxt/dist/app/entry.js",
@@ -230,7 +230,7 @@ const client_manifest = {
     "css": [
       "colaborators.1633a82a.css"
     ],
-    "file": "colaborators.2d6b4871.js",
+    "file": "colaborators.455668d3.js",
     "imports": [
       "node_modules/nuxt/dist/app/entry.js"
     ],
@@ -248,9 +248,9 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "gestoringreso.1163c798.js",
+    "file": "gestoringreso.b6d607ed.js",
     "imports": [
-      "_IngresoSemanal.b12ce8ef.js",
+      "_IngresoSemanal.24eec9b0.js",
       "node_modules/nuxt/dist/app/entry.js",
       "_userApi.248f1fe6.js",
       "_axios.4d564c32.js",
@@ -264,7 +264,7 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "gestorinventario.bebe9ebb.js",
+    "file": "gestorinventario.8e72c46e.js",
     "imports": [
       "_axios.4d564c32.js",
       "_rackApi.412b9ffa.js",
@@ -278,7 +278,7 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "gestorproyecto.db5cbe66.js",
+    "file": "gestorproyecto.78029c64.js",
     "imports": [
       "_userApi.248f1fe6.js",
       "_projectApi.98219bc6.js",
@@ -293,7 +293,7 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "gestorrack.7b0e857b.js",
+    "file": "gestorrack.e56c5da3.js",
     "imports": [
       "_rackApi.412b9ffa.js",
       "node_modules/nuxt/dist/app/entry.js",
@@ -317,10 +317,10 @@ const client_manifest = {
     "css": [
       "index.5aff9f83.css"
     ],
-    "file": "index.0f3afc1d.js",
+    "file": "index.38c84ca5.js",
     "imports": [
       "node_modules/nuxt/dist/app/entry.js",
-      "_IngresoSemanal.b12ce8ef.js",
+      "_IngresoSemanal.24eec9b0.js",
       "_userApi.248f1fe6.js",
       "_axios.4d564c32.js",
       "_projectApi.98219bc6.js"
@@ -339,7 +339,7 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "productos.861e62a3.js",
+    "file": "productos.60ec931c.js",
     "imports": [
       "_axios.4d564c32.js",
       "_wishlistApi.8f919075.js",
@@ -353,9 +353,9 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "Alerts.d662f1d5.js",
+    "file": "Alerts.13a01b96.js",
     "imports": [
-      "_UiChildCard.vue.59883287.js",
+      "_UiChildCard.vue.0b1cc50d.js",
       "node_modules/nuxt/dist/app/entry.js",
       "_projectApi.98219bc6.js",
       "_axios.4d564c32.js"
@@ -368,9 +368,9 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "Buttons.4b591f45.js",
+    "file": "Buttons.9a125d79.js",
     "imports": [
-      "_UiChildCard.vue.59883287.js",
+      "_UiChildCard.vue.0b1cc50d.js",
       "node_modules/nuxt/dist/app/entry.js"
     ],
     "isDynamicEntry": true,
@@ -381,9 +381,9 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "Cards.4e86b008.js",
+    "file": "Cards.5232abb1.js",
     "imports": [
-      "_UiChildCard.vue.59883287.js",
+      "_UiChildCard.vue.0b1cc50d.js",
       "node_modules/nuxt/dist/app/entry.js"
     ],
     "isDynamicEntry": true,
@@ -394,9 +394,9 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "Curousel.bf798f69.js",
+    "file": "Curousel.95ddfabe.js",
     "imports": [
-      "_UiChildCard.vue.59883287.js",
+      "_UiChildCard.vue.0b1cc50d.js",
       "node_modules/nuxt/dist/app/entry.js"
     ],
     "isDynamicEntry": true,
@@ -407,9 +407,9 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "Tabels.81608a55.js",
+    "file": "Tabels.dacc7c86.js",
     "imports": [
-      "_UiChildCard.vue.59883287.js",
+      "_UiChildCard.vue.0b1cc50d.js",
       "node_modules/nuxt/dist/app/entry.js"
     ],
     "isDynamicEntry": true,
@@ -420,7 +420,7 @@ const client_manifest = {
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "wishlist.6154d505.js",
+    "file": "wishlist.d4d40e8d.js",
     "imports": [
       "_wishlistApi.8f919075.js",
       "node_modules/nuxt/dist/app/entry.js",

@@ -167,9 +167,14 @@ function href() {
               </v-col>
             </v-row>
 
-            <VCard elevation="10" class="overflow-hidden">
+            <VCard elevation="10" class="overflow-hidden" style="width: 500px;">
               <v-card-text class="pa-0">
                 <div class="bg-primary pa-5">
+                  <v-row>
+                    <v-col>
+                      <!-- <v-date-picker></v-date-picker> -->
+                    </v-col>
+                  </v-row>
                   <h2 class="text-h5 mb-1">Últimos ingresos</h2>
                   <h5 class="text-subtitle-1">Ingresos diarios</h5>
                 </div>
@@ -179,13 +184,18 @@ function href() {
                   </v-col>
                   <v-col v-else>
                     <v-list>
-                      <v-list-item v-for="(checkIn, i) in checkInArray.slice(0, 8)" :key="checkIn._id">
+                      <v-list-item v-for="(checkIn, i) in checkInArray.slice(0, 8)" :key="checkIn._id" @click="href">
                         <v-list-item-title>
                           <div class="d-flex align-center py-3">
+                            <div class="mr-3">
+                            </div>
                             <div class="mx-3">
                               <h4 class="text-h6 mt-n1 mb-1">{{ checkIn.entry_reason }}</h4>
                               <div class="text-muted">Fecha de entrada: {{ new
                                 Date(checkIn.entry_date).toLocaleDateString() }}</div>
+                              <div class="truncate-text text-subtitle-2 textSecondary">
+                                id: {{ checkIn.uid_user }}
+                              </div>
                             </div>
                           </div>
                         </v-list-item-title>
@@ -195,60 +205,10 @@ function href() {
                 </div>
               </v-card-text>
             </VCard>
+
           </v-col>
         </v-row>
       </div>
-
-      <!-- Ultimos ingresos al citt -->
-      <v-col cols="4">
-        <v-row style="margin-bottom: 5px;">
-          <v-col>
-            <v-btn @click="createCsv" variant="tonal" color="primary">Descargar ingresos</v-btn>
-          </v-col>
-          <v-col>
-            <v-spacer></v-spacer>
-          </v-col>
-        </v-row>
-
-        <VCard elevation="10" class="overflow-hidden">
-          <v-card-text class="pa-0">
-            <div class="bg-primary pa-5">
-              <v-row>
-                <v-col>
-                  <!-- <v-date-picker></v-date-picker> -->
-                </v-col>
-              </v-row>
-              <h2 class="text-h5 mb-1">Últimos ingresos</h2>
-              <h5 class="text-subtitle-1">Ingresos diarios</h5>
-            </div>
-            <div class="pa-4">
-              <v-col v-if="loading" cols="12" class="text-center">
-                <v-progress-circular :size="200" :width="17" color="primary" indeterminate></v-progress-circular>
-              </v-col>
-              <v-col v-else>
-                <v-list>
-                  <v-list-item v-for="(checkIn, i) in checkInArray.slice(0, 8)" :key="checkIn._id" @click="href">
-                    <v-list-item-title>
-                      <div class="d-flex align-center py-3">
-                        <div class="mr-3">
-                        </div>
-                        <div class="mx-3">
-                          <h4 class="text-h6 mt-n1 mb-1">{{ checkIn.entry_reason }}</h4>
-                          <div class="text-muted">Fecha de entrada: {{ new Date(checkIn.entry_date).toLocaleDateString()
-                            }}</div>
-                          <div class="truncate-text text-subtitle-2 textSecondary">
-                            id: {{ checkIn.uid_user }}
-                          </div>
-                        </div>
-                      </div>
-                    </v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-col>
-            </div>
-          </v-card-text>
-        </VCard>
-      </v-col>
     </v-row>
   </div>
 </template>
