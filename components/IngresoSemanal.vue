@@ -66,6 +66,7 @@ export default defineComponent({
       usersArray: [],
       projectArray: [],
       projectsNames: [],
+      selectorOP: ['Proyecto CITT', 'MMT'],
       projectId: 0,
       totalRows: 0,
       selectedProyect: null,
@@ -91,8 +92,19 @@ export default defineComponent({
       itemId: null,
       errorText: '',
       passwordVisible: false,
-      studentName: null
+      studentName: null,
+      motivoEntrada: null,
     };
+  },
+  computed: {
+    formattedRun: {
+      get() {
+        return this.rutFormat(this.post.run);
+      },
+      set(value) {
+        this.post.run = value.replace(/\./g, '').replace(/-/g, '');
+      },
+    },
   },
   async created() {
     let local_project = localStorage.getItem('project_id');
@@ -201,7 +213,7 @@ export default defineComponent({
       const post = {
         uid_user: this.userId,
         entry_date: null,
-        entry_reason: this.studentName + ': ' + this.entryReason,
+        entry_reason: this.studentName + ': ' + this.entryReason + '-' + this.motivoEntrada,
         times_entered: null,
       };
       try {
@@ -232,7 +244,7 @@ export default defineComponent({
       };
       try {
         const response = await createUser(create);
-        
+
         this.getUsers();
         this.clearInput();
         this.dialog = false;
@@ -259,14 +271,14 @@ export default defineComponent({
         this.dialogUpdate = false;
       } catch (error) {
         console.log(error);
-        this.errorAlertVisible = true; 
+        this.errorAlertVisible = true;
       }
     },
     closeUpdate() {
       this.clearInput();
       this.dialogUpdate = false;
     },
-    
+
     selectProject() {
       this.dialogProject = false;
       this.loading = true;
@@ -289,7 +301,7 @@ export default defineComponent({
           user.asistioHoy = await this.checkIfAttendedToday(user.uid_user);
         });
 
-        console.log('asistencia',this.asistioHoy)
+        console.log('asistencia', this.asistioHoy)
         await Promise.all(attendancePromises);
         window.location.reload(); // Testeo
         console.log("ARRAY", this.usersArray);
@@ -305,27 +317,45 @@ export default defineComponent({
       console.log(this.itemId);
     },
     rutFormat(value) {
-      let rut = value.replace(/^0+/, ''); 
-      rut = rut.replace(/\./g, '').replace(/-/g, ''); 
+      let rut = value.replace(/^0+/, '').replace(/\./g, '').replace(/-/g, '');
 
-      if (rut.length > 1) { 
-        let cuerpo = rut.slice(0, -1); 
-        let dv = rut.slice(-1); 
+      if (rut.length > 1) {
+        let cuerpo = rut.slice(0, -1);
+        let dv = rut.slice(-1).toUpperCase(); // Aseguramos que el DV esté en mayúscula
 
         cuerpo = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
-        return `${cuerpo}-${dv}`; 
+        return `${cuerpo}-${dv}`;
       }
       return value;
     },
-    
-    validateRut(value) {
-      const rutFormateado = this.rutFormat(value);
-      const regex = /^[0-9]{1,2}\.[0-9]{3}\.[0-9]{3}-[0-9kK]$/; 
-      if (!regex.test(rutFormateado)) {
-        return "El RUT ingresado es inválido"; 
+    validateRun(value) {
+      if (!value) return 'El RUT es requerido';
+
+      const rut = value.replace(/\./g, '').replace(/-/g, '');
+
+      if (!/^\d{7,8}[0-9Kk]$/.test(rut)) return 'RUT inválido';
+
+      const cuerpo = rut.slice(0, -1);
+      const dv = rut.slice(-1).toUpperCase();
+      let suma = 0;
+      let multiplo = 2;
+
+      for (let i = cuerpo.length - 1; i >= 0; i--) {
+        suma += multiplo * parseInt(cuerpo.charAt(i), 10);
+        multiplo = multiplo === 7 ? 2 : multiplo + 1;
       }
-      return true; 
+
+      const rest = suma % 11;
+      const calculatedDv = rest === 0 ? '0' : rest === 1 ? 'K' : (11 - rest).toString();
+
+      if (dv !== calculatedDv) return 'RUT inválido';
+
+      return true; // RUT válido
+    },
+    onInput() {
+      // Forzar la actualización del modelo
+      this.$forceUpdate();
     },
     phoneFormat(value) {
       let phone = value.replace(/\D/g, '');
@@ -344,14 +374,14 @@ export default defineComponent({
       if (!value) {
         return "El correo es obligatorio";
       }
-      
+
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      
+
       if (!emailRegex.test(value)) {
         return "El correo debe tener un formato válido y no contener espacios ni símbolos inválidos";
       }
 
-      return true; 
+      return true;
     },
     validatePassword(value) {
       if (!value) {
@@ -367,30 +397,51 @@ export default defineComponent({
         return "La contraseña debe contener al menos una letra, símbolo o número";
       }
 
-      return true; 
+      return true;
     },
-    formatRun() {
-      const rawRun = this.post.run.replace(/[^0-9kK]/g, '');
+    methods: {
+      rutFormat(value) {
+        let rut = value.replace(/^0+/, '');
+        rut = rut.replace(/\./g, '').replace(/-/g, '');
 
-      if (rawRun.length < 2) {
-        this.post.run = '';
-        return;
-      }
+        if (rut.length > 1) {
+          let cuerpo = rut.slice(0, -1);
+          let dv = rut.slice(-1);
 
-      const body = rawRun.slice(0, -1);
-      const dv = rawRun.slice(-1).toUpperCase();
+          cuerpo = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
-      const formattedBody = body.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+          return `${cuerpo}-${dv}`;
+        }
+        return value;
+      },
+      validateRun(value) {
+        if (!value) return 'El RUT es requerido';
 
-      this.post.run = `${formattedBody}-${dv}`;
-    },
-    validateRun(value) {
-      const rutPattern = /^(?:\d{1,2}(?:\.\d{3}){2}-[0-9kK])$/;
+        const rut = value.replace(/\./g, '').replace(/-/g, '');
 
-      if (!rutPattern.test(value)) {
-        return 'El RUT debe estar en el formato 1.111.111-1';
-      }
-      return true; 
+        if (!/^\d{7,8}[0-9kK]$/.test(rut)) return 'RUT inválido';
+
+        const cuerpo = rut.slice(0, -1);
+        const dv = rut.slice(-1).toLowerCase();
+        let suma = 0;
+        let multiplo = 2;
+
+        for (let i = cuerpo.length - 1; i >= 0; i--) {
+          suma += multiplo * parseInt(cuerpo.charAt(i), 10);
+          multiplo = multiplo === 7 ? 2 : multiplo + 1;
+        }
+
+        const calculatedDv = 11 - (suma % 11);
+        const calculatedDvChar = calculatedDv === 10 ? 'k' : calculatedDv === 11 ? '0' : calculatedDv.toString();
+
+        if (dv !== calculatedDvChar) return 'RUT inválido';
+
+        return true; // RUT válido
+      },
+      onInput() {
+        // Actualiza el modelo cuando se cambia el input
+        this.$forceUpdate();
+      },
     },
     isFormValid() {
       return this.post.name && this.post.email && this.post.phone && this.post.password && this.post.project_id;
@@ -470,15 +521,8 @@ export default defineComponent({
       <v-card class="mx-auto">
         <v-divider />
         <v-col>
-          <v-data-table 
-            v-model:items-per-page="itemsPerPage" 
-            :items-per-page-options="rowsPerPageItems"
-            :headers="headers" 
-            :items="usersArray" 
-            :loading="loading" 
-            :search="search" 
-            item-key="uid_user"
-          >
+          <v-data-table v-model:items-per-page="itemsPerPage" :items-per-page-options="rowsPerPageItems"
+            :headers="headers" :items="usersArray" :loading="loading" :search="search" item-key="uid_user">
             <template v-slot:item.actions="{ item }">
               <v-btn class="ml-2" color="error" icon size="x-small" flat @click="openDeleteDialog(item)">
                 <v-icon>mdi-delete</v-icon>
@@ -510,9 +554,13 @@ export default defineComponent({
           <v-col>
             <v-textarea v-model="entryReason" label="Motivo"></v-textarea>
           </v-col>
+          <v-col>
+            <v-select v-model="motivoEntrada" :items="selectorOP" label="Seleciona una opción">
+            </v-select>
+          </v-col>
         </v-row>
         <v-btn class="ml-2" flat @click="dialogCheckin = false">
-          cancelar
+          Cancelar
         </v-btn>
         <v-btn class="ml-2" color="primary" flat @click="createCheckIn">
           Registrar
@@ -531,47 +579,25 @@ export default defineComponent({
             </v-col>
 
             <v-col cols="12" md="4" sm="6">
-              <v-text-field 
-                v-model="post.email" 
-                hint="email@duocuc.cl/ email@profesor.duoc.cl"
-                label="Email*"
-                :rules="[validateEmail]" 
-                required
-              ></v-text-field>
+              <v-text-field v-model="post.email" hint="email@duocuc.cl/ email@profesor.duoc.cl" label="Email*"
+                :rules="[validateEmail]" required></v-text-field>
             </v-col>
 
             <v-col cols="12" md="4" sm="6">
-              <v-text-field
-                v-model="post.phone"
-                hint="Ej: +56 9 XXXX XXXX"
-                label="Teléfono*"
-                required
-                :rules="[validatePhone]"
-                @input="post.phone = phoneFormat(post.phone)"
-              ></v-text-field>
+              <v-text-field v-model="post.phone" hint="Ej: +56 9 XXXX XXXX" label="Teléfono*" required
+                :rules="[validatePhone]" @input="post.phone = phoneFormat(post.phone)"></v-text-field>
             </v-col>
 
             <v-col cols="12" md="4" sm="6">
-              <v-text-field 
-                v-model="post.run"
-                hint="Ingresa el RUT sin puntos ni guion"
-                label="RUT*"
-                :rules="[validateRun]"
-                required
-              ></v-text-field>
+              <v-text-field v-model="post.run" hint="Ingresa el RUT sin puntos ni guion" label="RUT*"
+                :rules="[validateRun]" required></v-text-field>
             </v-col>
 
             <v-col cols="12" md="4" sm="6">
-              <v-text-field 
-                v-model="post.password"
+              <v-text-field v-model="post.password"
                 hint="Debe tener al menos 9 caracteres y contener al menos una letra, símbolo o número"
-                label="Contraseña*"
-                :rules="[validatePassword]"
-                required
-                :type="passwordVisible ? 'text' : 'password'"  
-                append-icon="mdi-eye"  
-                @click:append="passwordVisible = !passwordVisible"  
-              ></v-text-field>
+                label="Contraseña*" :rules="[validatePassword]" required :type="passwordVisible ? 'text' : 'password'"
+                append-icon="mdi-eye" @click:append="passwordVisible = !passwordVisible"></v-text-field>
             </v-col>
 
             <v-col cols="12" sm="6">
@@ -592,13 +618,8 @@ export default defineComponent({
 
           <v-btn text="Cerrar" variant="plain" @click="dialog = false"></v-btn>
 
-          <v-btn 
-            color="primary" 
-            text="Crear usuario" 
-            variant="tonal" 
-            @click="createUser"
-            :disabled="!isFormValid()"
-            ></v-btn>
+          <v-btn color="primary" text="Crear usuario" variant="tonal" @click="createUser"
+            :disabled="!isFormValid()"></v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -614,35 +635,19 @@ export default defineComponent({
             </v-col>
 
             <v-col cols="12" md="4" sm="6">
-              <v-text-field 
-                v-model="post.email" 
-                hint="email@duocuc.cl/ email@profesor.duoc.cl"
-                label="Email*"
-                :rules="[validateEmail]" 
-                required
-              ></v-text-field>
+              <v-text-field v-model="formattedRun" hint="Ingresa el RUT sin puntos ni guion" label="RUT*"
+                :rules="[validateRun]" @input="onInput" required></v-text-field>
+            </v-col>
+            <v-col cols="12" md="4" sm="6">
+              <v-text-field v-model="post.phone" hint="Ej: +56 9 XXXX XXXX" label="Teléfono*" required
+                :rules="[validatePhone]" @input="post.phone = phoneFormat(post.phone)"></v-text-field>
             </v-col>
 
             <v-col cols="12" md="4" sm="6">
-              <v-text-field
-                v-model="post.phone"
-                hint="Ej: +56 9 XXXX XXXX"
-                label="Teléfono*"
-                required
-                :rules="[validatePhone]"
-                @input="post.phone = phoneFormat(post.phone)"
-              ></v-text-field>
+              <v-text-field v-model="post.run" hint="Ingresa el RUT sin puntos ni guion" label="RUT*"
+                :rules="[validateRun]" required></v-text-field>
             </v-col>
 
-            <v-col cols="12" md="4" sm="6">
-              <v-text-field 
-                v-model="post.run"
-                hint="Ingresa el RUT sin puntos ni guion"
-                label="RUT*"
-                :rules="[validateRun]"
-                required
-              ></v-text-field>
-            </v-col>
 
             <v-col cols="12" sm="6">
               <v-autocomplete v-model="post.project_id" label="Selecciona un proyecto..." :items="projectArray"
@@ -662,12 +667,7 @@ export default defineComponent({
 
           <v-btn text="Cerrar" variant="plain" @click="closeUpdate()"></v-btn>
 
-          <v-btn 
-            color="primary" 
-            text="Crear usuario" 
-            variant="tonal" 
-            @click="updateUser"
-            ></v-btn>
+          <v-btn color="primary" text="Crear usuario" variant="tonal" @click="updateUser"></v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -714,15 +714,8 @@ export default defineComponent({
   </v-dialog>
 
   <!--Alerta-->
-  <v-alert
-    v-model="errorAlertVisible"
-    dismissible
-    color="red"
-    elevation="2"
-    colored-border
-    icon="mdi-alert"
-    timeout="5000"
-  >
+  <v-alert v-model="errorAlertVisible" dismissible color="red" elevation="2" colored-border icon="mdi-alert"
+    timeout="5000">
     Oops! Ha ocurrido un problema.
   </v-alert>
 

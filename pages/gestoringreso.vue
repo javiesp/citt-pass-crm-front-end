@@ -57,7 +57,7 @@ function saveFile(blob: any, fname: any) {
 
 function createCsv() {
   const arrayValue = checkInArray.value;
-  let tsvContent = "FECHA DE ENTRADA\tNOMBRE DE USUARIO\tMOTIVO\tVECES ENTRADA\n"; // Nueva cabecera sin _id y uid_user
+  let tsvContent = "FECHA DE ENTRADA\tNOMBRE DE USUARIO\tMOTIVO\tVECES ENTRADA\n"; 
 
   arrayValue.forEach((checkin) => {
     let nombreUsuario = "";
