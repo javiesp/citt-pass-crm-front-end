@@ -4,6 +4,18 @@ import img1 from '/images/profile/1.jpg';
 import img2 from '/images/profile/2.jpg';
 import img3 from '/images/profile/3.jpg';
 import img4 from '/images/profile/4.jpg';
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+    const accessToken = localStorage.getItem('accessToken');
+
+    console.log('ENCONTRADO !', accessToken);
+
+    if (!accessToken) {
+      alert('Debes iniciar sesión !!');
+      router.push("/login"); 
+    }
+
 const myContactsData = ref([
   {
     title: "Pavan Kumar",

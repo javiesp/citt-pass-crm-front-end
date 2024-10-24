@@ -2,6 +2,18 @@
 import { onMounted, ref, computed } from "vue";
 import { getAllcheckIn } from "../api/checkInApi";
 import img1 from "/images/profile/1.jpg";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+    const accessToken = localStorage.getItem('accessToken');
+
+    console.log('ENCONTRADO !', accessToken);
+
+    if (!accessToken) {
+      alert('Debes iniciar sesión !!');
+      router.push("/login"); 
+    }
+
 
 const checkInHeader = ['Fecha de entrada', 'Motivo'];
 

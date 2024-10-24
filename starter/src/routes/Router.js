@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 import Loadable from "../layouts/loader/Loadable";
 import Login from "../views/auth/Login";
 import Colaborators from "~/pages/colaborators.vue";
+import PerfilUsuario from "~/pages/perfilusuario.vue"
 import ProtectedRoute from "./ProtectedRoute"; // Importa el componente
 
 /* Layouts */
@@ -34,13 +35,14 @@ const ThemeRoutes = [
       { path: "/ui/alerts", element: <ProtectedRoute><Alerts /></ProtectedRoute> },
       { path: "/badges", element: <ProtectedRoute><Badges /></ProtectedRoute> },
       { path: "/buttons", element: <ProtectedRoute><Buttons /></ProtectedRoute> },
-      { path: "/cards", element: <ProtectedRoute><Cards /></ProtectedRoute> },
+      { path: "/cards", element: <Cards /> },
       { path: "/grid", element: <ProtectedRoute><Grid /></ProtectedRoute> },
       { path: "/table", element: <ProtectedRoute><Tables /></ProtectedRoute> },
       { path: "/forms", element: <ProtectedRoute><Forms /></ProtectedRoute> },
       { path: "/breadcrumbs", element: <ProtectedRoute><Breadcrumbs /></ProtectedRoute> },
       { path: "/productos", element: <ProtectedRoute><Productos /></ProtectedRoute> },
       { path: "/colaborators", element: <ProtectedRoute><Colaborators /></ProtectedRoute> },
+      { path: "/perfil", element: <PerfilUsuario /> },
       { path: "*", element: <Navigate to="/auth/404" /> },
     ],
   },

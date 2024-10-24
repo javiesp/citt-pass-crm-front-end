@@ -16,7 +16,7 @@ const userprofile = ref([
   {
     title: "Mi perfil",
     desc: "Configuración de la cuenta",
-    to: "/mi-perfil" // Path for "Mi perfil"
+    to: "/cards" // Path for "Mi perfil"
   },
   {
     title: "Colaboradores",
