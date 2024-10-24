@@ -351,10 +351,9 @@ export default defineComponent({
 
       if (dv !== calculatedDv) return 'RUT inválido';
 
-      return true; // RUT válido
+      return true; 
     },
     onInput() {
-      // Forzar la actualización del modelo
       this.$forceUpdate();
     },
     phoneFormat(value) {

@@ -57,31 +57,39 @@ function saveFile(blob: any, fname: any) {
 
 function createCsv() {
   const arrayValue = checkInArray.value;
-  let tsvContent = "FECHA DE ENTRADA\tNOMBRE DE USUARIO\tMOTIVO\tVECES ENTRADA\n"; 
+  let tsvContent = "FECHA DE ENTRADA\tNOMBRE DE USUARIO\tMOTIVO\tVECES ENTRADA\tCITT\n";
 
   arrayValue.forEach((checkin) => {
     let nombreUsuario = "";
     let motivo = "";
+    let citt = "";
 
-    // Verificar si entry_reason existe y no es null
     if (checkin.entry_reason) {
       // Separar entry_reason para obtener el nombre de usuario y el motivo
       [nombreUsuario, motivo] = checkin.entry_reason.split(':').map(part => part.trim());
+
+      // Extraer CITT si existe
+      const cittMatch = checkin.entry_reason.split('-'); // Cambiar para usar entry_reason directamente
+      if (cittMatch.length > 1) {
+        citt = cittMatch[1].trim(); // Tomar lo que está después del "-"
+        motivo = cittMatch[0].trim(); // Mantener el motivo original
+      }
     } else {
       // Manejar el caso donde entry_reason es null o no existe
       motivo = "Sin motivo";
     }
 
-    // Crear la fila sin _id y uid_user
-    let row = checkin.entry_date + "\t" + nombreUsuario + "\t" + motivo + "\t" + checkin.times_entered + "\n";
+    // Crear la fila con la nueva columna CITT
+    let row = `${checkin.entry_date}\t${nombreUsuario}\t${motivo}\t${checkin.times_entered}\t${citt}\n`;
     tsvContent += row;
   });
 
-  var data = new Blob([tsvContent], { type: 'text/tab-separated-values' }); // Tipo MIME
+  const data = new Blob([tsvContent], { type: 'text/tab-separated-values' }); // Tipo MIME
 
   const todayDate = "ingresos_citt_" + Date.now();
   saveFile(data, todayDate);
 }
+
 
 // onMounted(fetchCheckIn);
 
