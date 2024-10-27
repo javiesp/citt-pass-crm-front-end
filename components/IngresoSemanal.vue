@@ -5,7 +5,8 @@ import {
   getAllUsersById,
   createUser,
   deleteUser,
-  updateUser
+  updateUser,
+  getAllUsers
 } from "../api/userApi.ts";
 import {
   getAllcheckIn,
@@ -77,6 +78,8 @@ export default defineComponent({
       passwordVisible: false,
       studentName: null,
       motivoEntrada: null,
+      messageError: true,
+      local_project: null,
     };
   },
   computed: {
@@ -90,18 +93,37 @@ export default defineComponent({
     },
   },
   async created() {
-    let local_project = localStorage.getItem('project_id');
+    this.local_project = localStorage.getItem('project_id');
 
-    if (!local_project || local_project.trim() === '') {
+    if (!this.local_project || this.local_project.trim() === '') {
       this.dialogProject = true;
     } else {
       this.dialogProject = false;
     }
 
-    await this.getUsers();
+    await this.getUsers(this.local_project);
     await this.getProjects();
   },
   methods: {
+    async getAll() {
+      this.loading = true;
+      try {
+        const usersResponse = await getAllUsers();
+        this.usersArray = usersResponse.data;
+
+        // Add the attendance status to each user
+        const attendancePromises = this.usersArray.map(async (user) => {
+          user.asistioHoy = await this.checkIfAttendedToday(user.uid_user);
+        });
+
+        await Promise.all(attendancePromises);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        this.errorAlertVisible = true;
+      } finally {
+        this.loading = false;
+      }
+    },
     async checkIfAttendedToday(uid_user) {
       try {
         const today = new Date();
@@ -116,11 +138,11 @@ export default defineComponent({
         return false;
       }
     },
-    async getUsers() {
-      let local_project = localStorage.getItem('project_id');
+    async getUsers(id) {
+      this.local_project = localStorage.getItem('project_id');
       this.loading = true;
       try {
-        const usersResponse = await getAllUsersById(local_project);
+        const usersResponse = await getAllUsersById(this.local_project);
         this.usersArray = usersResponse.data;
 
         // Add the attendance status to each user
@@ -189,13 +211,31 @@ export default defineComponent({
     },
     async createUser() {
       const id = shortid.generate();
+      console.log('porq no sale el fakin id' , id)
+
+      this.post.email = this.post.email.toLowerCase();
+      this.post.uid_user = id;
+
+      console.log(this.post)
+
       const create = {
-        uid_user: id,
-        ...this.post,
+        uid_user: this.post.uid_user,
+        email: this.post.email,
+        phone: this.post.phone,
+        name: this.post.name,
+        hashed_password: this.post.hashed_password,
+        run: this.post.run,
+        proyect_id: this.post.project_id,
       };
+
       try {
         await createUser(create);
-        await this.getUsers();
+
+        this.local_project = this.post.project_id;
+        localStorage.removeItem("project_id");
+        localStorage.setItem("project_id", this.local_project)
+
+        await this.getUsers(this.local_project);
         this.clearInput();
         this.dialog = false;
       } catch (error) {
@@ -213,7 +253,12 @@ export default defineComponent({
 
       try {
         await updateUser(this.itemId, put);
-        await this.getUsers();
+
+        this.local_project = this.post.project_id;
+        localStorage.removeItem("project_id");
+        localStorage.setItem("project_id", this.local_project)
+
+        await this.getUsers(this.local_project);
         this.clearInput();
         this.dialogUpdate = false;
       } catch (error) {
@@ -233,9 +278,9 @@ export default defineComponent({
       this.getProjectById();
     },
     async getProjectById() {
-      let local_project = localStorage.getItem('project_id');
+      this.local_project = localStorage.getItem('project_id');
       try {
-        const usersResponse = await getAllUsersById(local_project);
+        const usersResponse = await getAllUsersById(this.local_project);
         this.usersArray = usersResponse.data;
         this.totalRows = usersResponse.data.total;
 
@@ -282,15 +327,29 @@ export default defineComponent({
       if (dv !== calculatedDv) return 'RUT inválido';
       return true;
     },
-    onInput() {
-      this.$forceUpdate();
-    },
     phoneFormat(value) {
       let phone = value.replace(/\D/g, '');
+
+      if (phone.length === 0) return value; 
+
       if (phone.startsWith('9') && (phone.length === 8 || phone.length === 9)) {
-        return phone.length === 9 ? `${phone.slice(0, 1)}${phone.slice(1, 5)}${phone.slice(5)}` : `${phone.slice(0, 1)}${phone.slice(1, 4)}${phone.slice(4)}`;
+        return phone.length === 9 
+          ? `${phone.slice(0, 1)}${phone.slice(1, 5)}${phone.slice(5)}` 
+          : `${phone.slice(0, 1)}${phone.slice(1, 4)}${phone.slice(4)}`; 
       }
+
       return value;
+    },
+    validatePhone(value) {
+      let phone = value.replace(/\D/g, '');
+
+      if (!phone) return "El teléfono es obligatorio";
+
+      if (!phone.startsWith('9') || !(phone.length === 8 || phone.length === 9)) {
+        return "El teléfono debe comenzar con '9' y tener 8 o 9 dígitos";
+      }
+
+      return true;
     },
     validateEmail(value) {
       if (!value) return "El correo es obligatorio";
@@ -301,15 +360,31 @@ export default defineComponent({
     validatePassword(value) {
       if (!value) return "La contraseña es obligatoria";
       if (value.length < 9) return "La contraseña debe tener al menos 9 caracteres";
-      const hasLetterOrSymbolOrNumber = /[a-zA-Z0-9!@#$%^&*()_+{}\[\]:;"'<>,.?~`-]/.test(value);
-      if (!hasLetterOrSymbolOrNumber) return "La contraseña debe contener al menos una letra, símbolo o número";
+
+      const hasLetter = /[a-zA-Z]/.test(value);
+      const hasSymbol = /[!@#$%^&*()_+{}\[\]:;"'<>,.?~`-]/.test(value);
+      const hasNumber = /[0-9]/.test(value); 
+
+      if (!hasLetter || !hasSymbol || !hasNumber) {
+        return "La contraseña debe contener al menos una letra, un símbolo y un número";
+      }
+      
       return true;
+    },
+    isFormValid() {
+      if (this.post.name && this.post.email && this.post.phone && this.post.hashed_password && this.post.project_id) {
+        return true;
+      } else {
+        this.messageError = 'Todos los campos son obligatorios';
+        return false;
+      }
     },
     async deleteItem() {
       try {
         this.loading = true;
         await deleteUser(this.itemId);
-        await this.getUsers();
+
+        await this.getUsers(this.local_project);
         this.dialogDelete = false;
       } catch (error) {
         console.error(error);
@@ -320,6 +395,10 @@ export default defineComponent({
     logout() {
       localStorage.removeItem("project_id");
       this.dialogProject = true;
+    },
+    closeCreate() {
+      this.clearInput();
+      this.dialog = false;
     },
     downloadPdf() {
       const link = document.createElement("a");
@@ -345,7 +424,7 @@ export default defineComponent({
   watch: {
     selectedProyect: function (newValue, oldValue) {
       if (newValue !== oldValue) {
-        this.getUsers();
+        this.getUsers(this.local_project);
       }
     },
   },
@@ -356,9 +435,9 @@ export default defineComponent({
   <v-row class="month-table">
     <!-- SELECTOR DE PROYECTO -->
     <v-col cols="3">
-      <v-text-field v-model="search" class="mx-auto" density="comfortable" menu-icon="" placeholder="Buscar Usuario"
-        prepend-inner-icon="mdi-magnify" theme="light" variant="solo" auto-select-first item-props
-        hint="Escriba para buscar" rounded></v-text-field>
+      <v-text-field v-model="search" class="mx-auto" density="comfortable" menu-icon=""
+        placeholder="Buscar Usuario asdsdf" prepend-inner-icon="mdi-magnify" theme="light" variant="solo"
+        auto-select-first item-props hint="Escriba para buscar" rounded></v-text-field>
     </v-col>
     <!-- BOTONERA -->
     <v-col cols="3">
@@ -368,7 +447,17 @@ export default defineComponent({
     </v-col>
     <v-col cols="3">
       <v-spacer></v-spacer>
-      <v-btn variant="tonal" color="red" prepend-icon="mdi-logout" @click="logout" text="cambiar de proyecto"></v-btn>
+      <v-btn variant="tonal" color="red" prepend-icon="mdi-logout" @click="logout">
+        cambiar de proyecto
+        <v-tooltip activator="parent" location="bottom">Muestra los usuarios según el proyecto</v-tooltip>
+      </v-btn>
+    </v-col>
+    <v-col cols="3">
+      <v-spacer></v-spacer>
+      <v-btn variant="tonal" color="red" prepend-icon="mdi-account-search" @click="getAll">
+        Buscar todos
+      <v-tooltip activator="parent" location="bottom">Mustra todos los usuarios</v-tooltip>
+      </v-btn>
     </v-col>
     <!-- TABLA DE USUARIOS -->
     <v-col cols="12" sm="12">
@@ -442,17 +531,24 @@ export default defineComponent({
                 :rules="[validatePhone]" @input="post.phone = phoneFormat(post.phone)"></v-text-field>
             </v-col>
 
-            <v-col cols="12" md="4" sm="6">
+            <v-col cols="11" md="4" sm="6">
               <v-text-field v-model="post.run" hint="Ingresa el RUT sin puntos ni guion" label="RUT*"
                 :rules="[validateRun]" required></v-text-field>
             </v-col>
 
             <v-col cols="12" md="4" sm="6">
-              <v-text-field v-model="post.password"
+              <v-text-field 
+                v-model="post.hashed_password"
                 hint="Debe tener al menos 9 caracteres y contener al menos una letra, símbolo o número"
-                label="Contraseña*" :rules="[validatePassword]" required :type="passwordVisible ? 'text' : 'password'"
-                append-icon="mdi-eye" @click:append="passwordVisible = !passwordVisible"></v-text-field>
+                label="Contraseña*"
+                :rules="[validatePassword]"
+                required
+                :type="passwordVisible ? 'text' : 'password'"  
+                append-icon="mdi-eye"  
+                @click:append="passwordVisible = !passwordVisible"  
+              ></v-text-field>
             </v-col>
+
 
             <v-col cols="12" sm="6">
               <v-autocomplete v-model="post.project_id" label="Selecciona un proyecto..." :items="projectArray"
@@ -463,6 +559,7 @@ export default defineComponent({
           </v-row>
 
           <small class="text-caption text-medium-emphasis">* Indica que el campo es obligatorio</small>
+          <small :disbled="!messageError" class="text-caption text-medium-emphasis">* Indica que el campo es obligatorio</small>
         </v-card-text>
 
         <v-divider></v-divider>
@@ -470,7 +567,7 @@ export default defineComponent({
         <v-card-actions>
           <v-spacer></v-spacer>
 
-          <v-btn text="Cerrar" variant="plain" @click="dialog = false"></v-btn>
+          <v-btn text="Cerrar" variant="plain" @click="closeCreate()"></v-btn>
 
           <v-btn color="primary" text="Crear usuario" variant="tonal" @click="createUser"
             :disabled="!isFormValid()"></v-btn>
