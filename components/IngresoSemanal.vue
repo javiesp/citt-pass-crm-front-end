@@ -16,11 +16,9 @@ import { getAllProjects } from "../api/projectApi.ts";
 import { createProject } from "../api/checkInApi";
 import shortid from 'shortid';
 
-console.log("");
 export default defineComponent({
   data() {
     return {
-      // data table
       loading: false,
       search: "",
       itemsPerPage: 5,
@@ -40,19 +38,6 @@ export default defineComponent({
         { title: "Lista", value: "checkin" },
         { title: "Asistencia", value: "asist" },
       ],
-      // VARAIBLES DESCARGA PDF
-      name: "DownloadPdfButton",
-      props: {
-        pdfUrl: {
-          type: String,
-          required: true,
-        },
-        pdfFileName: {
-          type: String,
-          required: true,
-        },
-      },
-      // VARIEABLES
       dialog: false,
       dialogCheckin: false,
       dialogProject: false,
@@ -70,11 +55,9 @@ export default defineComponent({
       projectId: 0,
       totalRows: 0,
       selectedProyect: null,
-      // ARRAY SELECTORES
       items: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
       userRole: ["Admin citt", "Profesor", "Alumno", "CIA", "MMT"],
       uidUser: ["OIUUYFASD", "ASDIUAD908", "908DKJHAS"],
-      loading: false,
       userId: null,
       UID_USER: [],
       entryReason: null,
@@ -133,10 +116,8 @@ export default defineComponent({
         return false;
       }
     },
-    // GET API Y AGUARDAR EN USERSARRAY
     async getUsers() {
       let local_project = localStorage.getItem('project_id');
-      console.log("get id", local_project)
       this.loading = true;
       try {
         const usersResponse = await getAllUsersById(local_project);
@@ -160,9 +141,7 @@ export default defineComponent({
       try {
         const projectResponse = await getAllProjects();
         this.projectArray = projectResponse.data;
-        this.projectsNames = this.projectArray.map(
-          (project) => project.project_name
-        ); // Llena el array con los nombres de proyecto
+        this.projectsNames = this.projectArray.map(project => project.project_name);
         this.totalRows = projectResponse.data.total;
       } catch (error) {
         console.error("Error al obtener proyectos:", error);
@@ -171,32 +150,13 @@ export default defineComponent({
       }
     },
     async editItem(item) {
-      this.post = {
-        uid_user: item.uid_user,
-        email: item.email,
-        phone: item.phone,
-        name: item.name,
-        hashed_password: item.hashed_password,
-        run: item.run,
-        project_id: item.project_id,
-      }
-
+      this.post = { ...item };
       this.dialogCheckin = true;
       this.userId = item.uid_user;
       this.studentName = item.name;
-      console.log(this.userId);
     },
     async updateItem(item) {
-      this.post = {
-        uid_user: item.uid_user,
-        email: item.email,
-        phone: item.phone,
-        name: item.name,
-        hashed_password: item.hashed_password,
-        run: item.run,
-        project_id: item.project_id,
-      }
-
+      this.post = { ...item };
       this.itemId = item._id;
       this.dialogUpdate = true;
     },
@@ -209,43 +169,33 @@ export default defineComponent({
       }
     },
     async createCheckIn() {
-      console.log("CREATE CHECKIN");
       const post = {
         uid_user: this.userId,
         entry_date: null,
-        entry_reason: this.studentName + ': ' + this.entryReason + '-' + this.motivoEntrada,
+        entry_reason: `${this.studentName}: ${this.entryReason} - ${this.motivoEntrada}`,
         times_entered: null,
       };
       try {
         this.loading = true;
         const response = await createProject(post);
-        console.log(response);
-        console.log("REGISTRADO");
         window.location.reload();
-
         this.dialogCheckin = false;
         this.clearInput();
-        this.loading = false;
       } catch (error) {
         console.log(error);
+      } finally {
+        this.loading = false;
       }
     },
     async createUser() {
       const id = shortid.generate();
-
       const create = {
         uid_user: id,
-        email: this.post.email,
-        phone: this.post.phone,
-        name: this.post.name,
-        hashed_password: this.post.hashed_password,
-        run: this.post.run,
-        proyect_id: this.post.project_id,
+        ...this.post,
       };
       try {
-        const response = await createUser(create);
-
-        this.getUsers();
+        await createUser(create);
+        await this.getUsers();
         this.clearInput();
         this.dialog = false;
       } catch (error) {
@@ -253,8 +203,6 @@ export default defineComponent({
       }
     },
     async updateUser() {
-      console.log(this.post)
-      const id = this.itemId;
       const put = {
         email: this.post.email,
         phone: this.post.phone,
@@ -264,9 +212,8 @@ export default defineComponent({
       };
 
       try {
-        const response = await updateUser(id, put);
-        this.getUsers();
-
+        await updateUser(this.itemId, put);
+        await this.getUsers();
         this.clearInput();
         this.dialogUpdate = false;
       } catch (error) {
@@ -278,20 +225,15 @@ export default defineComponent({
       this.clearInput();
       this.dialogUpdate = false;
     },
-
     selectProject() {
       this.dialogProject = false;
       this.loading = true;
-
       const proyect_id = this.selectedItem.id;
       localStorage.setItem("project_id", proyect_id);
-
       this.getProjectById();
     },
     async getProjectById() {
       let local_project = localStorage.getItem('project_id');
-      console.log("get id", local_project)
-
       try {
         const usersResponse = await getAllUsersById(local_project);
         this.usersArray = usersResponse.data;
@@ -301,10 +243,8 @@ export default defineComponent({
           user.asistioHoy = await this.checkIfAttendedToday(user.uid_user);
         });
 
-        console.log('asistencia', this.asistioHoy)
         await Promise.all(attendancePromises);
-        window.location.reload(); // Testeo
-        console.log("ARRAY", this.usersArray);
+        window.location.reload();
       } catch (error) {
         console.error("Error al obtener usuarios:", error);
       } finally {
@@ -314,161 +254,78 @@ export default defineComponent({
     openDeleteDialog(item) {
       this.dialogDelete = true;
       this.itemId = item._id;
-      console.log(this.itemId);
     },
     rutFormat(value) {
       let rut = value.replace(/^0+/, '').replace(/\./g, '').replace(/-/g, '');
-
       if (rut.length > 1) {
         let cuerpo = rut.slice(0, -1);
-        let dv = rut.slice(-1).toUpperCase(); // Aseguramos que el DV esté en mayúscula
-
+        let dv = rut.slice(-1).toUpperCase();
         cuerpo = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
         return `${cuerpo}-${dv}`;
       }
       return value;
     },
     validateRun(value) {
       if (!value) return 'El RUT es requerido';
-
       const rut = value.replace(/\./g, '').replace(/-/g, '');
-
       if (!/^\d{7,8}[0-9Kk]$/.test(rut)) return 'RUT inválido';
-
       const cuerpo = rut.slice(0, -1);
       const dv = rut.slice(-1).toUpperCase();
       let suma = 0;
       let multiplo = 2;
-
       for (let i = cuerpo.length - 1; i >= 0; i--) {
         suma += multiplo * parseInt(cuerpo.charAt(i), 10);
         multiplo = multiplo === 7 ? 2 : multiplo + 1;
       }
-
       const rest = suma % 11;
       const calculatedDv = rest === 0 ? '0' : rest === 1 ? 'K' : (11 - rest).toString();
-
       if (dv !== calculatedDv) return 'RUT inválido';
-
-      return true; 
+      return true;
     },
     onInput() {
       this.$forceUpdate();
     },
     phoneFormat(value) {
       let phone = value.replace(/\D/g, '');
-
       if (phone.startsWith('9') && (phone.length === 8 || phone.length === 9)) {
-        if (phone.length === 9) {
-          return phone.slice(0, 1) + phone.slice(1, 5) + phone.slice(5);
-        } else if (phone.length === 8) {
-          return phone.slice(0, 1) + phone.slice(1, 4) + phone.slice(4);
-        }
+        return phone.length === 9 ? `${phone.slice(0, 1)}${phone.slice(1, 5)}${phone.slice(5)}` : `${phone.slice(0, 1)}${phone.slice(1, 4)}${phone.slice(4)}`;
       }
-
       return value;
     },
     validateEmail(value) {
-      if (!value) {
-        return "El correo es obligatorio";
-      }
-
+      if (!value) return "El correo es obligatorio";
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-      if (!emailRegex.test(value)) {
-        return "El correo debe tener un formato válido y no contener espacios ni símbolos inválidos";
-      }
-
+      if (!emailRegex.test(value)) return "El correo debe tener un formato válido y no contener espacios ni símbolos inválidos";
       return true;
     },
     validatePassword(value) {
-      if (!value) {
-        return "La contraseña es obligatoria";
-      }
-
-      if (value.length < 9) {
-        return "La contraseña debe tener al menos 9 caracteres";
-      }
-
+      if (!value) return "La contraseña es obligatoria";
+      if (value.length < 9) return "La contraseña debe tener al menos 9 caracteres";
       const hasLetterOrSymbolOrNumber = /[a-zA-Z0-9!@#$%^&*()_+{}\[\]:;"'<>,.?~`-]/.test(value);
-      if (!hasLetterOrSymbolOrNumber) {
-        return "La contraseña debe contener al menos una letra, símbolo o número";
-      }
-
+      if (!hasLetterOrSymbolOrNumber) return "La contraseña debe contener al menos una letra, símbolo o número";
       return true;
-    },
-    methods: {
-      rutFormat(value) {
-        let rut = value.replace(/^0+/, '');
-        rut = rut.replace(/\./g, '').replace(/-/g, '');
-
-        if (rut.length > 1) {
-          let cuerpo = rut.slice(0, -1);
-          let dv = rut.slice(-1);
-
-          cuerpo = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-          return `${cuerpo}-${dv}`;
-        }
-        return value;
-      },
-      validateRun(value) {
-        if (!value) return 'El RUT es requerido';
-
-        const rut = value.replace(/\./g, '').replace(/-/g, '');
-
-        if (!/^\d{7,8}[0-9kK]$/.test(rut)) return 'RUT inválido';
-
-        const cuerpo = rut.slice(0, -1);
-        const dv = rut.slice(-1).toLowerCase();
-        let suma = 0;
-        let multiplo = 2;
-
-        for (let i = cuerpo.length - 1; i >= 0; i--) {
-          suma += multiplo * parseInt(cuerpo.charAt(i), 10);
-          multiplo = multiplo === 7 ? 2 : multiplo + 1;
-        }
-
-        const calculatedDv = 11 - (suma % 11);
-        const calculatedDvChar = calculatedDv === 10 ? 'k' : calculatedDv === 11 ? '0' : calculatedDv.toString();
-
-        if (dv !== calculatedDvChar) return 'RUT inválido';
-
-        return true; // RUT válido
-      },
-      onInput() {
-        // Actualiza el modelo cuando se cambia el input
-        this.$forceUpdate();
-      },
-    },
-    isFormValid() {
-      return this.post.name && this.post.email && this.post.phone && this.post.password && this.post.project_id;
     },
     async deleteItem() {
       try {
         this.loading = true;
-        const response = await deleteUser(this.itemId);
-        this.getUsers();
+        await deleteUser(this.itemId);
+        await this.getUsers();
         this.dialogDelete = false;
-        this.loading = false;
       } catch (error) {
         console.error(error);
+      } finally {
+        this.loading = false;
       }
     },
     logout() {
       localStorage.removeItem("project_id");
       this.dialogProject = true;
     },
-    // DESCARGAR PDF
     downloadPdf() {
-      console.log("PDFURLLLL");
-      console.log(this.pdfUrl);
       const link = document.createElement("a");
       link.href = this.pdfUrl;
       link.target = "_blank";
       link.download = this.pdfFileName;
-
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -487,14 +344,12 @@ export default defineComponent({
   },
   watch: {
     selectedProyect: function (newValue, oldValue) {
-      console.log(this.projectsNames);
       if (newValue !== oldValue) {
         this.getUsers();
       }
     },
   },
 });
-
 </script>
 
 <template>
@@ -634,9 +489,10 @@ export default defineComponent({
             </v-col>
 
             <v-col cols="12" md="4" sm="6">
-              <v-text-field v-model="formattedRun" hint="Ingresa el RUT sin puntos ni guion" label="RUT*"
-                :rules="[validateRun]" @input="onInput" required></v-text-field>
+              <v-text-field v-model="post.email" hint="email@duocuc.cl/ email@profesor.duoc.cl" label="Email*"
+                :rules="[validateEmail]" required></v-text-field>
             </v-col>
+
             <v-col cols="12" md="4" sm="6">
               <v-text-field v-model="post.phone" hint="Ej: +56 9 XXXX XXXX" label="Teléfono*" required
                 :rules="[validatePhone]" @input="post.phone = phoneFormat(post.phone)"></v-text-field>

@@ -7,8 +7,6 @@ import { useRouter } from "vue-router";
 const router = useRouter();
     const accessToken = localStorage.getItem('accessToken');
 
-    console.log('ENCONTRADO !', accessToken);
-
     if (!accessToken) {
       alert('Debes iniciar sesión !!');
       router.push("/login"); 

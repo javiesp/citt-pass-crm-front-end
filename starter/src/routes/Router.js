@@ -3,8 +3,6 @@ import { Navigate } from "react-router-dom";
 import Loadable from "../layouts/loader/Loadable";
 import Login from "../views/auth/Login";
 import Colaborators from "~/pages/colaborators.vue";
-import PerfilUsuario from "~/pages/perfilusuario.vue"
-import ProtectedRoute from "./ProtectedRoute"; // Importa el componente
 
 /* Layouts */
 const FullLayout = Loadable(lazy(() => import("../layouts/FullLayout")));
@@ -23,26 +21,27 @@ const Forms = Loadable(lazy(() => import("../views/ui/Forms")));
 const Breadcrumbs = Loadable(lazy(() => import("../views/ui/Breadcrumbs")));
 const Productos = Loadable(lazy(() => import("../views/Productos")));
 const Error = Loadable(lazy(() => import("../views/auth/Error")));
+const PerfilUsuario = Loadable(lazy(() => import("~/pages/perfilusuario.vue"))); // Ensure this path is correct
 
 /* Routes */
 const ThemeRoutes = [
   {
     path: "/",
-    element: <FullLayout />,
+    element: <Gestoringreso />,
     children: [
-      { path: "/gestoringreso", element: <ProtectedRoute><Gestoringreso /></ProtectedRoute> },
-      { path: "/about", element: <ProtectedRoute><About /></ProtectedRoute> },
-      { path: "/ui/alerts", element: <ProtectedRoute><Alerts /></ProtectedRoute> },
-      { path: "/badges", element: <ProtectedRoute><Badges /></ProtectedRoute> },
-      { path: "/buttons", element: <ProtectedRoute><Buttons /></ProtectedRoute> },
+      { path: "/gestoringreso", element: <Gestoringreso /> },
+      { path: "/about", element: <About /> },
+      { path: "/ui/alerts", element: <Alerts /> },
+      { path: "/badges", element: <Badges /> },
+      { path: "/buttons", element: <Buttons /> },
       { path: "/cards", element: <Cards /> },
-      { path: "/grid", element: <ProtectedRoute><Grid /></ProtectedRoute> },
-      { path: "/table", element: <ProtectedRoute><Tables /></ProtectedRoute> },
-      { path: "/forms", element: <ProtectedRoute><Forms /></ProtectedRoute> },
-      { path: "/breadcrumbs", element: <ProtectedRoute><Breadcrumbs /></ProtectedRoute> },
-      { path: "/productos", element: <ProtectedRoute><Productos /></ProtectedRoute> },
-      { path: "/colaborators", element: <ProtectedRoute><Colaborators /></ProtectedRoute> },
-      { path: "/perfil", element: <PerfilUsuario /> },
+      { path: "/grid", element: <Grid /> },
+      { path: "/table", element: <Tables /> },
+      { path: "/forms", element: <Forms /> },
+      { path: "/breadcrumbs", element: <Breadcrumbs /> },
+      { path: "/productos", element: <Productos /> },
+      { path: "/colaborators", element: <Colaborators /> },
+      { path: "/perfil", element: <PerfilUsuario /> }, // Corrected to use lazy-loaded component
       { path: "*", element: <Navigate to="/auth/404" /> },
     ],
   },

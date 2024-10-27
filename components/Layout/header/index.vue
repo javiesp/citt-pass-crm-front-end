@@ -12,20 +12,23 @@ function logout() {
   console.log('SESION CERRADA');
 }
 
+const emailStorage = localStorage.getItem('email')
+console.log('LOCAL STORAGE')
+console.log(emailStorage)
+
 const userprofile = ref([
   {
     title: "Mi perfil",
     desc: "Configuración de la cuenta",
-    to: "/cards" // Path for "Mi perfil"
+    to: "/perfil" 
   },
   {
     title: "Colaboradores",
     desc: "Colaboradores del proyecto",
-    to: "/colaborators" // Path for "Colaboradores"
+    to: "/colaborators"
   },
 ]);
 
-// Function to handle navigation when a user profile item is clicked
 const navigateTo = (to: string) => {
   if (to) {
     router.push(to); // Navigate to the specified route
@@ -43,7 +46,10 @@ const navigateTo = (to: string) => {
       </v-btn>
     </template>
     <v-sheet rounded="md" width="250" elevation="10">
+
       <v-list class="pa-4" elevation="10" rounded="md">
+        <v-list-item-title class="text-h6 mb-1">{{ emailStorage }}</v-list-item-title>
+        <v-list-item-subtitle class="text-subtitle-1">Ingeniería en informática</v-list-item-subtitle>
         <!-- User profile items -->
         <v-list-item 
           class="py-2 mb-2" 
