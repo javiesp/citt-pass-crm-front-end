@@ -28,7 +28,7 @@ diffusion.interceptors.response.use((response) => {
 });
 // Función para obtener todos los usuarios
 export const getsbProducts = () => {
-    return diffusion.get('https://api-integracion.sbgtech.workers.dev/prodasducts');
+    return diffusion.get('https://api-integracion.sbgtech.workers.dev/prodasd ucts');
 };
 
 
