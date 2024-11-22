@@ -43,9 +43,9 @@ const sidebarItem: menu[] = [
     to: "/gestorinventario",
   },
   {
-    title: "Producto item * aca poner producto  e item",
+    title: "Producto item",
     icon: IconPackages,
-    to: "",
+    to: "/productos",
   },
   { header: 'GESTOR PROYECTO' },
   {
@@ -59,11 +59,11 @@ const sidebarItem: menu[] = [
     icon: IconHeart,
     to: "/wishlist",
   },
-  {
-    title: "Gestor de productos",
-    icon: IconShoppingBag,
-    to: "/productos",
-  },
+  // {
+  //   title: "Gestor de productos",
+  //   icon: IconShoppingBag,
+  //   to: "/productos",
+  // },
 ];
 
 export default sidebarItem;

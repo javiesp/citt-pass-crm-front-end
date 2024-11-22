@@ -7,6 +7,9 @@ import {
   createWishlist,
   updateWishlist
 } from "../api/wishlistApi";
+import { 
+  getAllItems
+} from "../api/itemApi";
 
 export default defineComponent({
   name: "productItem",
@@ -42,7 +45,9 @@ export default defineComponent({
       totalPrice: 0,
       productName: null,
       productStock: null,
-      wihslistBudget: null
+      wihslistBudget: null,
+      itemArray: [],
+      itemNames: null
     };
   },
   computed: {
@@ -56,6 +61,16 @@ export default defineComponent({
         product.name.toLowerCase().includes(this.productSearchQuery.toLowerCase())
       );
     },
+    filteredItem() {
+      console.log('INPUT: ', this.productSearchQuery)
+      if (!this.productSearchQuery) {
+        console.log('OUTPUT: ', this.itemArray.results)
+        return this.itemArray.results || [];
+      }
+      return (this.itemArray.results || []).filter((product) =>
+        product.item_name.toLowerCase().includes(this.productSearchQuery.toLowerCase())
+      );
+    },
   },
   methods: {
     async getProduct() {
@@ -66,6 +81,20 @@ export default defineComponent({
         this.productArray = response.data;
         this.productNames = this.productArray.results.map((product) => product.name);
         console.log('OUTPUT: ', this.productArray)
+        this.loading = false
+      } catch (error) {
+        console.error("PRODUCT_ERROR:", error);
+        this.errorAlertVisible = true;
+      }
+    },
+    async getItem() {
+      try {
+        this.loading = true
+        const response = await getAllItems();
+        console.log('INPUT ITEMS: ', response);
+        this.itemArray = response.data;
+        // this.itemNames = this.itemArray.results.map((item) => item.item_name);
+        console.log('OUTPUT ITEMS: ', this.itemArray)
         this.loading = false
       } catch (error) {
         console.error("PRODUCT_ERROR:", error);
@@ -147,7 +176,7 @@ export default defineComponent({
         this.loading = false
         this.dialogCreateWishlist = false;
       } catch (error) {
-        console.error("PRODUCT_ERROR:", error);
+        console.error("item error:", error);
         this.errorAlertVisible = true;
       }
     },
@@ -211,13 +240,70 @@ export default defineComponent({
   },
   mounted() {
     this.getProduct(); 
-    this.getWishlist(); 
+    this.getWishlist();
+    this.getItem();
   },
 });
 </script>
 
 <template>
-  <h2>Productos</h2>
+  <v-row class="month-table">
+    <v-col cols="3">
+      <v-autocomplete
+        :items="itemArray"
+        item-value="itemArray.item_name"
+        class="mx-auto"
+        density="comfortable"
+        menu-icon=""
+        placeholder="Buscar Producto"
+        prepend-inner-icon="mdi-magnify"
+        style="max-width: 350px"
+        theme="light"
+        variant="solo"
+        auto-select-first
+        v-model="productSearchQuery"
+        item-props
+        hint="Escriba para buscar"
+        rounded
+      ></v-autocomplete>
+    </v-col>
+    <v-col cols="6">
+      <v-btn
+        variant="tonal"
+        color="primary"
+        prepend-icon="mdi-folder-outline"
+        @click="dialogCreateWishlist = true"
+      >
+        Crear wishlist
+      </v-btn>
+    </v-col>
+    <v-col v-if="loading" cols="12" class="text-center">
+      <v-progress-circular
+        :size="200"
+        :width="17"
+        color="primary"
+        indeterminate
+      ></v-progress-circular>
+    </v-col>
+    <v-col
+      v-else
+      v-for="item in itemArray" :key="item.id" class="item-card"
+      cols="12"
+      md="4"
+    >
+      <v-card>
+        <v-card-title>{{ item.item_name }}</v-card-title>
+        <v-card-text>
+          <p>Price: {{ item.item_price }}</p>
+          <v-btn icon @click="addProductToWishlist(item)">
+            <v-icon>mdi-heart</v-icon>
+          </v-btn>
+        </v-card-text>
+      </v-card>
+    </v-col>
+  </v-row>
+
+  <!-- <h2>Productos</h2>
   
   <v-row class="month-table">
     <v-col cols="3">
@@ -280,7 +366,7 @@ export default defineComponent({
         </v-card-text>
       </v-card>
     </v-col>
-  </v-row>
+  </v-row> -->
 
   <v-dialog v-model="dialogWishlist" max-width="500px">
       <template #default>
