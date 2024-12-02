@@ -20,7 +20,7 @@ const userprofile = ref([
   {
     title: "Mi perfil",
     desc: "Configuración de la cuenta",
-    to: "/perfil" 
+    to: "/perfilusuario", 
   },
   {
     title: "Colaboradores",

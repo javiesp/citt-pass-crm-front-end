@@ -6,6 +6,7 @@ import PerfectScrollbar from "vue3-perfect-scrollbar";
 import VueApexCharts from "vue3-apexcharts";
 import VueTablerIcons from "vue-tabler-icons";
 import { VDataTable } from 'vuetify/labs/VDataTable';
+import { VSkeletonLoader } from "vuetify/lib/labs/components.mjs";
 import DayJsAdapter from '@date-io/dayjs';
 
 import "@/assets/scss/style.scss";
@@ -19,6 +20,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     components: {
       ...components,
       VDataTable,
+      VSkeletonLoader,
     },
     date: {
       adapter: DayJsAdapter,
