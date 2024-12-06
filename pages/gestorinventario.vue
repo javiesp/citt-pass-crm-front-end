@@ -68,6 +68,9 @@ export default defineComponent({
     },
   },
   async created() {
+    const accessToken = localStorage.getItem('accessToken');
+    this.verifyTokenAuth(accessToken);
+
     let local_project = localStorage.getItem('rack_id_cach');
 
     if (!local_project || local_project.trim() === '') {
@@ -80,6 +83,15 @@ export default defineComponent({
     await this.getProjects();
   },
   methods: {
+    verifyTokenAuth(token) {
+      const router = useRouter();
+
+      if (!token) {
+        router.push("/login"); 
+      }
+
+      const isValidJWT = typeof token === 'string' && token.split('.').length !== 3 ? router.push("/login") : true
+    },
     async getInventory() {
       this.loading = true;
       try {

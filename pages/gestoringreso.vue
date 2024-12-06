@@ -8,9 +8,10 @@ const router = useRouter();
     const accessToken = localStorage.getItem('accessToken');
 
     if (!accessToken) {
-      alert('Debes iniciar sesión !!');
       router.push("/login"); 
     }
+
+    const isValidJWT = typeof token === 'string' && token.split('.').length !== 3 ? router.push("/login") : true
 
 
 const checkInHeader = ['Fecha de entrada', 'Motivo'];

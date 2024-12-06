@@ -53,8 +53,15 @@ export default defineComponent({
     }
   },
   methods: {
+    verifyTokenAuth(token) {
+      const router = useRouter();
 
-    // Metodo Listar Rack
+      if (!token) {
+        router.push("/login"); 
+      }
+
+      const isValidJWT = typeof token === 'string' && token.split('.').length !== 3 ? router.push("/login") : true
+    },
     async getRack() {
       this.loading = true;
       try {
@@ -193,6 +200,8 @@ export default defineComponent({
     }
   },
   mounted() {
+    const accessToken = localStorage.getItem('accessToken');
+    this.verifyTokenAuth(accessToken);
     this.getRack();
   },
 

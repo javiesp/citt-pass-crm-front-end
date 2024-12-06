@@ -76,6 +76,15 @@ export default defineComponent({
     },
   },
   methods: {
+    verifyTokenAuth(token) {
+      const router = useRouter();
+
+      if (!token) {
+        router.push("/login"); 
+      }
+
+      const isValidJWT = typeof token === 'string' && token.split('.').length !== 3 ? router.push("/login") : true
+    },
     async getProjects() {
       this.loading = true;
       try {
@@ -241,6 +250,8 @@ export default defineComponent({
   },
   watch: {},
   async created() {
+    const accessToken = localStorage.getItem('accessToken');
+    this.verifyTokenAuth(accessToken);
     await this.getProjects();
     console.log(this.projectArray);
     console.log("sel", this.projectId);

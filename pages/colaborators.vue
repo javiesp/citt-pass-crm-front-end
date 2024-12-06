@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
+const router = useRouter();
+    const accessToken = localStorage.getItem('accessToken');
+
+    if (!accessToken) {
+      router.push("/login"); 
+    }
+
+    const isValidJWT = typeof token === 'string' && token.split('.').length !== 3 ? router.push("/login") : true
+
 let hublink = 'https://github.com/';
 let photourl = 'https://avatars.githubusercontent.com/';
 

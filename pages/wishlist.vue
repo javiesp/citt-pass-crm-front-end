@@ -39,6 +39,15 @@ export default {
     },
   },
   methods: {
+    verifyTokenAuth(token) {
+      const router = useRouter();
+
+      if (!token) {
+        router.push("/login"); 
+      }
+
+      const isValidJWT = typeof token === 'string' && token.split('.').length !== 3 ? router.push("/login") : true
+    },
     async fetchWishlists() {
       try {
         this.loading = true;
@@ -85,6 +94,8 @@ export default {
     },
   },
   mounted() {
+    const accessToken = localStorage.getItem('accessToken');
+    this.verifyTokenAuth(accessToken);
     this.fetchWishlists();
   },
 };

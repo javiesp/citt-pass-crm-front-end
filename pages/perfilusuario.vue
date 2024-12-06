@@ -55,6 +55,8 @@ export default {
     };
   },
   created() {
+    const accessToken = localStorage.getItem('accessToken');
+    this.verifyTokenAuth(accessToken);
     this.getUserData();
 
     console.log('LOG', this.user_major)
@@ -66,6 +68,15 @@ export default {
     ];
   },
   methods: {
+    verifyTokenAuth(token) {
+      const router = useRouter();
+
+      if (!token) {
+        router.push("/login"); 
+      }
+
+      const isValidJWT = typeof token === 'string' && token.split('.').length !== 3 ? router.push("/login") : true
+    },
     toggleShowPassword() {
       this.showPassword = !this.showPassword;
     },

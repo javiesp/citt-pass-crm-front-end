@@ -10,6 +10,7 @@ import {
 import { 
   getAllItems
 } from "../api/itemApi";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "productItem",
@@ -73,6 +74,16 @@ export default defineComponent({
     },
   },
   methods: {
+    verifyTokenAuth(token) {
+      const router = useRouter();
+
+      if (!token) {
+        alert('Debes iniciar sesión !!');
+        router.push("/login"); 
+      }
+
+      const isValidJWT = typeof token === 'string' && token.split('.').length !== 3 ? router.push("/login") : true
+    },
     async getProduct() {
       try {
         this.loading = true
@@ -239,6 +250,8 @@ export default defineComponent({
     }
   },
   mounted() {
+    const accessToken = localStorage.getItem('accessToken');
+    this.verifyTokenAuth(accessToken);
     this.getProduct(); 
     this.getWishlist();
     this.getItem();
