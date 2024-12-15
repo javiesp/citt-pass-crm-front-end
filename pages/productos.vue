@@ -9,12 +9,14 @@ import {
 import {
   getProductByItem,
   createProduct,
-  deleteProduct
+  deleteProduct,
+  updateProduct
 } from '../api/productosApi';
 import {
   getAllItems,
   createItem,
-  deleteItem
+  deleteItem,
+  updateItem
 } from "../api/itemApi";
 import {
   getAllinventory
@@ -30,6 +32,8 @@ export default defineComponent({
       dialogWishlist: false,
       dialogCreateWishlist: false,
       dialogCreateItem: false,
+      dialogUpdateItem: false,
+      dialogDeleteItem: false,
       productDialog: false,
       loading: false,
       productArray: [],
@@ -80,8 +84,8 @@ export default defineComponent({
       },
       inventory_array: [],
       selectItem: null,
-      item_id: null,
-      product_id: null
+      itemId: null,
+      productId: null
     };
   },
   computed: {
@@ -113,7 +117,6 @@ export default defineComponent({
       this.fetchItemsForPage(1);
     },
     'itemPosts.inventory_id': function (newVal) {
-      console.log('Nuevo valor de inventory_id:', newVal); // Esto te muestra el ID seleccionado
     }
   },
   methods: {
@@ -160,13 +163,18 @@ export default defineComponent({
         this.itemArray = this.filteredProducts;
       }
     },
-    async getProductByid(item_id) {
+    openProductInfo(item_id) {
       this.productDialog = true;
+      this.getProductByid(item_id)
+    },
+    async getProductByid(item_id) {
       try {
         const response = await getProductByItem(item_id);
         this.product = response.data;
         this.product_price = this.product.product_price;
         this.product_stock = this.product.product_stock;
+        this.productId = this.product._id;
+        this.productPost = this.product;
       } catch (error) {
         console.log(error)
       }
@@ -232,7 +240,7 @@ export default defineComponent({
         item_price: this.itemPosts.item_price,
         category: this.itemPosts.category,
         inventory_id: this.itemPosts.inventory_id
-      } 
+      }
 
       try {
         const response = await createItem(post);
@@ -240,8 +248,9 @@ export default defineComponent({
         if (response) {
           this.getItem();
           this.createProduct();
-          this.loading = false;
+          this.dialogCreateItem = false;
           this.resetPost();
+          this.loading = false;
         }
       } catch (error) {
         console.log(error);
@@ -260,6 +269,69 @@ export default defineComponent({
       } catch (error) {
         console.log(error);
       }
+    },
+    openUpdate(item) {
+      this.dialogUpdateItem = true;
+      this.itemId = item._id;
+      this.itemPosts = item;
+      this.getProductByid(item.item_id);
+    },
+    async updateItem() {
+      const post = {
+        item_name: this.itemPosts.item_name,
+        item_price: this.itemPosts.item_price,
+        category: this.itemPosts.category,
+        inventory_id: this.itemPosts.inventory_id
+      }
+      try {
+        const response = await updateItem(this.itemId, post);
+
+        if (response) {
+          this.loading = false;
+          this.dialogUpdateItem = false;
+          this.updateProduct();
+          this.getItem();
+          this.resetPost();
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async updateProduct() {
+      const post = {
+        product_price: this.itemPosts.item_price,
+        product_stock: this.productPost.product_stock,
+        item_id: this.itemPosts.item_id
+      }
+
+      try {
+        const response = await updateProduct(this.productId, post);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    openDelete(item) {
+      this.dialogDeleteItem = true;
+      this.itemId = item._id;
+      this.itemPosts = item;
+    },
+    async deleteItem() {
+      try {
+        const response = await deleteItem(this.itemId);
+        this.getItem();
+        this.resetPost();
+        this.dialogDeleteItem = false;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    closeUpdate() {
+      this.resetPost();
+      this.dialogUpdateItem = false;
+    },
+    closeCreate() {
+      this.resetPost();
+      this.dialogCreateItem = false;
     },
     async saveWishlistId() {
       try {
@@ -296,8 +368,6 @@ export default defineComponent({
       this.post.wishlist_name = '';
     },
     resetPost() {
-      this.dialogCreateItem = false;
-
       this.product_price = 0;
       this.product_stock = 0;
 
@@ -356,24 +426,38 @@ export default defineComponent({
     <v-col v-for="item in filteredProducts" :key="item.id" class="item-card" cols="12" md="4">
       <v-card>
         <v-card-title>{{ item.item_name }}</v-card-title>
+        <v-card-content>
+
+        </v-card-content>
         <v-card-text>
-          <p>Price: {{ item.item_price }}</p>
-          <v-btn icon @click="addProductToWishlist(item)">
-            <v-icon>mdi-view-grid-plus</v-icon>
-          </v-btn>
-          <v-btn icon @click="addProductToWishlist(item)">
+          <p class="mb-2"><strong>Precio: </strong>{{ item.item_price }}</p> 
+          <v-chip class="ma-2">  
+            <v-icon v-if="item.category === 'Sensor'">mdi-leak</v-icon>
+            <v-icon v-else-if="item.category === 'Arduino'">mdi-chip</v-icon>
+            <v-icon v-else-if="item.category === 'Raspberry'">mdi-memory</v-icon>
+            <v-icon v-else-if="item.category === 'Robótica'">mdi-robot-excited</v-icon>
+            <v-icon v-else-if="item.category === '3D'">mdi-printer-3d</v-icon>
+            <v-icon v-else-if="item.category === 'Cable'">mdi-cable-data</v-icon>
+            <v-icon v-else>mdi-help-circle</v-icon> 
+            {{ item.category }}
+          </v-chip>
+
+          <v-divider></v-divider>
+
+          <v-btn icon @click="openUpdate(item)" class="ma-2">
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
-          <v-btn icon @click="addProductToWishlist(item)">
+          <v-btn icon @click="openDelete(item)" class="ma-2">
             <v-icon>mdi-trash-can</v-icon>
           </v-btn>
         </v-card-text>
         <v-card-actions>
-          <v-btn @click="getProductByid(item.item_id)">
+          <v-btn @click="openProductInfo(item.item_id)" class="ma-2">
             Ver stock
           </v-btn>
         </v-card-actions>
       </v-card>
+
     </v-col>
   </v-row>
 
@@ -397,7 +481,6 @@ export default defineComponent({
             <v-list-item-subtitle>{{ product_price }}</v-list-item-subtitle>
           </v-list-item>
         </v-list>
-        <v-btn @click="reset()">Actualizar producto</v-btn>
       </v-card-text>
       <v-card-actions class="d-flex justify-center">
         <v-btn @click="reset()">Cerrar</v-btn>
@@ -423,8 +506,8 @@ export default defineComponent({
               </v-col>
 
               <v-col cols="12" md="4">
-                <v-text-field v-model="itemPosts.category" label="Categoria" variant="underlined"
-                  required></v-text-field>
+                <v-autocomplete v-model="itemPosts.category" label="Categoria" variant="underlined"
+                  :items="['Sensor', 'Arduino', 'Raspberry', 'Robótica', '3D', 'Cable']" chips required></v-autocomplete>
               </v-col>
 
               <v-col cols="12" md="4">
@@ -444,12 +527,71 @@ export default defineComponent({
         </v-form>
       </v-card-text>
       <v-card-actions>
-        <v-btn @click="resetPost()">Cerrar</v-btn>
+        <v-btn @click="closeCreate()()">Cerrar</v-btn>
         <v-btn @click="createItem()">Guardar</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 
+  <v-dialog v-model="dialogUpdateItem" max-width="600px" persistent>
+    <v-card>
+      <v-card-text>
+        Actualizar Item
+        <v-form v-model="valid">
+          <v-container>
+            <v-row>
+              <v-col cols="12" md="4">
+                <v-text-field v-model="itemPosts.item_name" label="Nombre Item" variant="underlined"
+                  required></v-text-field>
+              </v-col>
+
+              <v-col cols="12" md="4">
+                <v-text-field v-model="itemPosts.item_price" label="Precio" type="number" variant="underlined"
+                  required></v-text-field>
+              </v-col>
+
+              <v-col cols="12" md="4">
+                <v-autocomplete v-model="itemPosts.category" label="Categoria" variant="underlined"
+                  :items="['Sensor', 'Arduino', 'Raspberry', 'Robótica', '3D', 'Cable']" chips required></v-autocomplete>
+              </v-col>
+
+              <v-col cols="12" md="4">
+                <v-autocomplete v-model="itemPosts.inventory_id" label="Inventario" variant="underlined" required
+                  :items="inventory_array" item-value="inventory_id" item-title="inventory_name" @change="selectItem" />
+              </v-col>
+
+              <v-divider></v-divider>
+
+              <v-col cols="12" md="4">
+                <v-text-field v-model="productPost.product_stock" label="Stock" type="number" min="0"
+                  variant="underlined" required></v-text-field>
+              </v-col>
+
+            </v-row>
+          </v-container>
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn @click="closeUpdate()">Cerrar</v-btn>
+        <v-btn @click="updateItem()">Guardar</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <v-dialog v-model="dialogDeleteItem" max-width="500px">
+    <v-card>
+      <v-card-title>
+        Eliminar Item
+      </v-card-title>
+      <v-card-text>
+        ¿Estás seguro de eliminar este Item?
+      </v-card-text>
+      <v-card-actions>
+        <v-btn @click="dialogDeleteItem = false">Cancelar</v-btn>
+        <v-btn @click="deleteItem()">Eliminar</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 
   <v-dialog v-model="dialogWishlist" max-width="500px" persistent scrollable>
     <v-card>

@@ -43,8 +43,8 @@ export const createProduct = (createItemDto?: any) => {
   return diffusion.post('/product/create-product', createItemDto );
 };
 
-export const updateItem = (id: string, updateItemDto: any) => {
-  return diffusion.put(`/item/update-item/${id}`, updateItemDto); 
+export const updateProduct = (id: string, updateItemDto: any) => {
+  return diffusion.put(`/product/update-product/${id}`, updateItemDto); 
 };
 
 export const deleteProduct = (id: any) => {
