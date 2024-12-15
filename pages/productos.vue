@@ -1,20 +1,19 @@
 <script>
 import { defineComponent } from "vue";
-import { getsbProducts } from "../api/integracionApi";
-import { 
-  getAllWishlists, 
-  updateWishlistProducts, 
+import {
+  getAllWishlists,
+  updateWishlistProducts,
   createWishlist,
   updateWishlist
 } from "../api/wishlistApi";
-import { 
+import {
   getAllItems
 } from "../api/itemApi";
 import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "productItem",
-  data () {
+  data() {
     return {
       dialog: false,
       dialogWishlist: false,
@@ -22,7 +21,7 @@ export default defineComponent({
       loading: false,
       productArray: [],
       productNames: [],
-      wishlistId: null, 
+      wishlistId: null,
       wishlistArray: [],
       wishNames: [],
       productSearchQuery: "",
@@ -31,16 +30,15 @@ export default defineComponent({
       dialogVisible: false,
       alertVisible: false,
       errorAlertVisible: false,
-      loading: false,
       isDisabled: true,
-      selectedWishlist: "", 
+      selectedWishlist: "",
       wishlistNameToIdMap: {},
       post: {
         wishlist_id: null,
-        wishlist_name: null, 
+        wishlist_name: null,
         budget: null,
         product: null
-      }, 
+      },
       ProductDto: [],
       count: 0,
       totalPrice: 0,
@@ -48,165 +46,141 @@ export default defineComponent({
       productStock: null,
       wihslistBudget: null,
       itemArray: [],
-      itemNames: null
+      itemNames: null,
+      itemsPerPage: 9,
+      currentPage: 1,
+      allItems: [],
     };
   },
   computed: {
     filteredProducts() {
-      console.log('INPUT: ', this.productSearchQuery)
       if (!this.productSearchQuery) {
-        console.log('OUTPUT: ', this.productArray.results)
-        return this.productArray.results || [];
+        return this.itemArray;
       }
-      return (this.productArray.results || []).filter((product) =>
-        product.name.toLowerCase().includes(this.productSearchQuery.toLowerCase())
-      );
+      return this.allItems
+        .filter((product) =>
+          product.item_name.toLowerCase().includes(this.productSearchQuery.toLowerCase())
+        )
+        .slice(
+          (this.currentPage - 1) * this.itemsPerPage,
+          this.currentPage * this.itemsPerPage
+        );
     },
-    filteredItem() {
-      console.log('INPUT: ', this.productSearchQuery)
-      if (!this.productSearchQuery) {
-        console.log('OUTPUT: ', this.itemArray.results)
-        return this.itemArray.results || [];
-      }
-      return (this.itemArray.results || []).filter((product) =>
-        product.item_name.toLowerCase().includes(this.productSearchQuery.toLowerCase())
-      );
-    },
+    totalPages() {
+      const filteredLength = !this.productSearchQuery
+        ? this.allItems.length
+        : this.allItems.filter((product) =>
+            product.item_name.toLowerCase().includes(this.productSearchQuery.toLowerCase())
+          ).length;
+      return Math.ceil(filteredLength / this.itemsPerPage);
+    }
+  },
+  watch: {
+    productSearchQuery() {
+      this.currentPage = 1;
+      this.fetchItemsForPage(1);
+    }
   },
   methods: {
     verifyTokenAuth(token) {
       const router = useRouter();
 
       if (!token) {
-        alert('Debes iniciar sesión !!');
-        router.push("/login"); 
+        router.push("/login");
       }
 
       const isValidJWT = typeof token === 'string' && token.split('.').length !== 3 ? router.push("/login") : true
     },
-    async getProduct() {
-      try {
-        this.loading = true
-        const response = await getsbProducts();
-        console.log('INPUT: ', response);
-        this.productArray = response.data;
-        this.productNames = this.productArray.results.map((product) => product.name);
-        console.log('OUTPUT: ', this.productArray)
-        this.loading = false
-      } catch (error) {
-        console.error("PRODUCT_ERROR:", error);
-        this.errorAlertVisible = true;
-      }
-    },
     async getItem() {
       try {
-        this.loading = true
+        this.loading = true;
         const response = await getAllItems();
-        console.log('INPUT ITEMS: ', response);
-        this.itemArray = response.data;
-        // this.itemNames = this.itemArray.results.map((item) => item.item_name);
-        console.log('OUTPUT ITEMS: ', this.itemArray)
-        this.loading = false
+        this.allItems = response.data;
+        this.fetchItemsForPage(1);
+        this.loading = false;
       } catch (error) {
         console.error("PRODUCT_ERROR:", error);
         this.errorAlertVisible = true;
+        this.loading = false;
       }
+    },
+    fetchItemsForPage(page) {
+      this.currentPage = page;
+      const start = (page - 1) * this.itemsPerPage;
+      const end = page * this.itemsPerPage;
+      
+      if (!this.productSearchQuery) {
+        this.itemArray = this.allItems.slice(start, end);
+      } else {
+        this.itemArray = this.filteredProducts;
+      }
+    },
+    handlePageChange(page) {
+      this.fetchItemsForPage(page);
     },
     async getWishlist() {
       try {
         const response = await getAllWishlists();
-        console.log('INPUT: ', response);
         this.wishlistArray = response.data;
         this.wishlistNameToIdMap = this.wishlistArray.reduce((map, wishlist) => {
-          map[wishlist.wishlist_name] = wishlist.wishlist_id; 
+          map[wishlist.wishlist_name] = wishlist.wishlist_id;
           return map;
         }, {});
         this.wishNames = this.wishlistArray.map((wishlist) => wishlist.wishlist_name);
-        console.log('OUTPUT: ', this.wishlistArray)
       } catch (error) {
         console.error("Error fetching wishlists:", error);
         this.errorAlertVisible = true;
       }
     },
     addProductToWishlist(product) {
-      console.log('HOLA', product);
       const productos = {
         product_id: product.id,
-        product_name: product.name,
-        price: product.price,
+        product_name: product.item_name,
+        price: product.item_price,
         quantity: this.count
-      }
-      this.selectedProducts = productos; 
+      };
+      this.selectedProducts = productos;
       this.productName = this.selectedProducts.product_name;
       this.productStock = product.stock;
-      console.log('INPUT: ', product);
       this.dialogWishlist = true;
-      console.log('OUTPUT: ',this.selectedWishlist,'/', this.selectedProducts); 
-      this.isDisabled = false
+      this.isDisabled = false;
     },
     incrementCount() {
-
-        this.isDisabled = true;
-        if (this.count < this.productStock) {
-          this.count++;
-          this.totalPrice += this.selectedProducts.price;
-          this.selectedProducts.quantity = this.count;
-          
-          console.log('Producto incrementado:', this.selectedProducts.name);
-          console.log('Contador actual:', this.count);
-          console.log('Precio Total:', this.totalPrice);
-        } else {
-          console.log('No se puede incrementar más, stock insuficiente');
-        }
-
+      this.isDisabled = true;
+      if (this.count < this.productStock) {
+        this.count++;
+        this.totalPrice += this.selectedProducts.price;
+        this.selectedProducts.quantity = this.count;
+      }
     },
     decrementCount() {
       if (this.count > 0) {
         this.count--;
         this.totalPrice -= this.selectedProducts.price;
-        console.log('Producto decrementado:', this.selectedProducts.name);
-        console.log('Contador actual:', this.count);
-        console.log('Precio Total:', this.totalPrice);
       } else {
-        this.isDisabled = false
-        console.log('No se puede decrementar más, cantidad mínima alcanzada');
+        this.isDisabled = false;
       }
     },
     async createWishlist() {
       const post = {
         wishlist_id: Math.random(),
-        wishlist_name: this.post.wishlist_name, 
+        wishlist_name: this.post.wishlist_name,
         budget: 0,
         product: this.ProductDto
       };
       try {
-        this.loading = true
-        const response = await createWishlist(post);
-        console.log('POST')
-        console.log(response);
-        this.loading = false
+        this.loading = true;
+        await createWishlist(post);
+        this.loading = false;
         this.dialogCreateWishlist = false;
       } catch (error) {
         console.error("item error:", error);
         this.errorAlertVisible = true;
       }
     },
-    openCreateDialog() {
-      this.dialog = true;
-    },
-    closeCreateDialog() {
-      this.dialogWishlist = false; 
-    },
     async saveWishlistId() {
-      console.log('WISHLIST SELECCIONADA');
-      console.log(this.selectedWishlist);
-      console.log('PRODUCTOS SELECCIONADOS');
-      console.log(this.selectedProducts);
-
       try {
         this.loading = true;
-
-        // Buscar la wishlist seleccionada en el array
         const selectedWishlistObj = this.wishlistArray.find(wishlist => wishlist._id === this.selectedWishlist);
 
         if (!selectedWishlistObj) {
@@ -214,45 +188,38 @@ export default defineComponent({
         }
 
         const currentBudget = selectedWishlistObj.budget || 0;
-        console.log("Presupuesto actual", currentBudget);
 
-        // Primero, actualiza los productos de la wishlist
-        const response1 = await updateWishlistProducts(this.selectedWishlist, this.selectedProducts);
-        console.log(response1);
+        await updateWishlistProducts(this.selectedWishlist, this.selectedProducts);
 
-        // Luego, actualiza el presupuesto de la wishlist
         const finalBudget = currentBudget + this.totalPrice;
-        console.log("Presupuesto final", finalBudget);
 
         const put = {
           budget: finalBudget
         };
 
-        const response2 = await updateWishlist(this.selectedWishlist, put);
-        console.log('PUT');
-        console.log(response2);
-
+        await updateWishlist(this.selectedWishlist, put);
         this.dialogWishlist = false;
         this.selectedProducts = {};
-        console.log('AGREGADO');
         this.loading = false;
       } catch (error) {
         console.log(error);
         this.loading = false;
       }
-      console.log('PASS');
       this.resetFields();
     },
     resetFields() {
       this.totalPrice = 0;
       this.count = 0;
       this.post.wishlist_name = '';
+    },
+    closeCreateDialog() {
+      this.dialogWishlist = false;
+      this.resetFields();
     }
   },
   mounted() {
     const accessToken = localStorage.getItem('accessToken');
     this.verifyTokenAuth(accessToken);
-    this.getProduct(); 
     this.getWishlist();
     this.getItem();
   },
@@ -260,51 +227,35 @@ export default defineComponent({
 </script>
 
 <template>
-  <v-row class="month-table">
-    <v-col cols="3">
-      <v-autocomplete
-        :items="itemArray"
-        item-value="itemArray.item_name"
-        class="mx-auto"
-        density="comfortable"
-        menu-icon=""
-        placeholder="Buscar Producto"
-        prepend-inner-icon="mdi-magnify"
-        style="max-width: 350px"
-        theme="light"
-        variant="solo"
-        auto-select-first
-        v-model="productSearchQuery"
-        item-props
-        hint="Escriba para buscar"
-        rounded
-      ></v-autocomplete>
+  <v-col cols="3">
+    <v-autocomplete 
+      :items="itemArray" 
+      item-value="item_name" 
+      class="mx-auto" 
+      density="comfortable"
+      placeholder="Buscar Producto" 
+      prepend-inner-icon="mdi-magnify" 
+      style="max-width: 350px" 
+      theme="light"
+      variant="solo" 
+      auto-select-first 
+      v-model="productSearchQuery" 
+      item-props 
+      hint="Escriba para buscar"
+      rounded>
+    </v-autocomplete>
+  </v-col>
+
+  <v-row v-if="loading" class="month-table">
+    <v-col v-for="n in 10" :key="n" cols="12" md="4">
+      <v-skeleton-loader :elevation="6" type="card-avatar"></v-skeleton-loader>
     </v-col>
-    <v-col cols="6">
-      <v-btn
-        variant="tonal"
-        color="primary"
-        prepend-icon="mdi-folder-outline"
-        @click="dialogCreateWishlist = true"
-      >
-        Crear wishlist
-      </v-btn>
-    </v-col>
-    <v-col v-if="loading" cols="12" class="text-center">
-      <v-progress-circular
-        :size="200"
-        :width="17"
-        color="primary"
-        indeterminate
-      ></v-progress-circular>
-    </v-col>
-    <v-col
-      v-else
-      v-for="item in itemArray" :key="item.id" class="item-card"
-      cols="12"
-      md="4"
-    >
+  </v-row>
+
+  <v-row v-else class="month-table">
+    <v-col v-for="item in filteredProducts" :key="item.id" class="item-card" cols="12" md="4">
       <v-card>
+        <v-img height="200px" src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" cover></v-img>
         <v-card-title>{{ item.item_name }}</v-card-title>
         <v-card-text>
           <p>Price: {{ item.item_price }}</p>
@@ -316,156 +267,53 @@ export default defineComponent({
     </v-col>
   </v-row>
 
-  <!-- <h2>Productos</h2>
-  
-  <v-row class="month-table">
-    <v-col cols="3">
-      <v-autocomplete
-        :items="productNames"
-        item-value="productArray.name"
-        class="mx-auto"
-        density="comfortable"
-        menu-icon=""
-        placeholder="Buscar Producto"
-        prepend-inner-icon="mdi-magnify"
-        style="max-width: 350px"
-        theme="light"
-        variant="solo"
-        auto-select-first
-        v-model="productSearchQuery"
-        item-props
-        hint="Escriba para buscar"
-        rounded
-      ></v-autocomplete>
-    </v-col>
-    <v-col cols="6">
-      <v-btn
-        variant="tonal"
-        color="primary"
-        prepend-icon="mdi-folder-outline"
-        @click="dialogCreateWishlist = true"
-      >
-        Crear wishlist
-      </v-btn>
-    </v-col>
-    <v-col v-if="loading" cols="12" class="text-center">
-      <v-progress-circular
-        :size="200"
-        :width="17"
-        color="primary"
-        indeterminate
-      ></v-progress-circular>
-    </v-col>
-    <v-col
-      v-else
-      v-for="(product, index) in filteredProducts"
-      :key="index"
-      cols="12"
-      md="4"
-    >
-      <v-card>
-        <v-img
-          v-if="product.images && product.images.length > 0"
-          :src="product.images[0]"
-          height="200"
-        ></v-img>
-        <v-card-title>{{ product.name }}</v-card-title>
-        <v-card-text>
-          <p>Price: {{ product.price }}</p>
-          <p>Discount: {{ product.discount }}</p>
-          <v-btn icon @click="addProductToWishlist(product)">
-            <v-icon>mdi-heart</v-icon>
+  <v-pagination 
+    v-model="currentPage" 
+    :length="totalPages" 
+    :total-visible="5" 
+    class="mt-4"
+    @update:model-value="handlePageChange">
+  </v-pagination>
+
+  <v-dialog v-model="dialogWishlist" max-width="500px" persistent scrollable>
+    <v-card>
+      <v-card-title>
+        Agregar a la Wishlist
+      </v-card-title>
+      <v-card-subtitle>
+        <p>Desea agregar el producto seleccionado a la wishlist?</p>
+      </v-card-subtitle>
+      <v-card-text>
+        <v-select
+          v-model="selectedWishlist"
+          :items="wishNames"
+          label="Seleccionar Wishlist"
+          required
+        ></v-select>
+        <v-row align="center" justify="center">
+          <v-btn icon @click="decrementCount">
+            <v-icon>mdi-minus</v-icon>
           </v-btn>
-        </v-card-text>
-      </v-card>
-    </v-col>
-  </v-row> -->
-
-  <v-dialog v-model="dialogWishlist" max-width="500px">
-      <template #default>
-        <v-card>
-          <v-card-title>Agregar producto a lista de deseos</v-card-title>
-          <v-card-text>
-            <v-list-item
-                :subtitle="precio"
-              >
-                <v-list-item-title>{{ productName }}</v-list-item-title>
-                <template v-slot:prepend>
-                  <v-avatar color="grey-lighten-1">
-                    <v-icon color="white">mdi-shopping</v-icon>
-                  </v-avatar>
-                </template>
-
-                <template v-slot:append>
-                  <v-col>
-                    <v-row>
-                      <v-btn density="compact" icon="mdi-minus" @click="decrementCount"></v-btn>
-                      <v-btn density="compact" icon="mdi-plus" @click="incrementCount"></v-btn>
-                    </v-row>
-                  </v-col>
-                </template>
-            </v-list-item>
-            <v-col>
-              <v-text>
-                Total: {{ totalPrice }}
-              </v-text>
-            </v-col>
-            <v-col>
-              <v-select
-                :items="wishlistArray"
-                label="Selecciona la wishlist"
-                v-model="selectedWishlist"
-                item-value="_id"
-                item-title="wishlist_name"
-                :disabled="!isDisabled"
-                dense
-              ></v-select>
-            </v-col>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn @click="closeCreateDialog">Cerrar</v-btn>
-            <v-btn color="primary" :disabled="!isDisabled" @click="saveWishlistId">Guardar</v-btn> <!-- Botón de guardar -->
-          </v-card-actions>
-        </v-card>
-      </template>
+          <span class="mx-4">{{ count }}</span>
+          <v-btn icon @click="incrementCount">
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
+        </v-row>
+        <p class="mt-4">Total: {{ totalPrice }}</p>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn @click="closeCreateDialog" text color="green">Cerrar</v-btn>
+        <v-btn @click="saveWishlistId" text color="green" :disabled="!selectedWishlist || count === 0">Guardar</v-btn>
+      </v-card-actions>
+    </v-card>
   </v-dialog>
-
-    <!-- Dialogo para añadir inventario -->
-  <div class="pa-4 text-center">
-    <v-dialog v-model="dialogCreateWishlist" max-width="600">
-      <v-card prepend-icon="mdi-heart" title="Crear lista de deseos">
-        <!-- Campos de texto -->
-        <v-card-text>
-          <v-row dense>
-            <v-col cols="12" md="12" sm="6">
-              <v-text-field 
-                v-model="post.wishlist_name"
-                label="Nombre de la lista" 
-                required
-              ></v-text-field>
-            </v-col>
-          </v-row>
-        </v-card-text>
-        <v-divider></v-divider>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn text="Cerrar" variant="plain" @click="dialogCreateWishlist = false"></v-btn>
-          <v-btn color="primary" text="Crear" variant="tonal" @click="createWishlist"></v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </div>
-
-  <v-alert
-    v-model="errorAlertVisible"
-    dismissible
-    color="red"
-    border="left"
-    elevation="2"
-    colored-border
-    icon="mdi-alert"
-    timeout="5000"
-  >
-    Oops! Ha ocurrido un problema.
-  </v-alert>
 </template>
+
+<style scoped>
+.month-table {
+  margin: 20px;
+}
+.item-card {
+  margin-bottom: 20px;
+}
+</style>
