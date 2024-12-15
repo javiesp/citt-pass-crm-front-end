@@ -957,41 +957,6 @@ const assets = {
     "size": 815,
     "path": "../../.output/public/_nuxt/wishlistApi.8f919075.js"
   },
-  "/images/big/blog-bg.jpg": {
-    "type": "image/jpeg",
-    "etag": "\"be25-crXLkJEAB4/QIjRyyWaESpGegv4\"",
-    "mtime": "2024-10-08T22:53:45.908Z",
-    "size": 48677,
-    "path": "../../.output/public/images/big/blog-bg.jpg"
-  },
-  "/images/big/img1.jpg": {
-    "type": "image/jpeg",
-    "etag": "\"84a3-xYCvTD7I5r4h2mWTdKUtD6bG9PQ\"",
-    "mtime": "2024-10-08T22:53:45.908Z",
-    "size": 33955,
-    "path": "../../.output/public/images/big/img1.jpg"
-  },
-  "/images/big/img2.jpg": {
-    "type": "image/jpeg",
-    "etag": "\"ddc4-r6QMl0x1YexOObSO43bRAT/klKk\"",
-    "mtime": "2024-10-08T22:53:45.909Z",
-    "size": 56772,
-    "path": "../../.output/public/images/big/img2.jpg"
-  },
-  "/images/big/img3.jpg": {
-    "type": "image/jpeg",
-    "etag": "\"e0a3-uhGWI2EzkpkHBG8cXwHbgzqaK9k\"",
-    "mtime": "2024-10-08T22:53:45.909Z",
-    "size": 57507,
-    "path": "../../.output/public/images/big/img3.jpg"
-  },
-  "/images/big/img4.jpg": {
-    "type": "image/jpeg",
-    "etag": "\"ea93-++duq1WrPXdJTxAIY0GUJskCQXg\"",
-    "mtime": "2024-10-08T22:53:45.910Z",
-    "size": 60051,
-    "path": "../../.output/public/images/big/img4.jpg"
-  },
   "/images/backgrounds/bg-1.jpg": {
     "type": "image/jpeg",
     "etag": "\"abe5-Rz+erx+f/xOpZ9gWZ5FWOveQzgw\"",
@@ -1027,6 +992,62 @@ const assets = {
     "size": 54216,
     "path": "../../.output/public/images/backgrounds/u5.jpg"
   },
+  "/images/big/blog-bg.jpg": {
+    "type": "image/jpeg",
+    "etag": "\"be25-crXLkJEAB4/QIjRyyWaESpGegv4\"",
+    "mtime": "2024-10-08T22:53:45.908Z",
+    "size": 48677,
+    "path": "../../.output/public/images/big/blog-bg.jpg"
+  },
+  "/images/big/img1.jpg": {
+    "type": "image/jpeg",
+    "etag": "\"84a3-xYCvTD7I5r4h2mWTdKUtD6bG9PQ\"",
+    "mtime": "2024-10-08T22:53:45.908Z",
+    "size": 33955,
+    "path": "../../.output/public/images/big/img1.jpg"
+  },
+  "/images/big/img2.jpg": {
+    "type": "image/jpeg",
+    "etag": "\"ddc4-r6QMl0x1YexOObSO43bRAT/klKk\"",
+    "mtime": "2024-10-08T22:53:45.909Z",
+    "size": 56772,
+    "path": "../../.output/public/images/big/img2.jpg"
+  },
+  "/images/big/img3.jpg": {
+    "type": "image/jpeg",
+    "etag": "\"e0a3-uhGWI2EzkpkHBG8cXwHbgzqaK9k\"",
+    "mtime": "2024-10-08T22:53:45.909Z",
+    "size": 57507,
+    "path": "../../.output/public/images/big/img3.jpg"
+  },
+  "/images/big/img4.jpg": {
+    "type": "image/jpeg",
+    "etag": "\"ea93-++duq1WrPXdJTxAIY0GUJskCQXg\"",
+    "mtime": "2024-10-08T22:53:45.910Z",
+    "size": 60051,
+    "path": "../../.output/public/images/big/img4.jpg"
+  },
+  "/images/logos/citt_logo.png": {
+    "type": "image/png",
+    "etag": "\"19f21-j8UiI2u2RsZQ5vydBjBxifdI4e4\"",
+    "mtime": "2024-10-08T22:53:45.911Z",
+    "size": 106273,
+    "path": "../../.output/public/images/logos/citt_logo.png"
+  },
+  "/images/logos/dark-logo-icon.svg": {
+    "type": "image/svg+xml",
+    "etag": "\"36c-SV1PaCxKxziiTDr3vFysEhoFlH0\"",
+    "mtime": "2024-10-08T22:53:45.911Z",
+    "size": 876,
+    "path": "../../.output/public/images/logos/dark-logo-icon.svg"
+  },
+  "/images/logos/dark-logo-text.svg": {
+    "type": "image/svg+xml",
+    "etag": "\"108b-hub2caGRhBjKtjn/80czSMlKS+I\"",
+    "mtime": "2024-10-08T22:53:45.912Z",
+    "size": 4235,
+    "path": "../../.output/public/images/logos/dark-logo-text.svg"
+  },
   "/images/products/empty-shopping-cart.svg": {
     "type": "image/svg+xml",
     "etag": "\"431c-L2YP9QSlacz/HDgpbwgeSAe3QrM\"",
@@ -1040,13 +1061,6 @@ const assets = {
     "mtime": "2024-10-08T22:53:45.913Z",
     "size": 24600,
     "path": "../../.output/public/images/products/payment.svg"
-  },
-  "/images/svgs/sidebar-buynow-bg.svg": {
-    "type": "image/svg+xml",
-    "etag": "\"6907-WEobvLeSUI1MCWppxaNjEJqRJOY\"",
-    "mtime": "2024-10-08T22:53:45.925Z",
-    "size": 26887,
-    "path": "../../.output/public/images/svgs/sidebar-buynow-bg.svg"
   },
   "/images/profile/1.jpg": {
     "type": "image/jpeg",
@@ -1181,26 +1195,12 @@ const assets = {
     "size": 554990,
     "path": "../../.output/public/images/profile/user2.jpg"
   },
-  "/images/logos/citt_logo.png": {
-    "type": "image/png",
-    "etag": "\"19f21-j8UiI2u2RsZQ5vydBjBxifdI4e4\"",
-    "mtime": "2024-10-08T22:53:45.911Z",
-    "size": 106273,
-    "path": "../../.output/public/images/logos/citt_logo.png"
-  },
-  "/images/logos/dark-logo-icon.svg": {
+  "/images/svgs/sidebar-buynow-bg.svg": {
     "type": "image/svg+xml",
-    "etag": "\"36c-SV1PaCxKxziiTDr3vFysEhoFlH0\"",
-    "mtime": "2024-10-08T22:53:45.911Z",
-    "size": 876,
-    "path": "../../.output/public/images/logos/dark-logo-icon.svg"
-  },
-  "/images/logos/dark-logo-text.svg": {
-    "type": "image/svg+xml",
-    "etag": "\"108b-hub2caGRhBjKtjn/80czSMlKS+I\"",
-    "mtime": "2024-10-08T22:53:45.912Z",
-    "size": 4235,
-    "path": "../../.output/public/images/logos/dark-logo-text.svg"
+    "etag": "\"6907-WEobvLeSUI1MCWppxaNjEJqRJOY\"",
+    "mtime": "2024-10-08T22:53:45.925Z",
+    "size": 26887,
+    "path": "../../.output/public/images/svgs/sidebar-buynow-bg.svg"
   }
 };
 

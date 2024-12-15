@@ -211,7 +211,6 @@ export default defineComponent({
     },
     async createUser() {
       const id = shortid.generate();
-      console.log('porq no sale el fakin id' , id)
 
       this.post.email = this.post.email.toLowerCase();
       this.post.uid_user = id;
@@ -436,7 +435,7 @@ export default defineComponent({
     <!-- SELECTOR DE PROYECTO -->
     <v-col cols="3">
       <v-text-field v-model="search" class="mx-auto" density="comfortable" menu-icon=""
-        placeholder="Buscar Usuario asdsdf" prepend-inner-icon="mdi-magnify" theme="light" variant="solo"
+        placeholder="Buscar Usuario" prepend-inner-icon="mdi-magnify" theme="light" variant="solo"
         auto-select-first item-props hint="Escriba para buscar" rounded></v-text-field>
     </v-col>
     <!-- BOTONERA -->
@@ -456,7 +455,7 @@ export default defineComponent({
       <v-spacer></v-spacer>
       <v-btn variant="tonal" color="red" prepend-icon="mdi-account-search" @click="getAll">
         Buscar todos
-      <v-tooltip activator="parent" location="bottom">Mustra todos los usuarios</v-tooltip>
+      <v-tooltip activator="parent" location="bottom">Muestra todos los usuarios</v-tooltip>
       </v-btn>
     </v-col>
     <!-- TABLA DE USUARIOS -->

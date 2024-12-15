@@ -7,9 +7,20 @@ import {
   updateWishlist
 } from "../api/wishlistApi";
 import {
-  getAllItems
+  getProductByItem,
+  createProduct,
+  deleteProduct
+} from '../api/productosApi';
+import {
+  getAllItems,
+  createItem,
+  deleteItem
 } from "../api/itemApi";
+import {
+  getAllinventory
+} from "../api/inventoryApi"
 import { useRouter } from "vue-router";
+import shortid from 'shortid';
 
 export default defineComponent({
   name: "productItem",
@@ -18,6 +29,8 @@ export default defineComponent({
       dialog: false,
       dialogWishlist: false,
       dialogCreateWishlist: false,
+      dialogCreateItem: false,
+      productDialog: false,
       loading: false,
       productArray: [],
       productNames: [],
@@ -50,6 +63,25 @@ export default defineComponent({
       itemsPerPage: 9,
       currentPage: 1,
       allItems: [],
+      product: [],
+      product_price: 0,
+      product_stock: 0,
+      productPost: {
+        product_price: null,
+        product_stock: null,
+        item_id: null
+      },
+      itemPosts: {
+        item_id: null,
+        item_name: null,
+        item_price: null,
+        category: null,
+        inventory_id: null
+      },
+      inventory_array: [],
+      selectItem: null,
+      item_id: null,
+      product_id: null
     };
   },
   computed: {
@@ -70,8 +102,8 @@ export default defineComponent({
       const filteredLength = !this.productSearchQuery
         ? this.allItems.length
         : this.allItems.filter((product) =>
-            product.item_name.toLowerCase().includes(this.productSearchQuery.toLowerCase())
-          ).length;
+          product.item_name.toLowerCase().includes(this.productSearchQuery.toLowerCase())
+        ).length;
       return Math.ceil(filteredLength / this.itemsPerPage);
     }
   },
@@ -79,6 +111,9 @@ export default defineComponent({
     productSearchQuery() {
       this.currentPage = 1;
       this.fetchItemsForPage(1);
+    },
+    'itemPosts.inventory_id': function (newVal) {
+      console.log('Nuevo valor de inventory_id:', newVal); // Esto te muestra el ID seleccionado
     }
   },
   methods: {
@@ -104,16 +139,43 @@ export default defineComponent({
         this.loading = false;
       }
     },
+    async getInventory() {
+      try {
+        const response = await getAllinventory();
+
+        this.inventory_array = response.data;
+
+      } catch (error) {
+        console.error('Error fetching inventory:', error);
+      }
+    },
     fetchItemsForPage(page) {
       this.currentPage = page;
       const start = (page - 1) * this.itemsPerPage;
       const end = page * this.itemsPerPage;
-      
+
       if (!this.productSearchQuery) {
         this.itemArray = this.allItems.slice(start, end);
       } else {
         this.itemArray = this.filteredProducts;
       }
+    },
+    async getProductByid(item_id) {
+      this.productDialog = true;
+      try {
+        const response = await getProductByItem(item_id);
+        this.product = response.data;
+        this.product_price = this.product.product_price;
+        this.product_stock = this.product.product_stock;
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    reset() {
+      this.product = []
+      this.product_price = 0
+      this.product_stock = 0
+      this.productDialog = false;
     },
     handlePageChange(page) {
       this.fetchItemsForPage(page);
@@ -161,21 +223,42 @@ export default defineComponent({
         this.isDisabled = false;
       }
     },
-    async createWishlist() {
+    async createItem() {
+      this.itemPosts.item_id = Math.floor(Math.random() * (123123123123 - 1 + 1)) + 1
+
       const post = {
-        wishlist_id: Math.random(),
-        wishlist_name: this.post.wishlist_name,
-        budget: 0,
-        product: this.ProductDto
-      };
+        item_id: this.itemPosts.item_id,
+        item_name: this.itemPosts.item_name,
+        item_price: this.itemPosts.item_price,
+        category: this.itemPosts.category,
+        inventory_id: this.itemPosts.inventory_id
+      } 
+
       try {
-        this.loading = true;
-        await createWishlist(post);
-        this.loading = false;
-        this.dialogCreateWishlist = false;
+        const response = await createItem(post);
+
+        if (response) {
+          this.getItem();
+          this.createProduct();
+          this.loading = false;
+          this.resetPost();
+        }
       } catch (error) {
-        console.error("item error:", error);
-        this.errorAlertVisible = true;
+        console.log(error);
+      }
+    },
+    async createProduct() {
+      const post = {
+        product_id: Math.floor(Math.random() * (123123123123 - 1 + 1)) + 1,
+        product_price: this.itemPosts.item_price,
+        product_stock: this.productPost.product_stock,
+        item_id: this.itemPosts.item_id
+      }
+
+      try {
+        const response = await createProduct(post)
+      } catch (error) {
+        console.log(error);
       }
     },
     async saveWishlistId() {
@@ -212,6 +295,24 @@ export default defineComponent({
       this.count = 0;
       this.post.wishlist_name = '';
     },
+    resetPost() {
+      this.dialogCreateItem = false;
+
+      this.product_price = 0;
+      this.product_stock = 0;
+
+      this.productPost = {
+        product_price: null,
+        product_stock: null,
+        item_id: null
+      },
+        this.itemPosts = {
+          item_name: null,
+          item_price: null,
+          category: null,
+          inventory_id: null
+        }
+    },
     closeCreateDialog() {
       this.dialogWishlist = false;
       this.resetFields();
@@ -222,29 +323,28 @@ export default defineComponent({
     this.verifyTokenAuth(accessToken);
     this.getWishlist();
     this.getItem();
+    this.getInventory();
+    console.log('INVENTARIO', this.inventory_array)
   },
 });
 </script>
 
 <template>
-  <v-col cols="3">
-    <v-autocomplete 
-      :items="itemArray" 
-      item-value="item_name" 
-      class="mx-auto" 
-      density="comfortable"
-      placeholder="Buscar Producto" 
-      prepend-inner-icon="mdi-magnify" 
-      style="max-width: 350px" 
-      theme="light"
-      variant="solo" 
-      auto-select-first 
-      v-model="productSearchQuery" 
-      item-props 
-      hint="Escriba para buscar"
-      rounded>
-    </v-autocomplete>
-  </v-col>
+  <v-row>
+    <v-col cols="2">
+      <v-autocomplete :items="itemArray" item-text="item_name" class="mx-auto" density="comfortable"
+        placeholder="Buscar Producto" prepend-inner-icon="mdi-magnify" style="max-width: 350px" theme="light"
+        variant="solo" v-model="productSearchQuery" hint="Escriba para buscar" @change="selectItem" rounded>
+      </v-autocomplete>
+    </v-col>
+
+    <v-col cols="2">
+      <v-btn variant="tonal" color="primary" prepend-icon="mdi-folder-outline" @click="dialogCreateItem = true">
+        Agregar Item
+      </v-btn>
+    </v-col>
+  </v-row>
+
 
   <v-row v-if="loading" class="month-table">
     <v-col v-for="n in 10" :key="n" cols="12" md="4">
@@ -255,25 +355,101 @@ export default defineComponent({
   <v-row v-else class="month-table">
     <v-col v-for="item in filteredProducts" :key="item.id" class="item-card" cols="12" md="4">
       <v-card>
-        <v-img height="200px" src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" cover></v-img>
         <v-card-title>{{ item.item_name }}</v-card-title>
         <v-card-text>
           <p>Price: {{ item.item_price }}</p>
           <v-btn icon @click="addProductToWishlist(item)">
-            <v-icon>mdi-heart</v-icon>
+            <v-icon>mdi-view-grid-plus</v-icon>
+          </v-btn>
+          <v-btn icon @click="addProductToWishlist(item)">
+            <v-icon>mdi-pencil</v-icon>
+          </v-btn>
+          <v-btn icon @click="addProductToWishlist(item)">
+            <v-icon>mdi-trash-can</v-icon>
           </v-btn>
         </v-card-text>
+        <v-card-actions>
+          <v-btn @click="getProductByid(item.item_id)">
+            Ver stock
+          </v-btn>
+        </v-card-actions>
       </v-card>
     </v-col>
   </v-row>
 
-  <v-pagination 
-    v-model="currentPage" 
-    :length="totalPages" 
-    :total-visible="5" 
-    class="mt-4"
+  <v-pagination v-model="currentPage" :length="totalPages" :total-visible="5" class="mt-4"
     @update:model-value="handlePageChange">
   </v-pagination>
+
+  <v-dialog v-model="productDialog" max-width="500px" scrollable>
+    <v-card class="elevation-10">
+      <v-card-title class="headline text-center">
+        Información del Producto
+      </v-card-title>
+      <v-card-text>
+        <v-list two-line>
+          <v-list-item>
+            <v-list-item-title class="font-weight-bold">Stock</v-list-item-title>
+            <v-list-item-subtitle>{{ product_stock }}</v-list-item-subtitle>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title class="font-weight-bold">Precio</v-list-item-title>
+            <v-list-item-subtitle>{{ product_price }}</v-list-item-subtitle>
+          </v-list-item>
+        </v-list>
+        <v-btn @click="reset()">Actualizar producto</v-btn>
+      </v-card-text>
+      <v-card-actions class="d-flex justify-center">
+        <v-btn @click="reset()">Cerrar</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <v-dialog v-model="dialogCreateItem" max-width="600px" persistent>
+    <v-card>
+      <v-card-text>
+        Crear Item
+        <v-form v-model="valid">
+          <v-container>
+            <v-row>
+              <v-col cols="12" md="4">
+                <v-text-field v-model="itemPosts.item_name" label="Nombre Item" variant="underlined"
+                  required></v-text-field>
+              </v-col>
+
+              <v-col cols="12" md="4">
+                <v-text-field v-model="itemPosts.item_price" label="Precio" type="number" variant="underlined"
+                  required></v-text-field>
+              </v-col>
+
+              <v-col cols="12" md="4">
+                <v-text-field v-model="itemPosts.category" label="Categoria" variant="underlined"
+                  required></v-text-field>
+              </v-col>
+
+              <v-col cols="12" md="4">
+                <v-autocomplete v-model="itemPosts.inventory_id" label="Inventario" variant="underlined" required
+                  :items="inventory_array" item-value="inventory_id" item-title="inventory_name" @change="selectItem" />
+              </v-col>
+
+              <v-divider></v-divider>
+
+              <v-col cols="12" md="4">
+                <v-text-field v-model="productPost.product_stock" label="Stock" type="number" min="0"
+                  variant="underlined" required></v-text-field>
+              </v-col>
+
+            </v-row>
+          </v-container>
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn @click="resetPost()">Cerrar</v-btn>
+        <v-btn @click="createItem()">Guardar</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
 
   <v-dialog v-model="dialogWishlist" max-width="500px" persistent scrollable>
     <v-card>
@@ -284,12 +460,7 @@ export default defineComponent({
         <p>Desea agregar el producto seleccionado a la wishlist?</p>
       </v-card-subtitle>
       <v-card-text>
-        <v-select
-          v-model="selectedWishlist"
-          :items="wishNames"
-          label="Seleccionar Wishlist"
-          required
-        ></v-select>
+        <v-select v-model="selectedWishlist" :items="wishNames" label="Seleccionar Wishlist" required></v-select>
         <v-row align="center" justify="center">
           <v-btn icon @click="decrementCount">
             <v-icon>mdi-minus</v-icon>
@@ -313,6 +484,7 @@ export default defineComponent({
 .month-table {
   margin: 20px;
 }
+
 .item-card {
   margin-bottom: 20px;
 }
