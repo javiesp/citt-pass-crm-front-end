@@ -101,8 +101,8 @@ export default defineComponent({
       this.dialogProject = false;
     }
 
-    await this.getUsers(this.local_project);
     await this.getProjects();
+    await this.getUsers(this.local_project);
   },
   methods: {
     async getAll() {
