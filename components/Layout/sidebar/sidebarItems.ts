@@ -30,7 +30,11 @@ const sidebarItem: menu[] = [
     icon: IconCards,
     to: "/gestoringreso",
   },
-
+  {
+    title: "Proyectos",
+    icon: IconUsersGroup,
+    to: "/gestorproyecto",
+  },
   { header: 'GESTOR INVENTARIO' },
   {
     title: "Rack",
@@ -46,12 +50,6 @@ const sidebarItem: menu[] = [
     title: "Producto item",
     icon: IconPackages,
     to: "/productos",
-  },
-  { header: 'GESTOR PROYECTO' },
-  {
-    title: "Proyectos",
-    icon: IconUsersGroup,
-    to: "/gestorproyecto",
   },
   { header: 'LISTA DE DESEOS' },
   {

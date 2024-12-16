@@ -402,13 +402,6 @@ export default defineComponent({
 <template>
   <v-row>
     <v-col cols="2">
-      <v-autocomplete :items="itemArray" item-text="item_name" class="mx-auto" density="comfortable"
-        placeholder="Buscar Producto" prepend-inner-icon="mdi-magnify" style="max-width: 350px" theme="light"
-        variant="solo" v-model="productSearchQuery" hint="Escriba para buscar" @change="selectItem" rounded>
-      </v-autocomplete>
-    </v-col>
-
-    <v-col cols="2">
       <v-btn variant="tonal" color="primary" prepend-icon="mdi-folder-outline" @click="dialogCreateItem = true">
         Agregar Item
       </v-btn>

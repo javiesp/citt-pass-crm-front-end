@@ -32,6 +32,10 @@ export const getAllItems = () => {
   return diffusion.get('/item/find-all-items');
 };
 
+export const getItemByInventoryId = (inventory_id : number) => {
+  return diffusion.get('/item/find-items-by-inventory', { params: { 'inventory_id' : inventory_id } });
+};
+
 export const createItem = (createItemDto?: any) => {
   return diffusion.post('/item/create-item', createItemDto );
 };

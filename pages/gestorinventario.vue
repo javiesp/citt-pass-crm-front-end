@@ -9,6 +9,9 @@ import {
   getWishlist,
 } from "../api/inventoryApi";
 import { getAllrack } from "../api/rackApi";
+import {
+  getItemByInventoryId
+} from "../api/itemApi";
 
 export default defineComponent({
   name: "inventoryItem",
@@ -26,12 +29,19 @@ export default defineComponent({
       headers: [
         { title: "ID", value: "inventory_id" },
         { title: "Nombre", value: "inventory_name" },
-        { title: "Productos", value: "product_id" },
+        { title: "Productos", value: "producto" },
         { title: "Rack ID", value: "rack_id" },
         { title: "Acciones", value: "actions" },
       ],
+      headers2: [
+        { title: "Nombre", value: "item_name" },
+        { title: "Precio", value: "item_price" },
+        { title: "Categoría", value: "category" },
+      ],
+      solo: null,
       dialog: false,
       dialogRack: true,
+      dialogItems: false,
       selectItem: null,
       inventoryArray: [],
       inventoryNames: [],
@@ -53,6 +63,7 @@ export default defineComponent({
         rack_id: null,
       },
       max: 12312312,
+      itemsArray: []
     };
   },
   computed: {
@@ -79,15 +90,13 @@ export default defineComponent({
       this.dialogRack = false;
     }
 
-    await this.getUsers();
-    await this.getProjects();
   },
   methods: {
     verifyTokenAuth(token) {
       const router = useRouter();
 
       if (!token) {
-        router.push("/login"); 
+        router.push("/login");
       }
 
       const isValidJWT = typeof token === 'string' && token.split('.').length !== 3 ? router.push("/login") : true
@@ -97,7 +106,6 @@ export default defineComponent({
       try {
         const inventoryResponse = await getAllinventory();
         this.inventoryArray = inventoryResponse.data;
-        this.inventoryNames = this.productArray.results.map((inventory) => inventory_name.name);
         console.log("INVENTARIOS");
         console.log(this.inventoryNames);
       } catch (error) {
@@ -229,6 +237,24 @@ export default defineComponent({
         this.errorAlertVisible = true;
       }
     },
+    async openProducts(item) {
+      const id = item.inventory_id
+      this.dialogItems = true;
+
+      try {
+        const response = await getItemByInventoryId(id);
+        // Ensure itemsArray is always an array
+        this.itemsArray = Array.isArray(response.data) ? response.data : [response.data];
+        console.log(this.itemsArray)
+      } catch (error) {
+        console.log(error);
+        this.itemsArray = []; // Set empty array on error
+      }
+    },
+    closeItems() {
+      this.itemsArray = [];
+      this.dialogItems = false;
+    },
     async selectProject() {
       console.log("SELECTED")
       localStorage.setItem("rack_id_cach", this.selectedItem);
@@ -267,7 +293,7 @@ export default defineComponent({
   mounted() {
     this.getInventory();
     this.getRack();
-    this.getWishlist();
+    // this.getWishlist();
   },
 });
 </script>
@@ -296,6 +322,11 @@ export default defineComponent({
         <v-col>
           <v-data-table v-model:items-per-page="itemsPerPage" :items-per-page-options="rowsPerPageItems"
             :headers="headers" :items="inventoryArray" :loading="loading" :search="search">
+            <template v-slot:item.producto="{ item }">
+              <v-btn class="ml-2" color="primary" icon size="x-small" flat @click="openProducts(item)">
+                <v-icon>mdi-package-variant-closed</v-icon>
+              </v-btn>
+            </template>
             <template v-slot:item.actions="{ item }">
               <v-btn class="ml-2" color="primary" icon size="x-small" flat @click="openUpdateDialog(item)">
                 <v-icon>mdi-pencil</v-icon>
@@ -382,6 +413,24 @@ export default defineComponent({
       </v-card>
     </v-dialog>
   </div>
+
+  <v-dialog v-model="dialogItems" max-width="700px" scrollable>
+    <v-card>
+      <v-card-title>
+        Items
+      </v-card-title>
+      <v-card-text v-if="itemsArray && itemsArray.length">
+        <v-data-table :headers="headers2" :items="itemsArray"></v-data-table>
+      </v-card-text>
+      <v-alert v-else type="info">
+        No hay productos disponibles.
+      </v-alert>
+      <v-card-actions>
+        <v-btn @click="closeItems()">Cerrar</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
 
   <!--Alerta-->
   <v-alert v-model="errorAlertVisible" dismissible color="red" elevation="2" colored-border icon="mdi-alert"
