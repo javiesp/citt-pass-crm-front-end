@@ -101,8 +101,11 @@ export default defineComponent({
       this.dialogProject = false;
     }
 
-    await this.getProjects();
-    await this.getUsers(this.local_project);
+    // Awaiting the fetches to complete
+    await Promise.all([
+      this.getProjects(),
+      this.getUsers(this.local_project)
+    ]);
   },
   methods: {
     async getAll() {
@@ -200,7 +203,7 @@ export default defineComponent({
       try {
         this.loading = true;
         const response = await createProject(post);
-        window.location.reload();
+        // window.location.reload();
         this.dialogCheckin = false;
         this.clearInput();
       } catch (error) {
@@ -329,12 +332,12 @@ export default defineComponent({
     phoneFormat(value) {
       let phone = value.replace(/\D/g, '');
 
-      if (phone.length === 0) return value; 
+      if (phone.length === 0) return value;
 
       if (phone.startsWith('9') && (phone.length === 8 || phone.length === 9)) {
-        return phone.length === 9 
-          ? `${phone.slice(0, 1)}${phone.slice(1, 5)}${phone.slice(5)}` 
-          : `${phone.slice(0, 1)}${phone.slice(1, 4)}${phone.slice(4)}`; 
+        return phone.length === 9
+          ? `${phone.slice(0, 1)}${phone.slice(1, 5)}${phone.slice(5)}`
+          : `${phone.slice(0, 1)}${phone.slice(1, 4)}${phone.slice(4)}`;
       }
 
       return value;
@@ -362,12 +365,12 @@ export default defineComponent({
 
       const hasLetter = /[a-zA-Z]/.test(value);
       const hasSymbol = /[!@#$%^&*()_+{}\[\]:;"'<>,.?~`-]/.test(value);
-      const hasNumber = /[0-9]/.test(value); 
+      const hasNumber = /[0-9]/.test(value);
 
       if (!hasLetter || !hasSymbol || !hasNumber) {
         return "La contraseña debe contener al menos una letra, un símbolo y un número";
       }
-      
+
       return true;
     },
     isFormValid() {
@@ -434,9 +437,9 @@ export default defineComponent({
   <v-row class="month-table">
     <!-- SELECTOR DE PROYECTO -->
     <v-col cols="3">
-      <v-text-field v-model="search" class="mx-auto" density="comfortable" menu-icon=""
-        placeholder="Buscar Usuario" prepend-inner-icon="mdi-magnify" theme="light" variant="solo"
-        auto-select-first item-props hint="Escriba para buscar" rounded></v-text-field>
+      <v-text-field v-model="search" class="mx-auto" density="comfortable" menu-icon="" placeholder="Buscar Usuario"
+        prepend-inner-icon="mdi-magnify" theme="light" variant="solo" auto-select-first item-props
+        hint="Escriba para buscar" rounded></v-text-field>
     </v-col>
     <!-- BOTONERA -->
     <v-col cols="3">
@@ -455,7 +458,7 @@ export default defineComponent({
       <v-spacer></v-spacer>
       <v-btn variant="tonal" color="red" prepend-icon="mdi-account-search" @click="getAll">
         Buscar todos
-      <v-tooltip activator="parent" location="bottom">Muestra todos los usuarios</v-tooltip>
+        <v-tooltip activator="parent" location="bottom">Muestra todos los usuarios</v-tooltip>
       </v-btn>
     </v-col>
     <!-- TABLA DE USUARIOS -->
@@ -536,16 +539,10 @@ export default defineComponent({
             </v-col>
 
             <v-col cols="12" md="4" sm="6">
-              <v-text-field 
-                v-model="post.hashed_password"
+              <v-text-field v-model="post.hashed_password"
                 hint="Debe tener al menos 9 caracteres y contener al menos una letra, símbolo o número"
-                label="Contraseña*"
-                :rules="[validatePassword]"
-                required
-                :type="passwordVisible ? 'text' : 'password'"  
-                append-icon="mdi-eye"  
-                @click:append="passwordVisible = !passwordVisible"  
-              ></v-text-field>
+                label="Contraseña*" :rules="[validatePassword]" required :type="passwordVisible ? 'text' : 'password'"
+                append-icon="mdi-eye" @click:append="passwordVisible = !passwordVisible"></v-text-field>
             </v-col>
 
 
@@ -558,7 +555,8 @@ export default defineComponent({
           </v-row>
 
           <small class="text-caption text-medium-emphasis">* Indica que el campo es obligatorio</small>
-          <small :disbled="!messageError" class="text-caption text-medium-emphasis">* Indica que el campo es obligatorio</small>
+          <small :disbled="!messageError" class="text-caption text-medium-emphasis">* Indica que el campo es
+            obligatorio</small>
         </v-card-text>
 
         <v-divider></v-divider>
