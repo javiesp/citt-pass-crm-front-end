@@ -1,5 +1,8 @@
 # cittPass-crm-front-end
 CRM diseñada para el centro de innovación y transferencia tecnológica de DuocUc. Administra usuarios, asistencia, proyectos e inventarios.
+
+## Código en producción:
+[https://citt-pass-crm-front-end-production.up.railway.app/login](https://citt-pass-crm-front-end-production.up.railway.app/login)
 ---
 ## Instalación
 
